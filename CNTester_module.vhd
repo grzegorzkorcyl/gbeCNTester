@@ -29,7 +29,12 @@ entity CNTester_module is
 		
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
-		GENERATE_PACKET_IN          : in    std_logic
+		GENERATE_PACKET_IN          : in    std_logic;
+		
+		LED_GREEN                   : out std_logic;
+		LED_ORANGE                  : out std_logic;
+		LED_RED                     : out std_logic;
+		LED_YELLOW                  : out std_logic
 		
 	);
 end entity CNTester_module;
@@ -380,6 +385,7 @@ signal pcs_tx_en_q, pcs_tx_er_q, pcs_rx_en_q, pcs_rx_er_q, mac_col_q, mac_crs_q 
 signal pcs_txd_qq, pcs_rxd_qq : std_logic_vector(7 downto 0);
 signal pcs_tx_en_qq, pcs_tx_er_qq, pcs_rx_en_qq, pcs_rx_er_qq, mac_col_qq, mac_crs_qq : std_logic;
 
+signal cnt1, cnt2 : std_logic_vector(31 downto 0);
 
 begin
 
@@ -828,7 +834,31 @@ MAC: tsmac34
 			STAT_DEBUG			=> pcs_stat_debug, --open,
 			CTRL_DEBUG			=> x"0000_0000_0000_0000"
 		);
+		
+CNT1_PROC : process (serdes_clk_125) is
+begin
+	if rising_edge(serdes_clk_125) then
+		if (RESET = '1') then
+			cnt1 <= (others => '0');
+		else
+			cnt1 <= cnt1 + x"1";
+		end if;
+	end if;
+end process CNT1_PROC ;
 
+CNT2_PROC : process (serdes_rx_clk) is
+begin
+	if rising_edge(serdes_rx_clk) then
+		if (RESET = '1') then
+			cnt2 <= (others => '0');
+		else
+			cnt2 <= cnt2 + x"1";
+		end if;
+	end if;
+end process CNT2_PROC ;
+
+LED_GREEN <= cnt1(24);
+LED_ORANGE <= cnt2(24);
 
 -- FrameConstructor fixed magic values
 --fc_type           <= x"0008";

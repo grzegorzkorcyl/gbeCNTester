@@ -37,7 +37,12 @@ component CNTester_module is
 		
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
-		GENERATE_PACKET_IN          : in    std_logic
+		GENERATE_PACKET_IN          : in    std_logic;
+		
+		LED_GREEN                   : out std_logic;
+		LED_ORANGE                  : out std_logic;
+		LED_RED                     : out std_logic;
+		LED_YELLOW                  : out std_logic
 		
 	);
 end component;
