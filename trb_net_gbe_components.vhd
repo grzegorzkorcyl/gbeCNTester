@@ -24,7 +24,7 @@ component CNTester_module is
 	port (
 		CLKSYS_IN : in std_logic;
 		CLKGBE_IN : in std_logic;
-		RESET_IN  : in std_logic;
+		RESET     : in std_logic;
 		GSR_N     : in std_logic;
 		
 		SFP_RXD_P_IN				: in	std_logic;
