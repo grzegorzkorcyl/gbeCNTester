@@ -27,8 +27,8 @@ architecture CNTester_Main of CNTester_Main is
 	
 begin
 
-	GENERATE_OUT  <= '0';
-	TIMESTAMP_OUT <= (others  => '0');
-	DEST_ADDR_OUT <= (others  => '0');
+	GENERATE_OUT  <= (others => '0');
+	TIMESTAMP_OUT <= (others => '0');
+	DEST_ADDR_OUT <= (others => '0');
 
 end architecture CNTester_Main;
