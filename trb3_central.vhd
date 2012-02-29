@@ -277,19 +277,21 @@ LINK_1 : CNTester_module
 		RESET      => reset_i,
 		GSR_N      => GSR_N,
 		
-		SFP_RXD_P_IN		 => SFP_RX_P(1),
-		SFP_RXD_N_IN		 => SFP_RX_N(1),
-		SFP_TXD_P_OUT		 => SFP_TX_P(2),
-		SFP_TXD_N_OUT		 => SFP_TX_N(2),
-		SFP_PRSNT_N_IN		 => SFP_MOD0(1),
-		SFP_LOS_IN			 => SFP_LOS(1),
-		SFP_TXDIS_OUT		 => SFP_TXDIS(1),
+		SFP_RXD_P_IN		 => SFP_RX_P(5),
+		SFP_RXD_N_IN		 => SFP_RX_N(5),
+		SFP_TXD_P_OUT		 => SFP_TX_P(5),
+		SFP_TXD_N_OUT		 => SFP_TX_N(5),
+		SFP_PRSNT_N_IN		 => SFP_MOD0(5),
+		SFP_LOS_IN			 => SFP_LOS(5),
+		SFP_TXDIS_OUT		 => SFP_TXDIS(5),
 		
 		TIMESTAMP_IN         => (others => '0'),
 		DEST_ADDR_IN         => (others  => '0'),
 		GENERATE_PACKET_IN   => '0'	
 	);
 
+SFP_TXDIS(4 downto 1) <= (others => '1');
+SFP_TXDIS(8 downto 6) <= (others => '1');
 
 
 ---------------------------------------------------------------------------
