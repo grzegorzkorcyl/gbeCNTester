@@ -156,8 +156,13 @@ port map (
 	STAT_DATA_ACK_IN  => stat_ack(0),
 	RECEIVED_FRAMES_OUT	=> RECEIVED_FRAMES_OUT(1 * 16 - 1 downto 0 * 16),
 	SENT_FRAMES_OUT		=> SENT_FRAMES_OUT(1 * 16 - 1 downto 0 * 16),
-	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
+	
 -- END OF INTERFACE
+	TIMESTAMP_IN         => (others => '0'),
+	DEST_ADDR_IN         => (others => '0'),
+	GENERATE_PACKET_IN   => (others => '0'),
+	
+	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
 );
 
 
