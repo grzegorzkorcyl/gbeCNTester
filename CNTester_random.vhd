@@ -27,7 +27,7 @@ begin
 		end if;
 	end if;
 
-	random_num <= rand_temp;
+	RANDOM_OUT <= rand_temp;
 end process;
 
 end architecture CNTester_random;
