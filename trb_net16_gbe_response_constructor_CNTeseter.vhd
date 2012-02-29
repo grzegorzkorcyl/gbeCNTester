@@ -116,7 +116,8 @@ begin
 	case construct_current_state is
 	
 		when IDLE =>
-			if (GENERATE_PACKET_IN = '1') then
+			--if (GENERATE_PACKET_IN = '1') then
+			if (timer(20) = '1' and timer_lock = '0') then
 				construct_next_state <= WAIT_FOR_LOAD;
 			else
 				construct_next_state <= IDLE;
