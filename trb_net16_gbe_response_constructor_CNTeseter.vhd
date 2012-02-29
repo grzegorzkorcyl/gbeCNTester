@@ -159,7 +159,7 @@ begin
 end process LOAD_CTR_PROC;
 
 
-tc_data_t <=  std_logic_vector(to_unsigned(load_ctr, 8));
+timer_t <=  std_logic_vector(to_unsigned(load_ctr, 8));
 TC_DATA_PROC : process(construct_current_state, load_ctr)
 begin
 
@@ -169,7 +169,7 @@ begin
 			
 		when LOAD_DATA =>
 			for i in 0 to 7 loop
-				tc_data(i) <= tc_data_t(i);
+				tc_data(i) <= timer_t(i);
 			end loop;
 			
 		when TERMINATION =>
