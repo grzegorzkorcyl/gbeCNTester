@@ -14,7 +14,7 @@ use work.trb_net_gbe_protocols.all;
 --********
 -- generates random dummy packets to feed the Compute Node, receives data back and updates statistics
 
-entity trb_net16_gbe_response_constructor_CNTeseter is
+entity trb_net16_gbe_response_constructor_CNTester is
 generic ( STAT_ADDRESS_BASE : integer := 0
 );
 port (
