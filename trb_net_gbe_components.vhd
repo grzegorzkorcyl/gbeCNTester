@@ -9,6 +9,17 @@ use work.trb_net_gbe_protocols.all;
 
 package trb_net_gbe_components is
 
+component CNTester_Main is
+	port (
+		CLKSYS_IN : in std_logic;
+		RESET     : in std_logic;
+		
+		GENERATE_OUT  : out std_logic_vector(2 downto 0);
+		TIMESTAMP_OUT : out std_logic_vector(31 downto 0);
+		DEST_ADDR_OUT : out std_logic_vector(15 downto 0)
+	);
+end component;
+
 component CNTester_module is
 	port (
 		CLKSYS_IN : in std_logic;
