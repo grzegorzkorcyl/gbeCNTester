@@ -80,6 +80,7 @@ signal tc_data    : std_logic_vector(8 downto 0);
 signal timer      : unsigned(28 downto 0);
 signal timer_lock : std_logic;
 signal timer_t    : std_logic_vector(7 downto 0);
+signal state      : std_logic_vector(3 downto 0);
 
 begin
 
@@ -89,10 +90,10 @@ begin
 		if (RESET = '1') then
 			timer  <= (others => '0');
 			timer_lock <= '0';
-		elsif (timer(20) = '0') then
+		elsif (timer(15) = '0') then
 			timer_lock <= '0';
 			timer <= timer + 1;
-		elsif (timer(20) = '1') then
+		elsif (timer(15) = '1') then
 			timer_lock <= '1';
 			timer <= timer + 1;
 		else
@@ -112,19 +113,21 @@ begin
 	end if;
 end process CONSTRUCT_MACHINE_PROC;
 
-CONSTRUCT_MACHINE : process(construct_current_state, GENERATE_PACKET_IN, TC_BUSY_IN, PS_SELECTED_IN, load_ctr)
+CONSTRUCT_MACHINE : process(construct_current_state, GENERATE_PACKET_IN, TC_BUSY_IN, PS_SELECTED_IN, load_ctr, timer, timer_lock)
 begin
 	case construct_current_state is
 	
 		when IDLE =>
+			state <= x"1";
 			--if (GENERATE_PACKET_IN = '1') then
-			if (timer(20) = '1' and timer_lock = '0') then
+			if (timer(15) = '1' and timer_lock = '0') then
 				construct_next_state <= WAIT_FOR_LOAD;
 			else
 				construct_next_state <= IDLE;
 			end if;
 			
 		when WAIT_FOR_LOAD =>
+			state <= x"2";
 			if (TC_BUSY_IN = '0' and PS_SELECTED_IN = '1') then
 				construct_next_state <= LOAD_DATA;
 			else
@@ -132,16 +135,19 @@ begin
 			end if;
 			
 		when LOAD_DATA =>
-			if (load_ctr = 255) then
+			state <= x"3";
+			if (load_ctr = 200) then
 				construct_next_state <= TERMINATION;
 			else
 				construct_next_state <= LOAD_DATA;
 			end if;
 			
 		when TERMINATION =>
+			state <= x"4";
 			construct_next_state <= CLEANUP;
 		
 		when CLEANUP =>
+			state <= x"5";
 			construct_next_state <= IDLE;
 	
 	end case;
@@ -193,7 +199,7 @@ end process TC_DATA_SYNC;
 PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 
-TC_FRAME_SIZE_OUT <= x"0100";
+TC_FRAME_SIZE_OUT <= x"00c9";
 TC_FRAME_TYPE_OUT <= x"1101";  -- frame type: CNTester 
 
 TC_DEST_MAC_OUT <= x"ffffffffffff";

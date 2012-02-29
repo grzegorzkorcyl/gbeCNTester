@@ -433,9 +433,9 @@ MAIN_CONTROL : trb_net16_gbe_main_control
 	  TC_TRANSMIT_DONE_IN   => mc_transmit_done,
 
   -- signals to/from packet constructor
-	  PC_READY_IN		=> pc_ready,
-	  PC_TRANSMIT_ON_IN	=> pc_transmit_on,
-	  PC_SOD_IN		    => tc_sod,
+	  PC_READY_IN		=> '1',
+	  PC_TRANSMIT_ON_IN	=> '0',
+	  PC_SOD_IN		    => '0',
 
   -- signals to/from sgmii/gbe pcs_an_complete
 	  PCS_AN_COMPLETE_IN	=> pcs_an_complete,
@@ -488,7 +488,7 @@ port map(
 	PC_EOD_IN		    => tc_eod,
 	PC_FC_READY_OUT		=> tc_pc_ready,
 	PC_FC_H_READY_OUT	=> tc_pc_h_ready,
-	PC_TRANSMIT_ON_IN	=> pc_transmit_on,
+	PC_TRANSMIT_ON_IN	=> '0',
 
       -- signals from ip_configurator used by packet constructor
 	IC_DEST_MAC_ADDRESS_IN  => ic_dest_mac,
@@ -572,7 +572,7 @@ port map(
 	FLAGS_OFFSET_IN			=> fc_flags_offset,
 	TTL_IN				    => fc_ttl,
 	PROTOCOL_IN			    => fc_protocol,
-	FRAME_DELAY_IN			=> frame_delay, -- gk 09.12.10
+	FRAME_DELAY_IN			=> (others => '0'), -- gk 09.12.10
 	-- ports for packetTransmitter
 	RD_CLK				    => serdes_clk_125,
 	FT_DATA_OUT 			=> ft_data,
@@ -584,8 +584,7 @@ port map(
 	-- debug ports
 	BSM_CONSTR_OUT			=> open,
 	BSM_TRANS_OUT			=> open,
-	DEBUG_OUT(31 downto 0)	=> open,
-	DEBUG_OUT(63 downto 32) => open
+	DEBUG_OUT              	=> open
 );
 
 
