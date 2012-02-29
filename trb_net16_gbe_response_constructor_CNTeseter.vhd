@@ -79,6 +79,7 @@ signal load_ctr   : integer range 0 to 255;
 signal tc_data    : std_logic_vector(8 downto 0);
 signal timer      : unsigned(28 downto 0);
 signal timer_lock : std_logic;
+signal timer_t    : std_logic_vector(7 downto 0);
 
 begin
 
@@ -157,6 +158,8 @@ begin
 	end if;
 end process LOAD_CTR_PROC;
 
+
+tc_data_t <=  std_logic_vector(to_unsigned(load_ctr, 8));
 TC_DATA_PROC : process(construct_current_state, load_ctr)
 begin
 
@@ -165,7 +168,9 @@ begin
 	case (construct_current_state) is
 			
 		when LOAD_DATA =>
-			tc_data <=  std_logic_vector(to_unsigned(load_ctr, 8));
+			for i in 0 to 7 loop
+				tc_data(i) <= tc_data_t(i);
+			end loop;
 			
 		when TERMINATION =>
 			tc_data(7 downto 0) <= x"ff";
