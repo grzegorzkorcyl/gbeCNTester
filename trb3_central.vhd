@@ -6,6 +6,7 @@ USE IEEE.std_logic_UNSIGNED.ALL;
 library work;
 use work.trb_net_std.all;
 use work.trb_net_components.all;
+use work.trb3_components.all;
 use work.trb_net_gbe_components.all;
 
 
