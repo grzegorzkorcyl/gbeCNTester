@@ -76,7 +76,7 @@ signal construct_current_state, construct_next_state : construct_states;
 attribute syn_encoding of construct_current_state: signal is "safe,gray";
 
 signal load_ctr   : integer range 0 to 255;
-signal tc_data    : std_logic_vector(7 downto 0);
+signal tc_data    : std_logic_vector(8 downto 0);
 signal timer      : unsigned(28 downto 0);
 signal timer_lock : std_logic;
 
