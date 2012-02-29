@@ -160,7 +160,7 @@ port map (
 -- END OF INTERFACE
 	TIMESTAMP_IN         => (others => '0'),
 	DEST_ADDR_IN         => (others => '0'),
-	GENERATE_PACKET_IN   => (others => '0'),
+	GENERATE_PACKET_IN   => '0',
 	
 	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
 );
