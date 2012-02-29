@@ -31,7 +31,7 @@ type udp_protos_a is array(c_MAX_UDP_PROTOCOLS - 1 downto 0) of std_logic_vector
 constant UDP_PROTOCOLS : udp_protos_a := (x"0044"); --(x"0044", x"61a8", x"7530");
 -- none is being used
 
-entity trb_net16_gbe_response_constructor_CNTester is
+component trb_net16_gbe_response_constructor_CNTester is
 generic ( STAT_ADDRESS_BASE : integer := 0
 );
 port (
@@ -81,7 +81,7 @@ port (
 -- debug
 	DEBUG_OUT		: out	std_logic_vector(31 downto 0)
 );
-end trb_net16_gbe_response_constructor_CNTester;
+end component;
 
 
 end package;
