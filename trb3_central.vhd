@@ -300,22 +300,24 @@ SFP_TXDIS(8 downto 6) <= (others => '1');
 
 GSR_N   <= pll_lock;
   
-THE_RESET_HANDLER : trb_net_reset_handler
-  generic map(
-    RESET_DELAY     => x"FEEE"
-    )
-  port map(
-    CLEAR_IN        => '0',             -- reset input (high active, async)
-    CLEAR_N_IN      => '1',             -- reset input (low active, async)
-    CLK_IN          => clk_200_i,       -- raw master clock, NOT from PLL/DLL!
-    SYSCLK_IN       => clk_100_i,       -- PLL/DLL remastered clock
-    PLL_LOCKED_IN   => pll_lock,        -- master PLL lock signal (async)
-    RESET_IN        => '0',             -- general reset signal (SYSCLK)
-    TRB_RESET_IN    => med_stat_op(4*16+13), -- TRBnet reset signal (SYSCLK)
-    CLEAR_OUT       => clear_i,         -- async reset out, USE WITH CARE!
-    RESET_OUT       => reset_i,         -- synchronous reset out (SYSCLK)
-    DEBUG_OUT       => open
-  );
+reset_i <= not GSR_N;
+
+--THE_RESET_HANDLER : trb_net_reset_handler
+--  generic map(
+--    RESET_DELAY     => x"FEEE"
+--    )
+--  port map(
+--    CLEAR_IN        => '0',             -- reset input (high active, async)
+--    CLEAR_N_IN      => '1',             -- reset input (low active, async)
+--    CLK_IN          => clk_200_i,       -- raw master clock, NOT from PLL/DLL!
+--    SYSCLK_IN       => clk_100_i,       -- PLL/DLL remastered clock
+--    PLL_LOCKED_IN   => pll_lock,        -- master PLL lock signal (async)
+--    RESET_IN        => '0',             -- general reset signal (SYSCLK)
+--    TRB_RESET_IN    => '0', --med_stat_op(4*16+13), -- TRBnet reset signal (SYSCLK)
+--    CLEAR_OUT       => clear_i,         -- async reset out, USE WITH CARE!
+--    RESET_OUT       => reset_i,         -- synchronous reset out (SYSCLK)
+--    DEBUG_OUT       => open
+--  );
 
 ---------------------------------------------------------------------------
 -- Clock Handling
@@ -332,13 +334,13 @@ THE_MAIN_PLL : pll_in200_out100
 ---------------------------------------------------------------------------
 -- Reboot FPGA
 ---------------------------------------------------------------------------
-THE_FPGA_REBOOT : fpga_reboot
-  port map(
-    CLK       => clk_100_i,
-    RESET     => reset_i,
-    DO_REBOOT => common_ctrl_regs(15),
-    PROGRAMN  => PROGRAMN
-    );
+--THE_FPGA_REBOOT : fpga_reboot
+--  port map(
+--    CLK       => clk_100_i,
+--    RESET     => reset_i,
+--    DO_REBOOT => common_ctrl_regs(15),
+--    PROGRAMN  => PROGRAMN
+--    );
 
     
 ---------------------------------------------------------------------------
