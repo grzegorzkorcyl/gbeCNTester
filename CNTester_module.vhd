@@ -41,7 +41,8 @@ entity CNTester_module is
 		SD_SIGNAL_DETECTED_IN		: in	std_logic;
 		SD_RX_CDR_IN				: in	std_logic;
 		SD_TX_PLL_LOL_IN            : in	std_logic;
-		SD_QUAD_RST_OUT             : out	std_logic 
+		SD_QUAD_RST_OUT             : out	std_logic;
+		SD_XMIT_OUT                 : out	std_logic 
 	);
 end entity CNTester_module;
 
@@ -846,7 +847,8 @@ MAC: tsmac34
 			SD_SIGNAL_DETECTED_IN		=> SD_SIGNAL_DETECTED_IN,
 			SD_RX_CDR_IN				=> SD_RX_CDR_IN,
 			SD_TX_PLL_LOL_IN            => SD_TX_PLL_LOL_IN,
-			SD_QUAD_RST_OUT             => SD_QUAD_RST_OUT          
+			SD_QUAD_RST_OUT             => SD_QUAD_RST_OUT,
+			SD_XMIT_OUT                 => SD_XMIT_OUT          
 		);
 
 

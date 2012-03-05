@@ -306,7 +306,8 @@ LINK_1 : CNTester_module
 		SD_SIGNAL_DETECTED_IN		=> sd_signal_detected(0),
 		SD_RX_CDR_IN				=> sd_rx_cdr(0),
 		SD_TX_PLL_LOL_IN            => sd_tx_pll_lol,
-		SD_QUAD_RST_OUT             => sd_quad_rst(0), 
+		SD_QUAD_RST_OUT             => sd_quad_rst(0),
+		SD_XMIT_OUT                 => sd_xmit(0),
 		
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
@@ -448,7 +449,7 @@ SERDES1 : serdes4ch
     );
 
 
-sd1_quad_rst <= or_all(sd_quad_rst);
+sd1_quad_rst <= sd_quad_rst(0);
 
 
 

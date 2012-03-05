@@ -58,7 +58,8 @@ port(
 	SD_SIGNAL_DETECTED_IN		: in	std_logic;
 	SD_RX_CDR_IN				: in	std_logic;
 	SD_TX_PLL_LOL_IN            : in	std_logic;
-	SD_QUAD_RST_OUT             : out	std_logic              
+	SD_QUAD_RST_OUT             : out	std_logic;
+	SD_XMIT_OUT                 : out	std_logic              
 );
 end entity;
 
@@ -384,7 +385,7 @@ begin
  	tx_kcntl			=> sd_tx_kcntl, -- TX komma control to SerDes
  	tx_disparity_cntl		=> sd_tx_correct_disp, -- idle parity state control in IPG (to SerDes)
  
-  xmit_autoneg => xmit,
+  xmit_autoneg => SD_XMIT_OUT,
  
  		serdes_recovered_clk		=> SD_RX_CLK_IN, -- 125MHz recovered from receive bit stream
  	rx_data				=> sd_rx_data_q, -- RX data from SerDes

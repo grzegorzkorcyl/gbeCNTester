@@ -173,6 +173,7 @@ component CNTester_module is
 		SD_RX_CDR_IN				: in	std_logic;
 		SD_TX_PLL_LOL_IN            : in	std_logic;
 		SD_QUAD_RST_OUT             : out	std_logic; 
+		SD_XMIT_OUT                 : out	std_logic;
 		
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
@@ -883,7 +884,8 @@ port(
 	SD_SIGNAL_DETECTED_IN		: in	std_logic;
 	SD_RX_CDR_IN				: in	std_logic;
 	SD_TX_PLL_LOL_IN            : in	std_logic;
-	SD_QUAD_RST_OUT             : out	std_logic          
+	SD_QUAD_RST_OUT             : out	std_logic;
+	SD_XMIT_OUT                 : out	std_logic          
 );
 end component;
 
