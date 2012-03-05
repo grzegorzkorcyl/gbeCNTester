@@ -456,6 +456,7 @@ sd1_quad_rst <= sd_quad_rst(0);
 senders_free(1) <= '0';
 senders_free(2) <= '0';
 
+SFP_TXDIS(5) <= '0';
 SFP_TXDIS(4 downto 1) <= (others => '1');
 SFP_TXDIS(8 downto 6) <= (others => '1');
 

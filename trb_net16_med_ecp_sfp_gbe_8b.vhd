@@ -473,7 +473,7 @@ u0_ri : register_interface_hb port map(
 
 
 
-pcs_mr_reset <= MR_RESET_IN or RESET or user_rst;
+pcs_mr_reset <= MR_RESET_IN or RESET;
 
 FT_TX_CLK_EN_OUT     <= tx_clk_en; -- to MAC
 FT_RX_CLK_EN_OUT     <= rx_clk_en; -- to MAC
