@@ -73,6 +73,12 @@ port (
 -- signals to/from hub
 	MC_UNIQUE_ID_IN		: in	std_logic_vector(63 downto 0);
 	
+	CNT_GENERATE_PACKET_IN   : in std_logic;
+	CNT_TIMESTAMP_IN         : in    std_logic_vector(31 downto 0);
+	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
+	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
+	CNT_BUSY_OUT             : out std_logic;
+	
 	GSC_CLK_IN               : in std_logic;
 	GSC_INIT_DATAREADY_OUT   : out std_logic;
 	GSC_INIT_DATA_OUT        : out std_logic_vector(15 downto 0);
@@ -217,6 +223,11 @@ port map(
 	
 	DHCP_START_IN		=> dhcp_start,
 	DHCP_DONE_OUT		=> dhcp_done,
+	
+	CNT_GENERATE_PACKET_IN => CNT_GENERATE_PACKET_IN,
+	CNT_TIMESTAMP_IN       => CNT_TIMESTAMP_IN,
+	CNT_DEST_ADDR_IN       => CNT_DEST_ADDR_IN,
+	CNT_SIZE_IN            => CNT_SIZE_IN,
 	
 	GSC_CLK_IN               => GSC_CLK_IN,
 	GSC_INIT_DATAREADY_OUT   => GSC_INIT_DATAREADY_OUT,
@@ -452,6 +463,7 @@ end process FLOW_MACHINE;
 TC_TRANSMIT_DATA_OUT <= '1' when (flow_current_state = TRANSMIT_DATA) else '0';
 TC_TRANSMIT_CTRL_OUT <= '1' when (flow_current_state = TRANSMIT_CTRL) else '0';
 
+CNT_BUSY_OUT <= '0' when flow_current_state = IDLE else '1';
 
 --***********************
 --	LINK STATE CONTROL

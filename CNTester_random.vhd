@@ -2,32 +2,41 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity CNTester_random is
-    generic ( width : integer :=  32 ); 
 	port (
       CLK_IN      : in std_logic;
+      RESET       : in std_logic;
       GENERATE_IN : in std_logic;
-      RANDOM_OUT  : out std_logic_vector (width-1 downto 0)   --output vector            
+      RANDOM_OUT  : out std_logic_vector (31 downto 0)            
     );
 end entity CNTester_random;
 
 architecture CNTester_random of CNTester_random is
-	
-begin
 
-RAND_PROC : process(CLK_IN)
-	variable rand_temp : std_logic_vector(width-1 downto 0):=(width-1 => '1',others => '0');
-	variable temp : std_logic := '0';
-	
-begin
-	if(rising_edge(CLK_IN)) then
-		if (GENERATE_IN = '1') then
-			temp := rand_temp(width-1) xor rand_temp(width-2);
-			rand_temp(width-1 downto 1) := rand_temp(width-2 downto 0);
-			rand_temp(0) := temp;
-		end if;
-	end if;
+signal lfsr: std_logic_vector (31 downto 0); 
+signal d0 : std_logic;
 
-	RANDOM_OUT <= rand_temp;
-end process;
+begin 
+
+  d0 <= lfsr(17) xnor lfsr(15);
+
+--  process(lfsr) begin 
+--    if(lfsr = x"359") then 
+--      lfsr_equal <= '1';
+--    else 
+--      lfsr_equal <= '0';
+--    end if;
+--  end process; 
+
+    process (CLK_IN,RESET) begin 
+      if (RESET = '1') then 
+        lfsr <= (others => '0');
+      elsif (CLK_IN'EVENT and CLK_IN = '1') then
+      	if (GENERATE_IN = '1') then
+	    	lfsr <= lfsr(30 downto 0) & d0;
+	    end if;
+      end if; 
+    end process;
+    
+    RANDOM_OUT <= lfsr;
 
 end architecture CNTester_random;

@@ -9,6 +9,132 @@ use work.trb_net_gbe_protocols.all;
 
 package trb_net_gbe_components is
 
+component serdes4ch is
+   GENERIC (USER_CONFIG_FILE    :  String := "serdes4ch.txt");
+ port (
+------------------
+-- CH0 --
+    hdinp_ch0, hdinn_ch0    :   in std_logic;
+    hdoutp_ch0, hdoutn_ch0   :   out std_logic;
+    rxiclk_ch0    :   in std_logic;
+    txiclk_ch0    :   in std_logic;
+    rx_full_clk_ch0   :   out std_logic;
+    rx_half_clk_ch0   :   out std_logic;
+    tx_full_clk_ch0   :   out std_logic;
+    tx_half_clk_ch0   :   out std_logic;
+    fpga_rxrefclk_ch0    :   in std_logic;
+    txdata_ch0    :   in std_logic_vector (7 downto 0);
+    tx_k_ch0    :   in std_logic;
+    xmit_ch0    :   in std_logic;
+    tx_disp_correct_ch0    :   in std_logic;
+    rxdata_ch0   :   out std_logic_vector (7 downto 0);
+    rx_k_ch0   :   out std_logic;
+    rx_disp_err_ch0   :   out std_logic;
+    rx_cv_err_ch0   :   out std_logic;
+    rx_serdes_rst_ch0_c    :   in std_logic;
+    sb_felb_ch0_c    :   in std_logic;
+    sb_felb_rst_ch0_c    :   in std_logic;
+    tx_pcs_rst_ch0_c    :   in std_logic;
+    tx_pwrup_ch0_c    :   in std_logic;
+    rx_pcs_rst_ch0_c    :   in std_logic;
+    rx_pwrup_ch0_c    :   in std_logic;
+    rx_los_low_ch0_s   :   out std_logic;
+    lsm_status_ch0_s   :   out std_logic;
+    rx_cdr_lol_ch0_s   :   out std_logic;
+-- CH1 --
+    hdinp_ch1, hdinn_ch1    :   in std_logic;
+    hdoutp_ch1, hdoutn_ch1   :   out std_logic;
+    rxiclk_ch1    :   in std_logic;
+    txiclk_ch1    :   in std_logic;
+    rx_full_clk_ch1   :   out std_logic;
+    rx_half_clk_ch1   :   out std_logic;
+    tx_full_clk_ch1   :   out std_logic;
+    tx_half_clk_ch1   :   out std_logic;
+    fpga_rxrefclk_ch1    :   in std_logic;
+    txdata_ch1    :   in std_logic_vector (7 downto 0);
+    tx_k_ch1    :   in std_logic;
+    xmit_ch1    :   in std_logic;
+    tx_disp_correct_ch1    :   in std_logic;
+    rxdata_ch1   :   out std_logic_vector (7 downto 0);
+    rx_k_ch1   :   out std_logic;
+    rx_disp_err_ch1   :   out std_logic;
+    rx_cv_err_ch1   :   out std_logic;
+    rx_serdes_rst_ch1_c    :   in std_logic;
+    sb_felb_ch1_c    :   in std_logic;
+    sb_felb_rst_ch1_c    :   in std_logic;
+    tx_pcs_rst_ch1_c    :   in std_logic;
+    tx_pwrup_ch1_c    :   in std_logic;
+    rx_pcs_rst_ch1_c    :   in std_logic;
+    rx_pwrup_ch1_c    :   in std_logic;
+    rx_los_low_ch1_s   :   out std_logic;
+    lsm_status_ch1_s   :   out std_logic;
+    rx_cdr_lol_ch1_s   :   out std_logic;
+-- CH2 --
+    hdinp_ch2, hdinn_ch2    :   in std_logic;
+    hdoutp_ch2, hdoutn_ch2   :   out std_logic;
+    rxiclk_ch2    :   in std_logic;
+    txiclk_ch2    :   in std_logic;
+    rx_full_clk_ch2   :   out std_logic;
+    rx_half_clk_ch2   :   out std_logic;
+    tx_full_clk_ch2   :   out std_logic;
+    tx_half_clk_ch2   :   out std_logic;
+    fpga_rxrefclk_ch2    :   in std_logic;
+    txdata_ch2    :   in std_logic_vector (7 downto 0);
+    tx_k_ch2    :   in std_logic;
+    xmit_ch2    :   in std_logic;
+    tx_disp_correct_ch2    :   in std_logic;
+    rxdata_ch2   :   out std_logic_vector (7 downto 0);
+    rx_k_ch2   :   out std_logic;
+    rx_disp_err_ch2   :   out std_logic;
+    rx_cv_err_ch2   :   out std_logic;
+    rx_serdes_rst_ch2_c    :   in std_logic;
+    sb_felb_ch2_c    :   in std_logic;
+    sb_felb_rst_ch2_c    :   in std_logic;
+    tx_pcs_rst_ch2_c    :   in std_logic;
+    tx_pwrup_ch2_c    :   in std_logic;
+    rx_pcs_rst_ch2_c    :   in std_logic;
+    rx_pwrup_ch2_c    :   in std_logic;
+    rx_los_low_ch2_s   :   out std_logic;
+    lsm_status_ch2_s   :   out std_logic;
+    rx_cdr_lol_ch2_s   :   out std_logic;
+-- CH3 --
+    hdinp_ch3, hdinn_ch3    :   in std_logic;
+    hdoutp_ch3, hdoutn_ch3   :   out std_logic;
+    rxiclk_ch3    :   in std_logic;
+    txiclk_ch3    :   in std_logic;
+    rx_full_clk_ch3   :   out std_logic;
+    rx_half_clk_ch3   :   out std_logic;
+    tx_full_clk_ch3   :   out std_logic;
+    tx_half_clk_ch3   :   out std_logic;
+    fpga_rxrefclk_ch3    :   in std_logic;
+    txdata_ch3    :   in std_logic_vector (7 downto 0);
+    tx_k_ch3    :   in std_logic;
+    xmit_ch3    :   in std_logic;
+    tx_disp_correct_ch3    :   in std_logic;
+    rxdata_ch3   :   out std_logic_vector (7 downto 0);
+    rx_k_ch3   :   out std_logic;
+    rx_disp_err_ch3   :   out std_logic;
+    rx_cv_err_ch3   :   out std_logic;
+    rx_serdes_rst_ch3_c    :   in std_logic;
+    sb_felb_ch3_c    :   in std_logic;
+    sb_felb_rst_ch3_c    :   in std_logic;
+    tx_pcs_rst_ch3_c    :   in std_logic;
+    tx_pwrup_ch3_c    :   in std_logic;
+    rx_pcs_rst_ch3_c    :   in std_logic;
+    rx_pwrup_ch3_c    :   in std_logic;
+    rx_los_low_ch3_s   :   out std_logic;
+    lsm_status_ch3_s   :   out std_logic;
+    rx_cdr_lol_ch3_s   :   out std_logic;
+---- Miscillaneous ports
+    fpga_txrefclk  :   in std_logic;
+    tx_serdes_rst_c    :   in std_logic;
+    tx_pll_lol_qd_s   :   out std_logic;
+    tx_sync_qd_c    :   in std_logic;
+    rst_qd_c    :   in std_logic;
+    serdes_rst_qd_c    :   in std_logic);
+
+end component;
+
 component CNTester_Main is
 	port (
 		CLKSYS_IN : in std_logic;
@@ -16,7 +142,10 @@ component CNTester_Main is
 		
 		GENERATE_OUT  : out std_logic_vector(2 downto 0);
 		TIMESTAMP_OUT : out std_logic_vector(31 downto 0);
-		DEST_ADDR_OUT : out std_logic_vector(15 downto 0)
+		DEST_ADDR_OUT : out std_logic_vector(15 downto 0);
+		SIZE_OUT        : out std_logic_vector(15 downto 0);
+		
+		SENDERS_FREE_IN : in std_logic_vector(2 downto 0)
 	);
 end component;
 
@@ -27,32 +156,40 @@ component CNTester_module is
 		RESET     : in std_logic;
 		GSR_N     : in std_logic;
 		
-		SFP_RXD_P_IN				: in	std_logic;
-		SFP_RXD_N_IN				: in	std_logic;
-		SFP_TXD_P_OUT				: out	std_logic;
-		SFP_TXD_N_OUT				: out	std_logic;
-		SFP_PRSNT_N_IN				: in	std_logic; -- SFP Present ('0' = SFP in place, '1' = no SFP mounted)
-		SFP_LOS_IN					: in	std_logic; -- SFP Loss Of Signal ('0' = OK, '1' = no signal)
-		SFP_TXDIS_OUT				: out	std_logic; -- SFP disable
+		-- serdes io
+		SD_RX_CLK_IN                : in	std_logic;
+		SD_TX_DATA_OUT              : out	std_logic_vector(7 downto 0);
+		SD_TX_KCNTL_OUT             : out	std_logic;
+		SD_TX_CORRECT_DISP_OUT      : out	std_logic;
+		SD_RX_DATA_IN               : in	std_logic_vector(7 downto 0);
+		SD_RX_KCNTL_IN              : in	std_logic;
+		SD_RX_DISP_ERROR_IN         : in	std_logic;
+		SD_RX_CV_ERROR_IN           : in	std_logic;
+		SD_RX_SERDES_RST_OUT        : out	std_logic;
+		SD_RX_PCS_RST_OUT           : out	std_logic;
+		SD_TX_PCS_RST_OUT			: out	std_logic;
+		SD_RX_LOS_IN				: in	std_logic;
+		SD_SIGNAL_DETECTED_IN		: in	std_logic;
+		SD_RX_CDR_IN				: in	std_logic;
+		SD_TX_PLL_LOL_IN            : in	std_logic;
+		SD_QUAD_RST_OUT             : out	std_logic; 
 		
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
 		GENERATE_PACKET_IN          : in    std_logic;
 		
-		LED_GREEN                   : out std_logic;
-		LED_ORANGE                  : out std_logic;
-		LED_RED                     : out std_logic;
-		LED_YELLOW                  : out std_logic
+		SIZE_IN                     : in    std_logic_vector(15 downto 0);
+		BUSY_OUT                    : out   std_logic	
 		
 	);
 end component;
 
 component CNTester_random is
-    generic ( width : integer :=  32 ); 
 	port (
       CLK_IN      : in std_logic;
+      RESET       : in std_logic;
       GENERATE_IN : in std_logic;
-      RANDOM_OUT  : out std_logic_vector (width-1 downto 0)   --output vector            
+      RANDOM_OUT  : out std_logic_vector (31 downto 0)   --output vector            
     );
 end component;
 
@@ -243,6 +380,10 @@ port (
 	GSC_REPLY_READ_OUT       : out std_logic;
 	GSC_BUSY_IN              : in std_logic;
 	
+	CNT_GENERATE_PACKET_IN   : in std_logic;
+	CNT_TIMESTAMP_IN         : in    std_logic_vector(31 downto 0);
+	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
+	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
 	-- input for statistics from outside	
 	STAT_DATA_IN             : in std_logic_vector(31 downto 0);
 	STAT_ADDR_IN             : in std_logic_vector(7 downto 0);
@@ -333,6 +474,12 @@ port (
 
 -- signals to/from hub
 	MC_UNIQUE_ID_IN		: in	std_logic_vector(63 downto 0);
+	
+	CNT_GENERATE_PACKET_IN   : in std_logic;
+	CNT_TIMESTAMP_IN         : in    std_logic_vector(31 downto 0);
+	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
+	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
+	CNT_BUSY_OUT             : out std_logic;
 	
 	GSC_CLK_IN               : in std_logic;
 	GSC_INIT_DATAREADY_OUT   : out std_logic;
@@ -711,16 +858,6 @@ port(
 	FT_RXD_OUT				: out	std_logic_vector(7 downto 0);
 	FT_RX_EN_OUT				: out	std_logic;
 	FT_RX_ER_OUT				: out	std_logic;
-	--SFP Connection
-	SD_RXD_P_IN				: in	std_logic;
-	SD_RXD_N_IN				: in	std_logic;
-	SD_TXD_P_OUT			: out	std_logic;
-	SD_TXD_N_OUT			: out	std_logic;
-	SD_REFCLK_P_IN			: in	std_logic;
-	SD_REFCLK_N_IN			: in	std_logic;
-	SD_PRSNT_N_IN			: in	std_logic; -- SFP Present ('0' = SFP in place, '1' = no SFP mounted)
-	SD_LOS_IN				: in	std_logic; -- SFP Loss Of Signal ('0' = OK, '1' = no signal)
-	SD_TXDIS_OUT			: out	std_logic; -- SFP disable
 	-- Autonegotiation stuff
 	MR_RESET_IN				: in	std_logic;
 	MR_MODE_IN				: in	std_logic;
@@ -730,11 +867,23 @@ port(
 	MR_AN_COMPLETE_OUT		: out	std_logic; 
 	MR_AN_ENABLE_IN			: in	std_logic;
 	MR_RESTART_AN_IN		: in	std_logic;
-	-- Status and control port
-	STAT_OP					: out	std_logic_vector (15 downto 0);
-	CTRL_OP					: in	std_logic_vector (15 downto 0);
-	STAT_DEBUG				: out	std_logic_vector (63 downto 0);
-	CTRL_DEBUG				: in	std_logic_vector (63 downto 0)
+	
+	SD_RX_CLK_IN                : in	std_logic;
+	SD_TX_DATA_OUT              : out	std_logic_vector(7 downto 0);
+	SD_TX_KCNTL_OUT             : out	std_logic;
+	SD_TX_CORRECT_DISP_OUT      : out	std_logic;
+	SD_RX_DATA_IN               : in	std_logic_vector(7 downto 0);
+	SD_RX_KCNTL_IN              : in	std_logic;
+	SD_RX_DISP_ERROR_IN         : in	std_logic;
+	SD_RX_CV_ERROR_IN           : in	std_logic;
+	SD_RX_SERDES_RST_OUT        : out	std_logic;
+	SD_RX_PCS_RST_OUT           : out	std_logic;
+	SD_TX_PCS_RST_OUT			: out	std_logic;
+	SD_RX_LOS_IN				: in	std_logic;
+	SD_SIGNAL_DETECTED_IN		: in	std_logic;
+	SD_RX_CDR_IN				: in	std_logic;
+	SD_TX_PLL_LOL_IN            : in	std_logic;
+	SD_QUAD_RST_OUT             : out	std_logic          
 );
 end component;
 

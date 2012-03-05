@@ -59,6 +59,7 @@ port (
 
 	TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 	DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
+	SIZE_IN                     : in    std_logic_vector(15 downto 0);
 	GENERATE_PACKET_IN          : in    std_logic;
 
 -- debug
@@ -77,30 +78,10 @@ attribute syn_encoding of construct_current_state: signal is "safe,gray";
 
 signal load_ctr   : integer range 0 to 255;
 signal tc_data    : std_logic_vector(8 downto 0);
-signal timer      : unsigned(28 downto 0);
-signal timer_lock : std_logic;
 signal timer_t    : std_logic_vector(7 downto 0);
 signal state      : std_logic_vector(3 downto 0);
 
 begin
-
-TIMER_PROC : process(CLK)
-begin
-	if rising_edge(CLK) then
-		if (RESET = '1') then
-			timer  <= (others => '0');
-			timer_lock <= '0';
-		elsif (timer(15) = '0') then
-			timer_lock <= '0';
-			timer <= timer + 1;
-		elsif (timer(15) = '1') then
-			timer_lock <= '1';
-			timer <= timer + 1;
-		else
-			timer <= timer + 1;
-		end if;
-	end if;
-end process TIMER_PROC;
 
 CONSTRUCT_MACHINE_PROC : process(CLK)
 begin
@@ -113,14 +94,13 @@ begin
 	end if;
 end process CONSTRUCT_MACHINE_PROC;
 
-CONSTRUCT_MACHINE : process(construct_current_state, GENERATE_PACKET_IN, TC_BUSY_IN, PS_SELECTED_IN, load_ctr, timer, timer_lock)
+CONSTRUCT_MACHINE : process(construct_current_state, GENERATE_PACKET_IN, TC_BUSY_IN, PS_SELECTED_IN, load_ctr)
 begin
 	case construct_current_state is
 	
 		when IDLE =>
 			state <= x"1";
-			--if (GENERATE_PACKET_IN = '1') then
-			if (timer(15) = '1' and timer_lock = '0') then
+			if (GENERATE_PACKET_IN = '1') then
 				construct_next_state <= WAIT_FOR_LOAD;
 			else
 				construct_next_state <= IDLE;

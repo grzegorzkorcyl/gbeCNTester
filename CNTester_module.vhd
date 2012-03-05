@@ -19,23 +19,29 @@ entity CNTester_module is
 		RESET     : in std_logic;
 		GSR_N     : in std_logic;
 		
-		SFP_RXD_P_IN				: in	std_logic;
-		SFP_RXD_N_IN				: in	std_logic;
-		SFP_TXD_P_OUT				: out	std_logic;
-		SFP_TXD_N_OUT				: out	std_logic;
-		SFP_PRSNT_N_IN				: in	std_logic; -- SFP Present ('0' = SFP in place, '1' = no SFP mounted)
-		SFP_LOS_IN					: in	std_logic; -- SFP Loss Of Signal ('0' = OK, '1' = no signal)
-		SFP_TXDIS_OUT				: out	std_logic; -- SFP disable
-		
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
 		GENERATE_PACKET_IN          : in    std_logic;
+		SIZE_IN                     : in    std_logic_vector(15 downto 0);
+		BUSY_OUT                    : out   std_logic;
 		
-		LED_GREEN                   : out std_logic;
-		LED_ORANGE                  : out std_logic;
-		LED_RED                     : out std_logic;
-		LED_YELLOW                  : out std_logic
-		
+		-- serdes io
+		SD_RX_CLK_IN                : in	std_logic;
+		SD_TX_DATA_OUT              : out	std_logic_vector(7 downto 0);
+		SD_TX_KCNTL_OUT             : out	std_logic;
+		SD_TX_CORRECT_DISP_OUT      : out	std_logic;
+		SD_RX_DATA_IN               : in	std_logic_vector(7 downto 0);
+		SD_RX_KCNTL_IN              : in	std_logic;
+		SD_RX_DISP_ERROR_IN         : in	std_logic;
+		SD_RX_CV_ERROR_IN           : in	std_logic;
+		SD_RX_SERDES_RST_OUT        : out	std_logic;
+		SD_RX_PCS_RST_OUT           : out	std_logic;
+		SD_TX_PCS_RST_OUT			: out	std_logic;
+		SD_RX_LOS_IN				: in	std_logic;
+		SD_SIGNAL_DETECTED_IN		: in	std_logic;
+		SD_RX_CDR_IN				: in	std_logic;
+		SD_TX_PLL_LOL_IN            : in	std_logic;
+		SD_QUAD_RST_OUT             : out	std_logic 
 	);
 end entity CNTester_module;
 
@@ -385,7 +391,6 @@ signal pcs_tx_en_q, pcs_tx_er_q, pcs_rx_en_q, pcs_rx_er_q, mac_col_q, mac_crs_q 
 signal pcs_txd_qq, pcs_rxd_qq : std_logic_vector(7 downto 0);
 signal pcs_tx_en_qq, pcs_tx_er_qq, pcs_rx_en_qq, pcs_rx_er_qq, mac_col_qq, mac_crs_qq : std_logic;
 
-signal cnt1, cnt2 : std_logic_vector(31 downto 0);
 
 begin
 
@@ -442,6 +447,13 @@ MAIN_CONTROL : trb_net16_gbe_main_control
 
   -- signals to/from hub
 	  MC_UNIQUE_ID_IN	       => (others => '0'),
+	  
+	  CNT_GENERATE_PACKET_IN   => GENERATE_PACKET_IN,
+	  CNT_TIMESTAMP_IN         => TIMESTAMP_IN,
+	  CNT_DEST_ADDR_IN         => DEST_ADDR_IN,
+	  CNT_SIZE_IN              => SIZE_IN,
+	  CNT_BUSY_OUT             => BUSY_OUT,
+	
 	  GSC_CLK_IN               => '0',
 	  GSC_INIT_DATAREADY_OUT   => open,
 	  GSC_INIT_DATA_OUT        => open,
@@ -808,16 +820,7 @@ MAC: tsmac34
 			FT_RXD_OUT			=> pcs_rxd,
 			FT_RX_EN_OUT			=> pcs_rx_en,
 			FT_RX_ER_OUT			=> pcs_rx_er,
-			--SFP Connection
-			SD_RXD_P_IN			=> SFP_RXD_P_IN,
-			SD_RXD_N_IN			=> SFP_RXD_N_IN,
-			SD_TXD_P_OUT			=> SFP_TXD_P_OUT,
-			SD_TXD_N_OUT			=> SFP_TXD_N_OUT,
-			SD_REFCLK_P_IN			=> '0',
-			SD_REFCLK_N_IN			=> '1',
-			SD_PRSNT_N_IN			=> SFP_PRSNT_N_IN,
-			SD_LOS_IN			=> SFP_LOS_IN,
-			SD_TXDIS_OUT			=> SFP_TXDIS_OUT,
+			
 			-- Autonegotiation stuff
 			MR_ADV_ABILITY_IN		=> x"0020", -- full duplex only
 			MR_AN_LP_ABILITY_OUT		=> pcs_an_lp_ability,
@@ -827,37 +830,25 @@ MAC: tsmac34
 			MR_MODE_IN			=> '0', --MR_MODE_IN,
 			MR_AN_ENABLE_IN			=> '1', -- do autonegotiation
 			MR_RESTART_AN_IN		=> '0', --MR_RESTART_IN,
-			-- Status and control port
-			STAT_OP				=> open,
-			CTRL_OP				=> x"0000",
-			STAT_DEBUG			=> pcs_stat_debug, --open,
-			CTRL_DEBUG			=> x"0000_0000_0000_0000"
+			
+			SD_RX_CLK_IN                => SD_RX_CLK_IN,
+			SD_TX_DATA_OUT              => SD_TX_DATA_OUT,
+			SD_TX_KCNTL_OUT             => SD_TX_KCNTL_OUT,
+			SD_TX_CORRECT_DISP_OUT      => SD_TX_CORRECT_DISP_OUT,
+			SD_RX_DATA_IN               => SD_RX_DATA_IN,
+			SD_RX_KCNTL_IN              => SD_RX_KCNTL_IN,
+			SD_RX_DISP_ERROR_IN         => SD_RX_DISP_ERROR_IN,
+			SD_RX_CV_ERROR_IN           => SD_RX_CV_ERROR_IN,
+			SD_RX_SERDES_RST_OUT        => SD_RX_SERDES_RST_OUT,
+			SD_RX_PCS_RST_OUT           => SD_RX_PCS_RST_OUT,
+			SD_TX_PCS_RST_OUT			=> SD_TX_PCS_RST_OUT,
+			SD_RX_LOS_IN				=> SD_RX_LOS_IN,
+			SD_SIGNAL_DETECTED_IN		=> SD_SIGNAL_DETECTED_IN,
+			SD_RX_CDR_IN				=> SD_RX_CDR_IN,
+			SD_TX_PLL_LOL_IN            => SD_TX_PLL_LOL_IN,
+			SD_QUAD_RST_OUT             => SD_QUAD_RST_OUT          
 		);
-		
-CNT1_PROC : process (serdes_clk_125) is
-begin
-	if rising_edge(serdes_clk_125) then
-		if (RESET = '1') then
-			cnt1 <= (others => '0');
-		else
-			cnt1 <= cnt1 + x"1";
-		end if;
-	end if;
-end process CNT1_PROC ;
 
-CNT2_PROC : process (serdes_rx_clk) is
-begin
-	if rising_edge(serdes_rx_clk) then
-		if (RESET = '1') then
-			cnt2 <= (others => '0');
-		else
-			cnt2 <= cnt2 + x"1";
-		end if;
-	end if;
-end process CNT2_PROC ;
-
-LED_GREEN <= cnt1(24);
-LED_ORANGE <= cnt2(24);
 
 -- FrameConstructor fixed magic values
 --fc_type           <= x"0008";

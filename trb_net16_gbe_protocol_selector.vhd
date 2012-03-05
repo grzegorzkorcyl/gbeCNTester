@@ -73,6 +73,11 @@ port (
 	GSC_REPLY_READ_OUT       : out std_logic;
 	GSC_BUSY_IN              : in std_logic;
 
+	CNT_GENERATE_PACKET_IN   : in std_logic;
+	CNT_TIMESTAMP_IN         : in    std_logic_vector(31 downto 0);
+	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
+	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
+
 	-- input for statistics from outside	
 	STAT_DATA_IN             : in std_logic_vector(31 downto 0);
 	STAT_ADDR_IN             : in std_logic_vector(7 downto 0);
@@ -158,9 +163,10 @@ port map (
 	SENT_FRAMES_OUT		=> SENT_FRAMES_OUT(1 * 16 - 1 downto 0 * 16),
 	
 -- END OF INTERFACE
-	TIMESTAMP_IN         => (others => '0'),
-	DEST_ADDR_IN         => (others => '0'),
-	GENERATE_PACKET_IN   => '0',
+	TIMESTAMP_IN         => CNT_TIMESTAMP_IN,
+	DEST_ADDR_IN         => CNT_DEST_ADDR_IN,
+	SIZE_IN              => CNT_SIZE_IN,
+	GENERATE_PACKET_IN   => CNT_GENERATE_PACKET_IN,
 	
 	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
 );

@@ -76,8 +76,8 @@ port (
 
 	TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 	DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
+	SIZE_IN                     : in    std_logic_vector(15 downto 0);
 	GENERATE_PACKET_IN          : in    std_logic;
-
 -- debug
 	DEBUG_OUT		: out	std_logic_vector(31 downto 0)
 );
