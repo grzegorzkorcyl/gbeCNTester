@@ -492,7 +492,6 @@ sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1);
 
 
 
-senders_free(1) <= '0';
 senders_free(2) <= '0';
 
 SFP_TXDIS(5) <= '0';
