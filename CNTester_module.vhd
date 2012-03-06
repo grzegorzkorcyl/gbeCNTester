@@ -18,6 +18,7 @@ entity CNTester_module is
 		CLKGBE_IN : in std_logic;
 		RESET     : in std_logic;
 		GSR_N     : in std_logic;
+		LINK_OK_OUT : out std_logic;
 		
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
@@ -861,5 +862,7 @@ fc_tos            <= x"10";
 --fc_type           <= x"0008";
 fc_ihl_version    <= x"45";
 fc_tos            <= x"10";
+
+LINK_OK_OUT		  <= link_ok;
 	
 end architecture CNTester_module;

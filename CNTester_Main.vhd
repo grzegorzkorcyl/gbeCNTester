@@ -16,6 +16,7 @@ entity CNTester_Main is
 	port (
 		CLKSYS_IN       : in std_logic;
 		RESET           : in std_logic;
+		LINK_OK_IN		: in std_logic;
 		
 		GENERATE_OUT    : out std_logic_vector(2 downto 0);
 		TIMESTAMP_OUT   : out std_logic_vector(31 downto 0);
@@ -50,7 +51,7 @@ begin
 	GENERATE_MACHINE_PROC : process(CLKSYS_IN)
 	begin
 		if rising_edge(CLKSYS_IN) then
-			if (RESET = '1') then
+			if (RESET = '1') and (LINK_OK_IN = '0') then
 				generate_current_state <= IDLE;
 			else
 				generate_current_state <= generate_next_state;

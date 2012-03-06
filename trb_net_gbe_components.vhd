@@ -137,8 +137,9 @@ end component;
 
 component CNTester_Main is
 	port (
-		CLKSYS_IN : in std_logic;
-		RESET     : in std_logic;
+		CLKSYS_IN 	: in std_logic;
+		RESET     	: in std_logic;
+		LINK_OK_IN	: in std_logic;
 		
 		GENERATE_OUT  : out std_logic_vector(2 downto 0);
 		TIMESTAMP_OUT : out std_logic_vector(31 downto 0);
@@ -155,6 +156,7 @@ component CNTester_module is
 		CLKGBE_IN : in std_logic;
 		RESET     : in std_logic;
 		GSR_N     : in std_logic;
+		LINK_OK_OUT : out std_logic;
 		
 		-- serdes io
 		SD_RX_CLK_IN                : in	std_logic;

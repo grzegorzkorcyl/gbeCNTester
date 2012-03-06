@@ -258,23 +258,25 @@ signal senders_free, activate_sender : std_logic_vector(2 downto 0);
 signal timestamp : std_logic_vector(31 downto 0);
 signal dest_addr, size : std_logic_vector(15 downto 0);
 
-signal sd_rx_clk, sd_quad_rst : std_logic_vector(3 downto 0);
+signal sd_rx_clk, sd_quad_rst, sd1_link_ok : std_logic_vector(3 downto 0);
 signal sd_tx_k, sd_xmit, sd_tx_disp, sd_rx_k, sd_rx_disp, sd_cv_err, sd_rx_serdes_rst, sd_tx_pcs_rst, sd_rx_pcs_rst, sd_rx_los, sd_rx_cdr, sd_signal_detected : std_logic_vector(3 downto 0);
 
 type arr is array(3 downto 0) of std_logic_vector(7 downto 0);
 signal sd_tx_data, sd_rx_data : arr;
 
-signal sd_tx_pll_lol, sd1_quad_rst : std_logic;
+signal sd_tx_pll_lol, sd1_quad_rst, link_ok : std_logic;
 
 signal timer1, timer2 : std_logic_vector(31 downto 0);
 
 begin
 
+link_ok <= sd1_link_ok(0);
 
 MAIN : CNTester_Main
 	port map (
 		CLKSYS_IN  => clk_100_i,
 		RESET      => reset_i,
+		LINK_OK_IN => link_ok,
 		
 		GENERATE_OUT    => activate_sender,
 		TIMESTAMP_OUT   => timestamp,
@@ -291,6 +293,7 @@ LINK_1 : CNTester_module
 		CLKGBE_IN  => CLK_GPLL_RIGHT,
 		RESET      => reset_i,
 		GSR_N      => GSR_N,
+		LINK_OK_OUT => sd1_link_ok(0),
 		
 		-- serdes io
 		SD_RX_CLK_IN                => sd_rx_clk(0),
