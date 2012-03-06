@@ -316,8 +316,8 @@ LINK_1 : CNTester_module
 		
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
-		GENERATE_PACKET_IN   => activate_sender(0),
-		SIZE_IN              => size,
+		GENERATE_PACKET_IN   => timer1(28), --activate_sender(0),
+		SIZE_IN              => x"00ff", --size,
 		BUSY_OUT             => senders_free(0)
 	);
 
@@ -595,7 +595,7 @@ begin
 	end if;
 end process TIMER2_PROC;
 
-LED_GREEN <= timer1(24);
+LED_GREEN <= timer1(28);
 LED_ORANGE <= timer2(24);
 LED_RED <= reset_i;
 LED_YELLOW <= sd_signal_detected(0); --debug(3);

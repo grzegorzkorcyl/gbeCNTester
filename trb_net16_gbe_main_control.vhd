@@ -543,12 +543,13 @@ begin
 				link_next_state <= INACTIVE;
 			else
 				if (wait_ctr = x"3baa_ca00") then
-					link_next_state <= GET_ADDRESS;
+					link_next_state <= ACTIVE;
 				else
 					link_next_state <= WAIT_FOR_BOOT;
 				end if;
 			end if;
 		
+		-- not used anymore in this design
 		when GET_ADDRESS =>
 			link_state <= x"7";
 			if (PCS_AN_COMPLETE_IN = '0') then
