@@ -266,7 +266,7 @@ signal sd_tx_data, sd_rx_data : arr;
 
 signal sd_tx_pll_lol, sd1_quad_rst : std_logic;
 
-signal timer1, timer2 : std_logic;
+signal timer1, timer2 : std_logic_vector(31 downto 0);
 
 begin
 
