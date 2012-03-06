@@ -270,7 +270,7 @@ signal timer1, timer2 : std_logic_vector(31 downto 0);
 
 begin
 
-link_ok <= sd1_link_ok(0);
+link_ok <= sd1_link_ok(0) and sd1_link_ok(1);
 
 MAIN : CNTester_Main
 	port map (
@@ -488,7 +488,7 @@ SERDES1 : serdes4ch
     );
 
 
-sd1_quad_rst <= sd_quad_rst(0);
+sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1);
 
 
 
