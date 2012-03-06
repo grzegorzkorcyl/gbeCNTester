@@ -135,6 +135,50 @@ component serdes4ch is
 
 end component;
 
+component serdes_gbe_0ch is
+   GENERIC (USER_CONFIG_FILE    :  String := "serdes_gbe_0ch.txt");
+ port (
+------------------
+-- CH0 --
+    hdinp_ch0, hdinn_ch0    :   in std_logic;
+    hdoutp_ch0, hdoutn_ch0   :   out std_logic;
+    rxiclk_ch0    :   in std_logic;
+    txiclk_ch0    :   in std_logic;
+    rx_full_clk_ch0   :   out std_logic;
+    rx_half_clk_ch0   :   out std_logic;
+    tx_full_clk_ch0   :   out std_logic;
+    tx_half_clk_ch0   :   out std_logic;
+    fpga_rxrefclk_ch0    :   in std_logic;
+    txdata_ch0    :   in std_logic_vector (7 downto 0);
+    tx_k_ch0    :   in std_logic;
+    xmit_ch0    :   in std_logic;
+    tx_disp_correct_ch0    :   in std_logic;
+    rxdata_ch0   :   out std_logic_vector (7 downto 0);
+    rx_k_ch0   :   out std_logic;
+    rx_disp_err_ch0   :   out std_logic;
+    rx_cv_err_ch0   :   out std_logic;
+    rx_serdes_rst_ch0_c    :   in std_logic;
+    sb_felb_ch0_c    :   in std_logic;
+    sb_felb_rst_ch0_c    :   in std_logic;
+    tx_pcs_rst_ch0_c    :   in std_logic;
+    tx_pwrup_ch0_c    :   in std_logic;
+    rx_pcs_rst_ch0_c    :   in std_logic;
+    rx_pwrup_ch0_c    :   in std_logic;
+    rx_los_low_ch0_s   :   out std_logic;
+    lsm_status_ch0_s   :   out std_logic;
+    rx_cdr_lol_ch0_s   :   out std_logic;
+-- CH1 --
+-- CH2 --
+-- CH3 --
+---- Miscillaneous ports
+    fpga_txrefclk  :   in std_logic;
+    tx_serdes_rst_c    :   in std_logic;
+    tx_pll_lol_qd_s   :   out std_logic;
+    rst_qd_c    :   in std_logic;
+    serdes_rst_qd_c    :   in std_logic);
+
+end component;
+
 component CNTester_Main is
 	port (
 		CLKSYS_IN 	: in std_logic;
