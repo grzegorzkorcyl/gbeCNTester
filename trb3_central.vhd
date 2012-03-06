@@ -264,7 +264,7 @@ signal sd_tx_k, sd_xmit, sd_tx_disp, sd_rx_k, sd_rx_disp, sd_cv_err, sd_rx_serde
 type arr is array(3 downto 0) of std_logic_vector(7 downto 0);
 signal sd_tx_data, sd_rx_data : arr;
 
-signal sd_tx_pll_lol, sd1_quad_rst, link_ok : std_logic;
+signal sd_tx_pll_lol, sd1_quad_rst : std_logic;
 
 signal timer1, timer2 : std_logic_vector(31 downto 0);
 
