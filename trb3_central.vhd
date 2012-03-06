@@ -443,7 +443,7 @@ SERDES1 : serdes4ch
     fpga_txrefclk       => CLK_GPLL_RIGHT,
     tx_serdes_rst_c     => '0',
     tx_pll_lol_qd_s     => sd_tx_pll_lol,
-    tx_sync_qd_c        => '0',
+    tx_sync_qd_c        => '1',
     rst_qd_c            => sd1_quad_rst,
     serdes_rst_qd_c     => '0'
     );
