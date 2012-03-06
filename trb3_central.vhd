@@ -321,7 +321,7 @@ LINK_1 : CNTester_module
 		BUSY_OUT             => senders_free(0)
 	);
 
-SERDES1 : serdes_gbe_ch0 --serdes4ch
+SERDES1 : serdes_gbe_0ch --serdes4ch
  port map(
 ------------------
 -- CH0 --
