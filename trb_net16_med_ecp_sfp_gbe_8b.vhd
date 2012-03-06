@@ -195,56 +195,6 @@ component register_interface_hb port (
    );
 end component;
 
-component sgmii33 port (
-	rst_n                  : in std_logic;
-	signal_detect          : in std_logic;
-	gbe_mode               : in std_logic;
-	sgmii_mode             : in std_logic;
-	--force_isolate          : in std_logic;
-	--force_loopback         : in std_logic;
-	--force_unidir           : in std_logic;
-	operational_rate       : in std_logic_vector(1 downto 0);
-	debug_link_timer_short : in std_logic;
-	rx_compensation_err    : out std_logic;
-	--ctc_drop_flag          : out std_logic;
-	--ctc_add_flag           : out std_logic;
-	--an_link_ok             : out std_logic;
-	tx_clk_125             : in std_logic;                    
-        tx_clock_enable_source : out std_logic;
-        tx_clock_enable_sink   : in std_logic;          
-	tx_d                   : in std_logic_vector(7 downto 0); 
-	tx_en                  : in std_logic;       
-	tx_er                  : in std_logic;       
-	rx_clk_125             : in std_logic; 
-        rx_clock_enable_source : out std_logic;
-        rx_clock_enable_sink   : in std_logic;          
-	rx_d                   : out std_logic_vector(7 downto 0);       
-	rx_dv                  : out std_logic;  
-	rx_er                  : out std_logic; 
-	col                    : out std_logic;  
-	crs                    : out std_logic;  
-	tx_data                : out std_logic_vector(7 downto 0);  
-	tx_kcntl               : out std_logic; 
-	tx_disparity_cntl      : out std_logic; 
-	--xmit_autoneg           : out std_logic; 
-	serdes_recovered_clk   : in std_logic; 
-	rx_data                : in std_logic_vector(7 downto 0);  
-	rx_even                : in std_logic;  
-	rx_kcntl               : in std_logic; 
-	rx_disp_err            : in std_logic; 
-	rx_cv_err              : in std_logic; 
-	rx_err_decode_mode     : in std_logic; 
-	mr_an_complete         : out std_logic; 
-	mr_page_rx             : out std_logic; 
-	mr_lp_adv_ability      : out std_logic_vector(15 downto 0); 
-	mr_main_reset          : in std_logic; 
-	mr_an_enable           : in std_logic; 
-	mr_restart_an          : in std_logic; 
-	mr_adv_ability         : in std_logic_vector(15 downto 0)
-   );
-end component;
-
-
 signal refclkcore			: std_logic;
 
 signal sd_link_ok			: std_logic;
@@ -348,55 +298,57 @@ begin
  
  SGMII_GBE_PCS : sgmii_gbe_pcs34
  port map(
- 	rst_n				=> GSR_N,
- 	signal_detect			=> SD_SIGNAL_DETECTED_IN,
- 	gbe_mode			=> '1',
- 	sgmii_mode			=> '0',
- 	operational_rate		=> operational_rate,
- 	debug_link_timer_short		=> '0',
+	rst_n					=> GSR_N,
+	signal_detect			=> SD_SIGNAL_DETECTED_IN,
+	gbe_mode				=> '1',
+	sgmii_mode				=> '0',
+	operational_rate		=> operational_rate,
+	debug_link_timer_short	=> '0',
+	 
+	force_isolate 			=> '0',
+	force_loopback 			=> '0',
+	force_unidir 			=> '0',
  
-  force_isolate => '0',
-  force_loopback => '0',
-  force_unidir => '0',
+ 	rx_compensation_err		=> open,
  
- 	rx_compensation_err		=> compensation_err,
- 
-  ctc_drop_flag => open,
-  ctc_add_flag => open,
-  an_link_ok => open,
+	ctc_drop_flag 			=> open,
+	ctc_add_flag 			=> open,
+	an_link_ok 				=> open,
  
  	-- MAC interface
- 		tx_clk_125			=> CLK_125_IN, --refclkcore, -- original clock from SerDes
- 	tx_clock_enable_source		=> tx_clk_en,
- 	tx_clock_enable_sink		=> tx_clk_en,
- 	tx_d				=> FT_TXD_IN, -- TX data from MAC
- 	tx_en				=> FT_TX_EN_IN, -- TX data enable from MAC
- 	tx_er				=> FT_TX_ER_IN, -- TX error from MAC
- 		rx_clk_125			=> CLK_125_IN, --refclkcore, -- original clock from SerDes
- 	rx_clock_enable_source		=> rx_clk_en,
- 	rx_clock_enable_sink		=> rx_clk_en,
- 	rx_d				=> pcs_rx_d, -- RX data to MAC
- 	rx_dv				=> pcs_rx_dv, -- RX data enable to MAC
- 	rx_er				=> pcs_rx_er, -- RX error to MAC
- 	col				=> FT_COL_OUT,
- 	crs				=> FT_CRS_OUT,
+ 	tx_clk_125				=> CLK_125_IN, --refclkcore, -- original clock from SerDes
+ 	tx_clock_enable_source	=> tx_clk_en,
+ 	tx_clock_enable_sink	=> tx_clk_en,
+ 	tx_d					=> FT_TXD_IN, -- TX data from MAC
+ 	tx_en					=> FT_TX_EN_IN, -- TX data enable from MAC
+ 	tx_er					=> FT_TX_ER_IN, -- TX error from MAC
+ 	rx_clk_125				=> CLK_125_IN, --refclkcore, -- original clock from SerDes
+ 	rx_clock_enable_source	=> rx_clk_en,
+ 	rx_clock_enable_sink	=> rx_clk_en,
+ 	rx_d					=> FT_RXD_OUT, -- RX data to MAC
+ 	rx_dv					=> FT_RX_EN_OUT, -- RX data enable to MAC
+ 	rx_er					=> FT_RX_ER_OUT, -- RX error to MAC
+ 	col						=> FT_COL_OUT,
+ 	crs						=> FT_CRS_OUT,
+ 	
  	-- SerDes interface
- 	tx_data				=> sd_tx_data, -- TX data to SerDes
- 	tx_kcntl			=> sd_tx_kcntl, -- TX komma control to SerDes
+ 	tx_data					=> sd_tx_data, -- TX data to SerDes
+ 	tx_kcntl				=> sd_tx_kcntl, -- TX komma control to SerDes
  	tx_disparity_cntl		=> sd_tx_correct_disp, -- idle parity state control in IPG (to SerDes)
  
-  xmit_autoneg => SD_XMIT_OUT,
- 
- 		serdes_recovered_clk		=> SD_RX_CLK_IN, -- 125MHz recovered from receive bit stream
- 	rx_data				=> sd_rx_data_q, -- RX data from SerDes
- 	rx_kcntl			=> sd_rx_kcntl_q, -- RX komma control from SerDes
+  	xmit_autoneg 			=> SD_XMIT_OUT,
+ 	serdes_recovered_clk	=> SD_RX_CLK_IN, -- 125MHz recovered from receive bit stream
+ 	
+ 	rx_data					=> sd_rx_data_q, -- RX data from SerDes
+ 	rx_kcntl				=> sd_rx_kcntl_q, -- RX komma control from SerDes
  	rx_err_decode_mode		=> '0', -- receive error control mode fixed to normal
- 	rx_even				=> '0', -- unused (receive error control mode = normal, tie to GND)
- 	rx_disp_err			=> sd_rx_disp_error_q, -- RX disparity error from SerDes
- 	rx_cv_err			=> sd_rx_cv_error_q, -- RX code violation error from SerDes
+ 	rx_even					=> '0', -- unused (receive error control mode = normal, tie to GND)
+ 	rx_disp_err				=> sd_rx_disp_error_q, -- RX disparity error from SerDes
+ 	rx_cv_err				=> sd_rx_cv_error_q, -- RX code violation error from SerDes
+ 	
  	-- Autonegotiation stuff
  	mr_an_complete			=> an_complete,
- 	mr_page_rx			=> mr_page_rx,
+ 	mr_page_rx				=> mr_page_rx,
  	mr_lp_adv_ability		=> mr_lp_adv_ability,
  	mr_main_reset			=> mr_main_reset,
  	mr_an_enable			=> '1',
@@ -406,14 +358,6 @@ begin
 
 rst_n <= not RESET;
 
---SYNC_RX_PROC : process(sd_rx_clk)
---begin
---  if rising_edge(sd_rx_clk) then
-    FT_RXD_OUT   <= pcs_rx_d;
-    FT_RX_EN_OUT <= pcs_rx_dv;
-    FT_RX_ER_OUT <= pcs_rx_er;
---  end if;
---end process SYNC_RX_PROC;
 
 u0_reset_controller_pcs : reset_controller_pcs port map(
 	rst_n           => rst_n,
@@ -462,7 +406,7 @@ u0_ri : register_interface_hb port map(
 	-- Register Outputs
 	mr_an_enable   => mr_an_enable,
 	mr_restart_an  => mr_restart_an,
-	mr_main_reset      => mr_main_reset,
+	mr_main_reset  => mr_main_reset,
 	mr_adv_ability => mr_adv_ability,
 
 	-- Register Inputs
@@ -470,10 +414,6 @@ u0_ri : register_interface_hb port map(
 	mr_page_rx         => mr_page_rx,
 	mr_lp_adv_ability  => mr_lp_adv_ability
 	);
-
-
-
-pcs_mr_reset <= MR_RESET_IN or RESET;
 
 FT_TX_CLK_EN_OUT     <= tx_clk_en; -- to MAC
 FT_RX_CLK_EN_OUT     <= rx_clk_en; -- to MAC
@@ -483,7 +423,7 @@ MR_AN_COMPLETE_OUT   <= an_complete;
 MR_AN_PAGE_RX_OUT    <= pcs_mr_page_rx;
 
 -- Clock games
-CLK_125_OUT    <= CLK_125_IN; --sd_tx_clk;
+CLK_125_OUT    <= CLK_125_IN;
 CLK_125_RX_OUT <= SD_RX_CLK_IN;
 
 

@@ -727,9 +727,9 @@ MAC: tsmac34
 		txmac_clk_en			=> mac_tx_clk_en,
 		rxmac_clk_en			=> mac_rx_clk_en,
 	------------------- Input signals to the GMII ----------------  NOT USED
-		rxd				=> pcs_rxd_qq, --x"00",
-		rx_dv 				=> pcs_rx_en_qq, --'0',
-		rx_er				=> pcs_rx_er_qq, --'0',
+		rxd				=> pcs_rxd_qq,
+		rx_dv 				=> pcs_rx_en_qq,
+		rx_er				=> pcs_rx_er_qq,
 		col				=> mac_col,
 		crs				=> mac_crs,
 	-------------------- Input signals to the CPU I/F -------------------
@@ -747,7 +747,7 @@ MAC: tsmac34
 		tx_sndpausreq			=> '0',
 		tx_fifoctrl			=> '0',  -- always data frame
 	---------------- Input signals to the Rx MAC FIFO I/F --------------- 
-		rx_fifo_full			=> mac_rx_fifo_full, --'0',
+		rx_fifo_full			=> mac_rx_fifo_full,
 		ignore_pkt			=> '0',
 	---------------- Output signals from the GMII -----------------------
 		txd				=> pcs_txd,
@@ -808,10 +808,10 @@ MAC: tsmac34
 			RESET				=> RESET,
 			GSR_N				=> GSR_N,
 			CLK_125_OUT			=> serdes_clk_125,
-			CLK_125_RX_OUT			=> serdes_rx_clk, --open,
+			CLK_125_RX_OUT		=> serdes_rx_clk, --open,
 			CLK_125_IN			=> CLKGBE_IN,
-			FT_TX_CLK_EN_OUT		=> mac_tx_clk_en,
-			FT_RX_CLK_EN_OUT		=> mac_rx_clk_en,
+			FT_TX_CLK_EN_OUT	=> mac_tx_clk_en,
+			FT_RX_CLK_EN_OUT	=> mac_rx_clk_en,
 			--connection to frame transmitter (tsmac)
 			FT_COL_OUT			=> mac_col,
 			FT_CRS_OUT			=> mac_crs,
@@ -819,16 +819,16 @@ MAC: tsmac34
 			FT_TX_EN_IN			=> pcs_tx_en_qq,
 			FT_TX_ER_IN			=> pcs_tx_er_qq,
 			FT_RXD_OUT			=> pcs_rxd,
-			FT_RX_EN_OUT			=> pcs_rx_en,
-			FT_RX_ER_OUT			=> pcs_rx_er,
+			FT_RX_EN_OUT		=> pcs_rx_en,
+			FT_RX_ER_OUT		=> pcs_rx_er,
 			
 			-- Autonegotiation stuff
 			MR_ADV_ABILITY_IN		=> x"0020", -- full duplex only
-			MR_AN_LP_ABILITY_OUT		=> pcs_an_lp_ability,
+			MR_AN_LP_ABILITY_OUT	=> pcs_an_lp_ability,
 			MR_AN_PAGE_RX_OUT		=> pcs_an_page_rx,
 			MR_AN_COMPLETE_OUT		=> pcs_an_complete,
-			MR_RESET_IN			=> RESET,
-			MR_MODE_IN			=> '0', --MR_MODE_IN,
+			MR_RESET_IN				=> RESET,
+			MR_MODE_IN				=> '0', --MR_MODE_IN,
 			MR_AN_ENABLE_IN			=> '1', -- do autonegotiation
 			MR_RESTART_AN_IN		=> '0', --MR_RESTART_IN,
 			

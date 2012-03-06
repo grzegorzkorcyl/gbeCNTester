@@ -266,6 +266,8 @@ signal sd_tx_data, sd_rx_data : arr;
 
 signal sd_tx_pll_lol, sd1_quad_rst : std_logic;
 
+signal timer1, timer2 : std_logic;
+
 begin
 
 
@@ -567,10 +569,33 @@ THE_MAIN_PLL : pll_in200_out100
 --LED_RED <= debug(2);
 --LED_YELLOW <= debug(3);
 
-LED_GREEN <= debug(0);
-LED_ORANGE <= debug(1);
-LED_RED <= debug(2);
-LED_YELLOW <= link_ok; --debug(3);
+
+TIMER1_PROC : process(CLK_GPLL_RIGHT)
+begin
+	if rising_edge(CLK_GPLL_RIGHT) then
+		if (reset_i = '1') then
+			timer1 <= (others => '0');
+		else
+			timer1 <= timer1 + x"1";
+		end if;
+	end if;
+end process TIMER1_PROC;
+
+TIMER2_PROC : process(sd_rx_clk(0))
+begin
+	if rising_edge(sd_rx_clk(0)) then
+		if (reset_i = '1') then
+			timer2 <= (others => '0');
+		else
+			timer2 <= timer2 + x"1";
+		end if;
+	end if;
+end process TIMER2_PROC;
+
+LED_GREEN <= timer1(24);
+LED_ORANGE <= timer2(24);
+LED_RED <= reset_i;
+LED_YELLOW <= sd_signal_detected(0); --debug(3);
 
 
 ---------------------------------------------------------------------------
