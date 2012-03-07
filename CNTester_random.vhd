@@ -12,31 +12,22 @@ end entity CNTester_random;
 
 architecture CNTester_random of CNTester_random is
 
-signal lfsr: std_logic_vector (31 downto 0); 
-signal d0 : std_logic;
+component lfsr is
+    port (
+        Clk: in  std_logic; 
+        Enb: in  std_logic; 
+        Rst: in  std_logic; 
+        Dout: out  std_logic_vector(31 downto 0));
+end component;
 
 begin 
 
-  d0 <= lfsr(17) xnor lfsr(15);
-
---  process(lfsr) begin 
---    if(lfsr = x"359") then 
---      lfsr_equal <= '1';
---    else 
---      lfsr_equal <= '0';
---    end if;
---  end process; 
-
-    process (CLK_IN,RESET) begin 
-      if (RESET = '1') then 
-        lfsr <= (others => '0');
-      elsif (CLK_IN'EVENT and CLK_IN = '1') then
-      	if (GENERATE_IN = '1') then
-	    	lfsr <= lfsr(30 downto 0) & d0;
-	    end if;
-      end if; 
-    end process;
-    
-    RANDOM_OUT <= lfsr;
+main : lfsr
+    port map(
+        Clk => CLK_IN, 
+        Enb => GENERATE_IN, 
+        Rst => RESET, 
+        Dout => RANDOM_OUT
+        );
 
 end architecture CNTester_random;

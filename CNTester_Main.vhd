@@ -29,12 +29,12 @@ end entity CNTester_Main;
 
 architecture CNTester_Main of CNTester_Main is
 
-type generate_states is (IDLE, GENERATE_SENDER, GENERATE_SIZE, ACTIVATE);
+type generate_states is (IDLE, GENERATE_SENDER, GENERATE_SIZE, ACTIVATE, WAIT1, WAIT2, WAIT3, WAIT4, WAIT5);
 signal generate_current_state, generate_next_state : generate_states;
 
-signal generate_en : std_logic;
+signal generate_en, condition_valid : std_logic;
 signal values : std_logic_vector(31 downto 0);
-
+signal generate_t : std_logic_vector(2 downto 0);
 signal timer : std_logic_vector(31 downto 0);
 	
 begin
@@ -51,7 +51,7 @@ begin
 	GENERATE_MACHINE_PROC : process(CLKSYS_IN)
 	begin
 		if rising_edge(CLKSYS_IN) then
-			if (RESET = '1') and (LINK_OK_IN = '0') then
+			if (RESET = '1') or (LINK_OK_IN = '0') then
 				generate_current_state <= IDLE;
 			else
 				generate_current_state <= generate_next_state;
@@ -59,7 +59,7 @@ begin
 		end if;
 	end process GENERATE_MACHINE_PROC;
 	
-	GENERATE_MACHINE : process(generate_current_state, SENDERS_FREE_IN)
+	GENERATE_MACHINE : process(generate_current_state, SENDERS_FREE_IN, generate_t)
 	begin
 	
 		case (generate_current_state) is
@@ -72,13 +72,40 @@ begin
 				end if;
 			
 			when GENERATE_SENDER =>
-				generate_next_state <= GENERATE_SIZE;
+				if (generate_t /= "000")   then
+					generate_next_state <= GENERATE_SIZE;
+				else
+					generate_next_state <= GENERATE_SENDER;
+				end if;
 				
 			when GENERATE_SIZE =>
-				generate_next_state <= ACTIVATE;
+				if (values(31 downto 7) /= x"0000_00") then
+					generate_next_state <= ACTIVATE;
+				else
+					generate_next_state <= GENERATE_SIZE;
+				end if;
 			
 			when ACTIVATE =>
-				generate_next_state <= IDLE;
+				generate_next_state <= WAIT1;
+				
+			when WAIT1 =>
+				generate_next_state <= WAIT2;
+			
+			when WAIT2 =>
+				generate_next_state <= WAIT3;
+				
+			when WAIT3 =>
+				generate_next_state <= WAIT4;
+				
+			when WAIT4 =>
+				generate_next_state <= WAIT5;
+				
+			when WAIT5 =>
+				if (SENDERS_FREE_IN = "000") then
+					generate_next_state <= IDLE;
+				else
+					generate_next_state <= WAIT5;
+				end if;
 		
 		end case;
 		
@@ -86,17 +113,43 @@ begin
 	
 	generate_en <= '1' when generate_current_state = GENERATE_SENDER or generate_current_state = GENERATE_SIZE else '0';
 	
-	GENERATE_OUT(0) <= '1' when values(20) = '1' and generate_current_state = GENERATE_SIZE else '0';
-	GENERATE_OUT(1) <= '1' when values(6) = '1' and generate_current_state = GENERATE_SIZE else '0';
-	GENERATE_OUT(2) <= '1' when values(7) = '1' and generate_current_state = GENERATE_SIZE else '0';
+	GENERATE_T_PROC : process(CLKSYS_IN)
+	begin
+		if rising_edge(CLKSYS_IN) then
+			if (generate_current_state /= GENERATE_SENDER and generate_current_state /= GENERATE_SIZE and generate_current_state /= ACTIVATE) then
+				generate_t <= "000";
+			elsif (generate_current_state = GENERATE_SENDER) and (generate_t = "000") then
+				if (values(31 downto 28) = x"f") then
+					generate_t(0) <= '1';
+				elsif (values(27 downto 24) = x"f") then
+					generate_t(1) <= '1';
+				elsif (values(23 downto 20) = x"f") then
+					generate_t(2) <= '1';
+				else
+					generate_t(2 downto 0) <= "000";
+				end if;
+			end if;
+		end if;
+	end process GENERATE_T_PROC;
+	
+	GENERATE_OUT_PROC : process(CLKSYS_IN)
+	begin
+		if rising_edge(CLKSYS_IN) then
+			if (RESET = '1') or (generate_current_state /= ACTIVATE) then
+				GENERATE_OUT <= "000";
+			elsif (generate_current_state = ACTIVATE) then
+				GENERATE_OUT <= generate_t;
+			end if;
+		end if;
+	end process GENERATE_OUT_PROC;
 	
 	SIZE_PROC : process(CLKSYS_IN)
 	begin
 		if rising_edge(CLKSYS_IN) then
-			if (RESET = '1') then
+			if (RESET = '1') or (generate_current_state = IDLE) then
 				SIZE_OUT <= (others  => '0');
 			elsif (generate_current_state = GENERATE_SIZE) then
-				SIZE_OUT <= "0000" & values(7 downto 0) & "1111";
+				SIZE_OUT <= "00000000" & values(11 downto 8) & "1111";
 			end if;
 		end if;
 	end process SIZE_PROC;

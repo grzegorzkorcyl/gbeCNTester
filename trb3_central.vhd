@@ -270,7 +270,7 @@ signal timer1, timer2 : std_logic_vector(31 downto 0);
 
 begin
 
-link_ok <= sd1_link_ok(0) and sd1_link_ok(1);
+link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2);
 
 MAIN : CNTester_Main
 	port map (
@@ -314,10 +314,11 @@ LINK_1 : CNTester_module
 		SD_QUAD_RST_OUT             => sd_quad_rst(0),
 		SD_XMIT_OUT                 => sd_xmit(0),
 		
+		MAC_ADDR_IN          => x"123456789010",
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
-		GENERATE_PACKET_IN   => timer1(28), --activate_sender(0),
-		SIZE_IN              => x"00ff", --size,
+		GENERATE_PACKET_IN   => activate_sender(0),
+		SIZE_IN              => size,
 		BUSY_OUT             => senders_free(0)
 	);
 	
@@ -348,11 +349,47 @@ port map(
 	SD_QUAD_RST_OUT             => sd_quad_rst(1),
 	SD_XMIT_OUT                 => sd_xmit(1),
 	
+	MAC_ADDR_IN          => x"123456789011",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
-	GENERATE_PACKET_IN   => timer1(28), --activate_sender(0),
-	SIZE_IN              => x"00ff", --size,
+	GENERATE_PACKET_IN   => activate_sender(1),
+	SIZE_IN              => size,
 	BUSY_OUT             => senders_free(1)
+);
+
+LINK_3 : CNTester_module
+port map(
+	CLKSYS_IN  => clk_100_i,
+	CLKGBE_IN  => CLK_GPLL_RIGHT,
+	RESET      => reset_i,
+	GSR_N      => GSR_N,
+	LINK_OK_OUT => sd1_link_ok(2),
+	
+	-- serdes io
+	SD_RX_CLK_IN                => sd_rx_clk(2),
+	SD_TX_DATA_OUT              => sd_tx_data(2),
+	SD_TX_KCNTL_OUT             => sd_tx_k(2),
+	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(2),
+	SD_RX_DATA_IN               => sd_rx_data(2),
+	SD_RX_KCNTL_IN              => sd_rx_k(2),
+	SD_RX_DISP_ERROR_IN         => sd_rx_disp(2),
+	SD_RX_CV_ERROR_IN           => sd_cv_err(2),
+	SD_RX_SERDES_RST_OUT        => sd_rx_serdes_rst(2),
+	SD_RX_PCS_RST_OUT           => sd_rx_pcs_rst(2),
+	SD_TX_PCS_RST_OUT			=> sd_tx_pcs_rst(2),
+	SD_RX_LOS_IN				=> sd_rx_los(2),
+	SD_SIGNAL_DETECTED_IN		=> sd_signal_detected(2),
+	SD_RX_CDR_IN				=> sd_rx_cdr(2),
+	SD_TX_PLL_LOL_IN            => sd_tx_pll_lol,
+	SD_QUAD_RST_OUT             => sd_quad_rst(2),
+	SD_XMIT_OUT                 => sd_xmit(2),
+	
+	MAC_ADDR_IN          => x"123456789012",
+	TIMESTAMP_IN         => timestamp,
+	DEST_ADDR_IN         => dest_addr,
+	GENERATE_PACKET_IN   => activate_sender(2),
+	SIZE_IN              => size,
+	BUSY_OUT             => senders_free(2)
 );
 
 SERDES1 : serdes4ch
@@ -488,16 +525,14 @@ SERDES1 : serdes4ch
     );
 
 
-sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1);
+sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1) or sd_quad_rst(2);
 
-
-
-senders_free(2) <= '0';
 
 SFP_TXDIS(5) <= '0';
 SFP_TXDIS(6) <= '0';
+SFP_TXDIS(7) <= '0';
 SFP_TXDIS(4 downto 1) <= (others => '1');
-SFP_TXDIS(8 downto 7) <= (others => '1');
+SFP_TXDIS(8) <= '1';
 
 
 ---------------------------------------------------------------------------

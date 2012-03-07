@@ -20,6 +20,7 @@ entity CNTester_module is
 		GSR_N     : in std_logic;
 		LINK_OK_OUT : out std_logic;
 		
+		MAC_ADDR_IN                 : in	std_logic_vector(47 downto 0);
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
 		GENERATE_PACKET_IN          : in    std_logic;
@@ -524,7 +525,7 @@ port map(
 	MC_DEST_MAC_IN		=> mc_dest_mac,
 	MC_DEST_IP_IN		=> mc_dest_ip,
 	MC_DEST_UDP_IN		=> mc_dest_udp,
-	MC_SRC_MAC_IN		=> mc_src_mac,
+	MC_SRC_MAC_IN		=> MAC_ADDR_IN, --mc_src_mac,  to identify the module
 	MC_SRC_IP_IN		=> mc_src_ip,
 	MC_SRC_UDP_IN		=> mc_src_udp,
 		

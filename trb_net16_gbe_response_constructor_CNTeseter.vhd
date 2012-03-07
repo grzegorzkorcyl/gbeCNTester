@@ -76,10 +76,11 @@ type construct_states is (IDLE, WAIT_FOR_LOAD, LOAD_DATA, TERMINATION, CLEANUP);
 signal construct_current_state, construct_next_state : construct_states;
 attribute syn_encoding of construct_current_state: signal is "safe,gray";
 
-signal load_ctr   : integer range 0 to 255;
+signal load_ctr   : std_logic_vector(15 downto 0);
 signal tc_data    : std_logic_vector(8 downto 0);
 signal timer_t    : std_logic_vector(7 downto 0);
 signal state      : std_logic_vector(3 downto 0);
+signal size_t     : std_logic_vector(15 downto 0);
 
 begin
 
@@ -94,7 +95,7 @@ begin
 	end if;
 end process CONSTRUCT_MACHINE_PROC;
 
-CONSTRUCT_MACHINE : process(construct_current_state, GENERATE_PACKET_IN, TC_BUSY_IN, PS_SELECTED_IN, load_ctr)
+CONSTRUCT_MACHINE : process(construct_current_state, GENERATE_PACKET_IN, TC_BUSY_IN, PS_SELECTED_IN, load_ctr, SIZE_IN)
 begin
 	case construct_current_state is
 	
@@ -116,7 +117,7 @@ begin
 			
 		when LOAD_DATA =>
 			state <= x"3";
-			if (load_ctr = 200) then
+			if (load_ctr = size_t - x"1") then
 				construct_next_state <= TERMINATION;
 			else
 				construct_next_state <= LOAD_DATA;
@@ -137,15 +138,26 @@ LOAD_CTR_PROC : process(CLK)
 begin
 	if rising_edge(CLK) then
 		if (RESET = '1') or (construct_current_state = IDLE) then
-			load_ctr <= 1;
+			load_ctr <= (others => '0');
 		elsif (TC_RD_EN_IN = '1') and (PS_SELECTED_IN = '1') then
-			load_ctr <= load_ctr + 1;
+			load_ctr <= load_ctr + x"1";
 		end if;
 	end if;
 end process LOAD_CTR_PROC;
 
+SIZE_T_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') then
+			size_t <= (others => '0');
+		elsif (construct_current_state = IDLE and GENERATE_PACKET_IN = '1') then
+			size_t <= SIZE_IN;
+		end if;
+	end if;
+end process SIZE_T_PROC;
 
-timer_t <=  std_logic_vector(to_unsigned(load_ctr, 8));
+
+--timer_t <=  std_logic_vector(to_unsigned(load_ctr, 8));
 TC_DATA_PROC : process(construct_current_state, load_ctr)
 begin
 
@@ -155,7 +167,7 @@ begin
 			
 		when LOAD_DATA =>
 			for i in 0 to 7 loop
-				tc_data(i) <= timer_t(i);
+				tc_data(i) <= load_ctr(i);
 			end loop;
 			
 		when TERMINATION =>
@@ -179,13 +191,13 @@ end process TC_DATA_SYNC;
 PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 
-TC_FRAME_SIZE_OUT <= x"00c9";
+TC_FRAME_SIZE_OUT <= size_t; --x"00c9";
 TC_FRAME_TYPE_OUT <= x"1101";  -- frame type: CNTester 
 
 TC_DEST_MAC_OUT <= x"ffffffffffff";
 TC_DEST_IP_OUT  <= (others => '0');
 TC_DEST_UDP_OUT <= (others => '0');
-TC_SRC_MAC_OUT  <= g_MY_MAC;
+TC_SRC_MAC_OUT  <= x"123456789012";
 TC_SRC_IP_OUT   <= (others => '0');
 TC_SRC_UDP_OUT  <= (others  => '0');
 TC_IP_PROTOCOL_OUT <= (others  => '0'); -- udp

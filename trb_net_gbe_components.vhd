@@ -221,6 +221,7 @@ component CNTester_module is
 		SD_QUAD_RST_OUT             : out	std_logic; 
 		SD_XMIT_OUT                 : out	std_logic;
 		
+		MAC_ADDR_IN                 : in	std_logic_vector(47 downto 0);
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
 		GENERATE_PACKET_IN          : in    std_logic;
