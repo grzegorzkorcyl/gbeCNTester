@@ -396,10 +396,10 @@ SERDES1 : serdes4ch
  port map(
 ------------------
 -- CH0 --
-    hdinp_ch0			=> SFP_RX_P(5),
-    hdinn_ch0			=> SFP_RX_N(5),
-    hdoutp_ch0			=> SFP_TX_P(5),
-    hdoutn_ch0			=> SFP_TX_N(5),
+    hdinp_ch0			=> SFP_RX_P(1),
+    hdinn_ch0			=> SFP_RX_N(1),
+    hdoutp_ch0			=> SFP_TX_P(1),
+    hdoutn_ch0			=> SFP_TX_N(1),
     rxiclk_ch0			=> sd_rx_clk(0),
     txiclk_ch0			=> CLK_GPLL_RIGHT,
     rx_full_clk_ch0		=> sd_rx_clk(0),
@@ -426,10 +426,10 @@ SERDES1 : serdes4ch
     lsm_status_ch0_s    => sd_signal_detected(0),
     rx_cdr_lol_ch0_s    => sd_rx_cdr(0),
 -- CH1 --
-    hdinp_ch1			=> SFP_RX_P(6),
-    hdinn_ch1			=> SFP_RX_N(6),
-    hdoutp_ch1			=> SFP_TX_P(6),
-    hdoutn_ch1			=> SFP_TX_N(6),
+    hdinp_ch1			=> SFP_RX_P(2),
+    hdinn_ch1			=> SFP_RX_N(2),
+    hdoutp_ch1			=> SFP_TX_P(2),
+    hdoutn_ch1			=> SFP_TX_N(2),
     rxiclk_ch1			=> sd_rx_clk(1),
     txiclk_ch1			=> CLK_GPLL_RIGHT,
     rx_full_clk_ch1		=> sd_rx_clk(1),
@@ -456,10 +456,10 @@ SERDES1 : serdes4ch
     lsm_status_ch1_s    => sd_signal_detected(1),
     rx_cdr_lol_ch1_s    => sd_rx_cdr(1),
 -- CH2 --
-    hdinp_ch2			=> SFP_RX_P(7),
-    hdinn_ch2			=> SFP_RX_N(7),
-    hdoutp_ch2			=> SFP_TX_P(7),
-    hdoutn_ch2			=> SFP_TX_N(7),
+    hdinp_ch2			=> SFP_RX_P(3),
+    hdinn_ch2			=> SFP_RX_N(3),
+    hdoutp_ch2			=> SFP_TX_P(3),
+    hdoutn_ch2			=> SFP_TX_N(3),
     rxiclk_ch2			=> sd_rx_clk(2),
     txiclk_ch2			=> CLK_GPLL_RIGHT,
     rx_full_clk_ch2		=> sd_rx_clk(2),
@@ -486,10 +486,10 @@ SERDES1 : serdes4ch
     lsm_status_ch2_s    => sd_signal_detected(2),
     rx_cdr_lol_ch2_s    => sd_rx_cdr(2),
 -- CH3 --
-    hdinp_ch3			=> SFP_RX_P(8),
-    hdinn_ch3			=> SFP_RX_N(8),
-    hdoutp_ch3			=> SFP_TX_P(8),
-    hdoutn_ch3			=> SFP_TX_N(8),
+    hdinp_ch3			=> SFP_RX_P(4),
+    hdinn_ch3			=> SFP_RX_N(4),
+    hdoutp_ch3			=> SFP_TX_P(4),
+    hdoutn_ch3			=> SFP_TX_N(4),
     rxiclk_ch3			=> sd_rx_clk(3),
     txiclk_ch3			=> CLK_GPLL_RIGHT,
     rx_full_clk_ch3		=> sd_rx_clk(3),
@@ -523,6 +523,8 @@ SERDES1 : serdes4ch
     rst_qd_c            => sd1_quad_rst,
     serdes_rst_qd_c     => '0'
     );
+    
+    
 
 
 sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1) or sd_quad_rst(2);
