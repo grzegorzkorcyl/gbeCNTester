@@ -9,6 +9,20 @@ use work.trb_net_gbe_protocols.all;
 
 package trb_net_gbe_components is
 
+component stats_ram is
+     port (
+        WrAddress: in  std_logic_vector(9 downto 0); 
+        RdAddress: in  std_logic_vector(9 downto 0); 
+        Data: in  std_logic_vector(71 downto 0); 
+        WE: in  std_logic; 
+        RdClock: in  std_logic; 
+        RdClockEn: in  std_logic; 
+        Reset: in  std_logic; 
+        WrClock: in  std_logic; 
+        WrClockEn: in  std_logic; 
+        Q: out  std_logic_vector(71 downto 0));
+end component;
+
 component serdes4ch is
    GENERIC (USER_CONFIG_FILE    :  String := "serdes4ch.txt");
  port (

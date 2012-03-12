@@ -81,8 +81,18 @@ signal tc_data    : std_logic_vector(8 downto 0);
 signal timer_t    : std_logic_vector(7 downto 0);
 signal state      : std_logic_vector(3 downto 0);
 signal size_t     : std_logic_vector(15 downto 0);
+signal packet_ctr : std_logic_vector(31 downto 0);
+
+
+signal stats_rd_clk, stats_we, stats_re : std_logic;
+signal stats_data, stats_q : std_logic_vector(71 downto 0);
+signal saved_timestamp : std_logic_vector(31 downto 0);
 
 begin
+
+
+-- **************
+-- TRANSMISSION PART
 
 CONSTRUCT_MACHINE_PROC : process(CLK)
 begin
@@ -183,13 +193,103 @@ end process;
 TC_DATA_SYNC : process(CLK)
 begin
 	if rising_edge(CLK) then
-		TC_DATA_OUT <= tc_data;
+	
+		TC_DATA_OUT(8) <= '0';
+	
+		if (load_ctr = x"0000") then
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(31 downto 24);
+		elsif (load_ctr = x"0001") then
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(23 downto 16);
+		elsif (load_ctr = x"0002") then
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(15 downto 8);
+		elsif (load_ctr = x"0003") then
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(7 downto 0);
+		elsif (load_ctr = x"0004") then
+			TC_DATA_OUT(7 downto 0) <= saved_timestamp(31 downto 24);
+		elsif (load_ctr = x"0005") then
+			TC_DATA_OUT(7 downto 0) <= saved_timestamp(23 downto 16);
+		elsif (load_ctr = x"0006") then
+			TC_DATA_OUT(7 downto 0) <= saved_timestamp(15 downto 8);
+		elsif (load_ctr = x"0007") then
+			TC_DATA_OUT(7 downto 0) <= saved_timestamp(7 downto 0);
+		else
+			TC_DATA_OUT <= tc_data;
+		end if;
 	end if;
 end process TC_DATA_SYNC;
 
+-- packet counter as packet id for stats memory
+PACKET_CTR_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') then
+			packet_ctr <= (others => '0');
+		elsif (construct_current_state = LOAD_DATA and load_ctr = size_t - x"1") then
+			packet_ctr <= packet_ctr + x"1";
+		end if;
+	end if;
+end process PACKET_CTR_PROC;
+
+SAVED_TIMESTAMP_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') or (construct_current_state = CLEANUP) then
+			saved_timestamp <= (others => '0');
+		elsif (GENERATE_PACKET_IN = '1') then
+			saved_timestamp <= TIMESTAMP_IN;
+		end if;
+	end if;
+end process SAVED_TIMESTAMP_PROC;
+
+-- END OF TRANSMISSION PART
+-- *****************
+
+
+-- *****************
+--  RECEIVING PART
+
+
+
+
+
+-- END OF RECEVING PART
+-- *****************
+
+
+
+-- *****************
+--  STATISTICS PART
+
+STATS_MEM : fifo_512x72
+    port map(
+        Data		=> stats_data,
+        RdClock		=> stats_rd_clk, 
+        WrClock		=> CLK,
+        WrEn		=> stats_we,
+        RdEn		=> stats_re,
+        Reset		=> RESET,
+        RPReset		=> RESET,
+        Q			=> stats_q,
+        Empty		=> open,
+        Full		=> open
+);
+stats_rd_clk <= CLK;  -- change it to read clock from the master reader
+
+stats_we <= '1' when construct_current_state = TERMINATION else '0';
+
+stats_data(31 downto 0)  <= packet_ctr - x"1";
+stats_data(63 downto 32) <= saved_timestamp;
+stats_data(71 downto 64) <= (others => '0');
+
+
+
+
+-- END OF STATISTICS PART
+-- ****************
+
 
 PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';
-PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1';
+PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1'; 
 
 TC_FRAME_SIZE_OUT <= size_t; --x"00c9";
 TC_FRAME_TYPE_OUT <= x"1101";  -- frame type: CNTester 
