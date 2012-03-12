@@ -254,7 +254,7 @@ signal gsc_busy : std_logic;
 signal mc_unique_id : std_logic_vector(63 downto 0);
 
 
-signal senders_free, activate_sender : std_logic_vector(2 downto 0);
+signal senders_free, activate_sender : std_logic_vector(7 downto 0);
 signal timestamp : std_logic_vector(31 downto 0);
 signal dest_addr, size : std_logic_vector(15 downto 0);
 
