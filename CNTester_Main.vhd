@@ -18,12 +18,12 @@ entity CNTester_Main is
 		RESET           : in std_logic;
 		LINK_OK_IN		: in std_logic;
 		
-		GENERATE_OUT    : out std_logic_vector(2 downto 0);
+		GENERATE_OUT    : out std_logic_vector(7 downto 0);
 		TIMESTAMP_OUT   : out std_logic_vector(31 downto 0);
 		DEST_ADDR_OUT   : out std_logic_vector(15 downto 0);
 		SIZE_OUT        : out std_logic_vector(15 downto 0);
 		
-		SENDERS_FREE_IN : in std_logic_vector(2 downto 0)
+		SENDERS_FREE_IN : in std_logic_vector(7 downto 0)
 	);
 end entity CNTester_Main;
 
@@ -34,7 +34,7 @@ signal generate_current_state, generate_next_state : generate_states;
 
 signal generate_en, condition_valid : std_logic;
 signal values : std_logic_vector(31 downto 0);
-signal generate_t : std_logic_vector(2 downto 0);
+signal generate_t : std_logic_vector(7 downto 0);
 signal timer : std_logic_vector(31 downto 0);
 	
 begin
@@ -118,15 +118,25 @@ begin
 		if rising_edge(CLKSYS_IN) then
 			if (generate_current_state /= GENERATE_SENDER and generate_current_state /= GENERATE_SIZE and generate_current_state /= ACTIVATE) then
 				generate_t <= "000";
-			elsif (generate_current_state = GENERATE_SENDER) and (generate_t = "000") then
+			elsif (generate_current_state = GENERATE_SENDER) and (generate_t = "00000000") then
 				if (values(31 downto 28) = x"f") then
 					generate_t(0) <= '1';
 				elsif (values(27 downto 24) = x"f") then
 					generate_t(1) <= '1';
 				elsif (values(23 downto 20) = x"f") then
 					generate_t(2) <= '1';
+				elsif (values(19 downto 16) = x"f") then
+					generate_t(3) <= '1';
+				elsif (values(15 downto 12) = x"f") then
+					generate_t(4) <= '1';
+				elsif (values(11 downto 8) = x"f") then
+					generate_t(5) <= '1';
+				elsif (values(7 downto 4) = x"f") then
+					generate_t(6) <= '1';
+				elsif (values(3 downto 0) = x"f") then
+					generate_t(7) <= '1';
 				else
-					generate_t(2 downto 0) <= "000";
+					generate_t(7 downto 0) <= "00000000";
 				end if;
 			end if;
 		end if;
@@ -136,7 +146,7 @@ begin
 	begin
 		if rising_edge(CLKSYS_IN) then
 			if (RESET = '1') or (generate_current_state /= ACTIVATE) then
-				GENERATE_OUT <= "000";
+				GENERATE_OUT <= "00000000";
 			elsif (generate_current_state = ACTIVATE) then
 				GENERATE_OUT <= generate_t;
 			end if;

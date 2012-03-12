@@ -199,12 +199,12 @@ component CNTester_Main is
 		RESET     	: in std_logic;
 		LINK_OK_IN	: in std_logic;
 		
-		GENERATE_OUT  : out std_logic_vector(2 downto 0);
+		GENERATE_OUT  : out std_logic_vector(7 downto 0);
 		TIMESTAMP_OUT : out std_logic_vector(31 downto 0);
 		DEST_ADDR_OUT : out std_logic_vector(15 downto 0);
 		SIZE_OUT        : out std_logic_vector(15 downto 0);
 		
-		SENDERS_FREE_IN : in std_logic_vector(2 downto 0)
+		SENDERS_FREE_IN : in std_logic_vector(7 downto 0)
 	);
 end component;
 
