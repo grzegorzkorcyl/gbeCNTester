@@ -61,6 +61,11 @@ port (
 	DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
 	SIZE_IN                     : in    std_logic_vector(15 downto 0);
 	GENERATE_PACKET_IN          : in    std_logic;
+	
+	MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+	MODULE_RD_EN_IN             : in	std_logic;
+	MODULE_SELECTED_IN           : in	std_logic;
+	MODULE_FULL_OUT             : out	std_logic;
 
 -- debug
 	DEBUG_OUT		: out	std_logic_vector(31 downto 0)
@@ -86,7 +91,13 @@ signal packet_ctr : std_logic_vector(31 downto 0);
 
 signal stats_rd_clk, stats_we, stats_re : std_logic;
 signal stats_data, stats_q : std_logic_vector(71 downto 0);
-signal saved_timestamp : std_logic_vector(31 downto 0);
+signal saved_timestamp, saved_rec_timestamp, saved_rec_packet_id : std_logic_vector(31 downto 0);
+
+type dissect_states is (IDLE, SAVE, CLEANUP);
+signal dissect_current_state, dissect_next_state : dissect_states;
+attribute syn_encoding of dissect_current_state: signal is "safe,gray";
+
+signal resp_bytes_ctr : integer range 0 to 9000;
 
 begin
 
@@ -248,7 +259,87 @@ end process SAVED_TIMESTAMP_PROC;
 -- *****************
 --  RECEIVING PART
 
+DISSECT_MACHINE_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') then
+			dissect_current_state <= IDLE;
+		else
+			dissect_current_state <= dissect_next_state;
+		end if;
+	end if;
+end process DISSECT_MACHINE_PROC;
 
+DISSECT_MACHINE : process(dissect_current_state, PS_WR_EN_IN, PS_ACTIVATE_IN, PS_DATA_IN)
+begin
+	case dissect_current_state is
+	
+		when IDLE =>
+			state <= x"1";
+			if (PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
+				dissect_next_state <= SAVE;
+			else
+				dissect_next_state <= IDLE;
+			end if;
+		
+		when SAVE =>
+			state <= x"2";
+			if (PS_DATA_IN(8) = '1') then
+				dissect_next_state <= CLEANUP;
+			else
+				dissect_next_state <= SAVE;
+			end if;
+		
+		when CLEANUP =>
+			state <= x"5";
+			dissect_next_state <= IDLE;
+	
+	end case;
+end process DISSECT_MACHINE;
+
+RESP_BYTES_CTR_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') or (dissect_current_state = CLEANUP) then
+			resp_bytes_ctr <= 0;
+		elsif (PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
+			resp_bytes_ctr <= resp_bytes_ctr + 1;
+		end if;
+	end if;
+end process RESP_BYTES_CTR_PROC;
+
+SAVE_VALUES_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') then
+			saved_rec_packet_id <= (others => '0');
+			saved_rec_timestamp <= (others => '0');
+		elsif (PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
+			case (resp_bytes_ctr) is
+				
+				when 3 =>
+					saved_rec_packet_id(7 downto 0) <= PS_DATA_IN(7 downto 0);
+				when 2 =>
+					saved_rec_packet_id(15 downto 8) <= PS_DATA_IN(7 downto 0);
+				when 1 =>
+					saved_rec_packet_id(23 downto 16) <= PS_DATA_IN(7 downto 0);
+				when 0 =>
+					saved_rec_packet_id(31 downto 24) <= PS_DATA_IN(7 downto 0);
+					
+				when 7 =>
+					saved_rec_timestamp(7 downto 0) <= PS_DATA_IN(7 downto 0);
+				when 6 =>
+					saved_rec_timestamp(15 downto 8) <= PS_DATA_IN(7 downto 0);
+				when 5 =>
+					saved_rec_timestamp(23 downto 16) <= PS_DATA_IN(7 downto 0);
+				when 4 =>
+					saved_rec_timestamp(31 downto 24) <= PS_DATA_IN(7 downto 0);
+					
+				when others => null;
+			end case;
+		end if;
+	end if;
+end process SAVE_VALUES_PROC;
 
 
 
@@ -263,23 +354,24 @@ end process SAVED_TIMESTAMP_PROC;
 STATS_MEM : fifo_512x72
     port map(
         Data		=> stats_data,
-        RdClock		=> stats_rd_clk, 
+        RdClock		=> CLK, 
         WrClock		=> CLK,
         WrEn		=> stats_we,
         RdEn		=> stats_re,
         Reset		=> RESET,
         RPReset		=> RESET,
-        Q			=> stats_q,
+        Q			=> MODULE_DATA_OUT,
         Empty		=> open,
-        Full		=> open
+        Full		=> MODULE_FULL_OUT
 );
-stats_rd_clk <= CLK;  -- change it to read clock from the master reader
 
-stats_we <= '1' when construct_current_state = TERMINATION else '0';
+stats_re <= '1' when MODULE_RD_EN_IN = '1' and MODULE_SELECTED_IN = '1' else '0'; 
 
-stats_data(31 downto 0)  <= packet_ctr - x"1";
-stats_data(63 downto 32) <= saved_timestamp;
-stats_data(71 downto 64) <= (others => '0');
+stats_we <= '1' when construct_current_state = TERMINATION or dissect_current_state = CLEANUP else '0';
+
+stats_data(31 downto 0)  <= packet_ctr - x"1" when construct_current_state = TERMINATION else saved_rec_packet_id;
+stats_data(63 downto 32) <= saved_timestamp when construct_current_state = TERMINATION else saved_rec_timestamp;
+stats_data(71 downto 64) <= x"11" when construct_current_state = TERMINATION else x"22";
 
 
 

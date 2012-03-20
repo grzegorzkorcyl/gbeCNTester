@@ -13,6 +13,7 @@ use work.trb_net_gbe_components.all;
 use work.trb_net_gbe_protocols.all;
 
 entity CNTester_module is
+generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 	port (
 		CLKSYS_IN : in std_logic;
 		CLKGBE_IN : in std_logic;
@@ -26,6 +27,17 @@ entity CNTester_module is
 		GENERATE_PACKET_IN          : in    std_logic;
 		SIZE_IN                     : in    std_logic_vector(15 downto 0);
 		BUSY_OUT                    : out   std_logic;
+		
+		MODULE_SELECT_OUT     : out std_logic_vector(7 downto 0);
+		MODULE_RD_EN_OUT      : out std_logic;
+		MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
+		STOP_TRANSMISSION_OUT : out std_logic;
+		START_STAT_IN         : in std_logic;
+		
+		MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+		MODULE_RD_EN_IN             : in	std_logic;
+		MODULE_SELECTED_IN           : in	std_logic;
+		MODULE_FULL_OUT             : out	std_logic;
 		
 		-- serdes io
 		SD_RX_CLK_IN                : in	std_logic;
@@ -394,10 +406,12 @@ signal pcs_tx_en_q, pcs_tx_er_q, pcs_rx_en_q, pcs_rx_er_q, mac_col_q, mac_crs_q 
 signal pcs_txd_qq, pcs_rxd_qq : std_logic_vector(7 downto 0);
 signal pcs_tx_en_qq, pcs_tx_er_qq, pcs_rx_en_qq, pcs_rx_er_qq, mac_col_qq, mac_crs_qq : std_logic;
 
+signal fc_test_rd_en : std_logic;
 
 begin
 
 MAIN_CONTROL : trb_net16_gbe_main_control
+generic map ( g_GENERATE_STAT => g_GENERATE_STAT)
   port map(
 	  CLK			=> CLKSYS_IN,
 	  CLK_125		=> CLKGBE_IN,
@@ -456,6 +470,17 @@ MAIN_CONTROL : trb_net16_gbe_main_control
 	  CNT_DEST_ADDR_IN         => DEST_ADDR_IN,
 	  CNT_SIZE_IN              => SIZE_IN,
 	  CNT_BUSY_OUT             => BUSY_OUT,
+	  
+	  CNT_MODULE_SELECT_OUT     => MODULE_SELECT_OUT, 
+	  CNT_MODULE_RD_EN_OUT      => MODULE_RD_EN_OUT,
+	  CNT_MODULE_DATA_IN        => MODULE_DATA_IN,
+	  CNT_STOP_TRANSMISSION_OUT => STOP_TRANSMISSION_OUT,
+	  CNT_START_STAT_IN         => START_STAT_IN,
+	  
+	  CNT_MODULE_DATA_OUT       => MODULE_DATA_OUT,
+	  CNT_MODULE_RD_EN_IN       => MODULE_RD_EN_IN,
+	  CNT_MODULE_SELECTED_IN     => MODULE_SELECTED_IN,
+	  CNT_MODULE_FULL_OUT       => MODULE_FULL_OUT,
 	
 	  GSC_CLK_IN               => '0',
 	  GSC_INIT_DATAREADY_OUT   => open,
@@ -564,7 +589,7 @@ port map(
 	-- ports for user logic
 	RESET				    => RESET,
 	CLK				        => CLKSYS_IN,
-	LINK_OK_IN			    => link_ok, --pcs_an_complete,  -- gk 03.08.10  -- gk 30.09.10
+	LINK_OK_IN			    => '1', --link_ok, --pcs_an_complete,  -- gk 03.08.10  -- gk 30.09.10
 	--
 	WR_EN_IN			    => fc_wr_en,
 	DATA_IN				    => fc_data,
@@ -592,7 +617,7 @@ port map(
 	RD_CLK				    => serdes_clk_125,
 	FT_DATA_OUT 			=> ft_data,
 	FT_TX_EMPTY_OUT			=> ft_tx_empty,
-	FT_TX_RD_EN_IN			=> mac_tx_read,
+	FT_TX_RD_EN_IN			=> fc_test_rd_en, --mac_tx_read,
 	FT_START_OF_PACKET_OUT	=> ft_start_of_packet,
 	FT_TX_DONE_IN			=> mac_tx_done,
 	FT_TX_DISCFRM_IN		=> mac_tx_discfrm,
@@ -602,6 +627,7 @@ port map(
 	DEBUG_OUT              	=> open
 );
 
+fc_test_rd_en <= '1' when g_SIMULATE = 1 and ft_tx_empty = '0' else mac_tx_read;
 
 
 RECEIVE_CONTROLLER : trb_net16_gbe_receive_control
@@ -682,7 +708,7 @@ port map(
 	  CLK			=> CLKSYS_IN,
 	  RESET			=> RESET,
 	  LINK_OK_IN		=> link_ok,
-	  ALLOW_RX_IN		=> allow_rx,
+	  ALLOW_RX_IN		=> '1', --allow_rx,
 	  RX_MAC_CLK		=> serdes_rx_clk,
 
   -- input signals from TS_MAC
@@ -769,12 +795,17 @@ MAC: tsmac34
 	------------- Output signals from the Rx MAC FIFO I/F ---------------   
 		rx_fifo_error			=> mac_rx_fifo_err, --open,
 		rx_stat_vector			=> mac_rx_stat_vec, --open,
-		rx_dbout			=> mac_rxd, --open,
-		rx_write			=> mac_rx_en, --open,
+		rx_dbout			=> open, --mac_rxd, --open,
+		rx_write			=> open, --mac_rx_en, --open,
 		rx_stat_en			=> mac_rx_stat_en, --open,
-		rx_eof				=> mac_rx_eof, --open,
+		rx_eof				=> open, --mac_rx_eof, --open,
 		rx_error			=> mac_rx_er --open
 	);
+	
+	-- LOOPBACK FOR TESTBENCH
+	mac_rxd <= ft_data(7 downto 0);
+	mac_rx_en <= fc_test_rd_en;-- mac_fifoavail;
+	mac_rx_eof <= mac_fifoeof;
 	
 	SYNC_GMII_RX_PROC : process(serdes_rx_clk)
 	begin

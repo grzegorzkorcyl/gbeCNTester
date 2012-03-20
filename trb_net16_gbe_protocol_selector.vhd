@@ -18,6 +18,7 @@ use work.trb_net_gbe_protocols.all;
 
 
 entity trb_net16_gbe_protocol_selector is
+generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 port (
 	CLK			: in	std_logic;  -- system clock
 	RESET			: in	std_logic;
@@ -77,6 +78,17 @@ port (
 	CNT_TIMESTAMP_IN         : in    std_logic_vector(31 downto 0);
 	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
 	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
+	
+	CNT_MODULE_SELECT_OUT     : out std_logic_vector(7 downto 0);
+	CNT_MODULE_RD_EN_OUT      : out std_logic;
+	CNT_MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
+	CNT_STOP_TRANSMISSION_OUT : out std_logic;
+	CNT_START_STAT_IN         : in std_logic;
+	
+	CNT_MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+	CNT_MODULE_RD_EN_IN             : in	std_logic;
+	CNT_MODULE_SELECTED_IN           : in	std_logic;
+	CNT_MODULE_FULL_OUT             : out	std_logic;
 
 	-- input for statistics from outside	
 	STAT_DATA_IN             : in std_logic_vector(31 downto 0);
@@ -117,6 +129,8 @@ signal stat_ack                 : std_logic_vector((c_MAX_PROTOCOLS + 1) - 1 dow
 
 begin
 
+
+proto_gen: if (g_GENERATE_STAT = 0) generate
 -- protocol Nr. 1 CNTester
 CNTeseter : trb_net16_gbe_response_constructor_CNTester
 generic map( STAT_ADDRESS_BASE => 6
@@ -168,9 +182,72 @@ port map (
 	SIZE_IN              => CNT_SIZE_IN,
 	GENERATE_PACKET_IN   => CNT_GENERATE_PACKET_IN,
 	
+	MODULE_DATA_OUT      => CNT_MODULE_DATA_OUT,
+	MODULE_RD_EN_IN      => CNT_MODULE_RD_EN_IN,
+	MODULE_SELECTED_IN    => CNT_MODULE_SELECTED_IN,
+	MODULE_FULL_OUT      => CNT_MODULE_FULL_OUT,
+	
 	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
 );
+end generate;
 
+stat_gen: if (g_GENERATE_STAT = 1) generate
+CNStatsSender : trb_net16_gbe_response_constructor_CNStatsSender
+generic map( STAT_ADDRESS_BASE => 6
+)
+port map (
+	CLK			=> CLK,
+	RESET			=> RESET,
+	
+-- INTERFACE	
+	PS_DATA_IN		=> PS_DATA_IN,
+	PS_WR_EN_IN		=> PS_WR_EN_IN,
+	PS_ACTIVATE_IN		=> PS_PROTO_SELECT_IN(0),
+	PS_RESPONSE_READY_OUT	=> resp_ready(0),
+	PS_BUSY_OUT		=> busy(0),
+	PS_SELECTED_IN		=> selected(0),
+
+	PS_SRC_MAC_ADDRESS_IN	=> PS_SRC_MAC_ADDRESS_IN,
+	PS_DEST_MAC_ADDRESS_IN  => PS_DEST_MAC_ADDRESS_IN,
+	PS_SRC_IP_ADDRESS_IN	=> PS_SRC_IP_ADDRESS_IN,
+	PS_DEST_IP_ADDRESS_IN	=> PS_DEST_IP_ADDRESS_IN,
+	PS_SRC_UDP_PORT_IN	=> PS_SRC_UDP_PORT_IN,
+	PS_DEST_UDP_PORT_IN	=> PS_DEST_UDP_PORT_IN,
+	
+	TC_RD_EN_IN		=> TC_RD_EN_IN,
+	TC_DATA_OUT		=> tc_data(1 * 9 - 1 downto 0 * 9),
+	TC_FRAME_SIZE_OUT	=> tc_size(1 * 16 - 1 downto 0 * 16),
+	TC_FRAME_TYPE_OUT	=> tc_type(1 * 16 - 1 downto 0 * 16),
+	TC_IP_PROTOCOL_OUT	=> tc_ip_proto(1 * 8 - 1 downto 0 * 8),
+	
+	TC_DEST_MAC_OUT		=> tc_mac(1 * 48 - 1 downto 0 * 48),
+	TC_DEST_IP_OUT		=> tc_ip(1 * 32 - 1 downto 0 * 32),
+	TC_DEST_UDP_OUT		=> tc_udp(1 * 16 - 1 downto 0 * 16),
+	TC_SRC_MAC_OUT		=> tc_src_mac(1 * 48 - 1 downto 0 * 48),
+	TC_SRC_IP_OUT		=> tc_src_ip(1 * 32 - 1 downto 0 * 32),
+	TC_SRC_UDP_OUT		=> tc_src_udp(1 * 16 - 1 downto 0 * 16),
+	
+	TC_BUSY_IN		=> TC_BUSY_IN,
+	
+	STAT_DATA_OUT => stat_data(1 * 32 - 1 downto 0 * 32),
+	STAT_ADDR_OUT => stat_addr(1 * 8 - 1 downto 0 * 8),
+	STAT_DATA_RDY_OUT => stat_rdy(0),
+	STAT_DATA_ACK_IN  => stat_ack(0),
+	RECEIVED_FRAMES_OUT	=> RECEIVED_FRAMES_OUT(1 * 16 - 1 downto 0 * 16),
+	SENT_FRAMES_OUT		=> SENT_FRAMES_OUT(1 * 16 - 1 downto 0 * 16),
+	
+-- END OF INTERFACE
+
+	MODULE_SELECT_OUT     => CNT_MODULE_SELECT_OUT,
+	MODULE_RD_EN_OUT      => CNT_MODULE_RD_EN_OUT,
+	MODULE_DATA_IN        => CNT_MODULE_DATA_IN,
+	STOP_TRANSMISSION_OUT => CNT_STOP_TRANSMISSION_OUT,
+	START_STAT_IN         => CNT_START_STAT_IN,
+
+	
+	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
+);
+end generate;
 
 --***************
 -- DO NOT TOUCH,  response selection logic

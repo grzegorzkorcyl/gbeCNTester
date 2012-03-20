@@ -7,7 +7,7 @@ use work.trb_net_std.all;
 
 package trb_net_gbe_protocols is
 
-signal g_SIMULATE             : integer range 0 to 1 := 0;
+signal g_SIMULATE             : integer range 0 to 1 := 1;
 
 -- g_MY_IP is being set by DHCP Response Constructor
 signal g_MY_IP                : std_logic_vector(31 downto 0);
@@ -78,6 +78,65 @@ port (
 	DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
 	SIZE_IN                     : in    std_logic_vector(15 downto 0);
 	GENERATE_PACKET_IN          : in    std_logic;
+		
+	MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+	MODULE_RD_EN_IN             : in	std_logic;
+	MODULE_SELECTED_IN           : in	std_logic;
+	MODULE_FULL_OUT             : out	std_logic;
+-- debug
+	DEBUG_OUT		: out	std_logic_vector(31 downto 0)
+);
+end component;
+
+component trb_net16_gbe_response_constructor_CNStatsSender is
+generic ( STAT_ADDRESS_BASE : integer := 0
+);
+port (
+	CLK			: in	std_logic;  -- system clock
+	RESET			: in	std_logic;
+	
+-- INTERFACE	
+	PS_DATA_IN		: in	std_logic_vector(8 downto 0);
+	PS_WR_EN_IN		: in	std_logic;
+	PS_ACTIVATE_IN		: in	std_logic;
+	PS_RESPONSE_READY_OUT	: out	std_logic;
+	PS_BUSY_OUT		: out	std_logic;
+	PS_SELECTED_IN		: in	std_logic;
+	PS_SRC_MAC_ADDRESS_IN	: in	std_logic_vector(47 downto 0);
+	PS_DEST_MAC_ADDRESS_IN  : in	std_logic_vector(47 downto 0);
+	PS_SRC_IP_ADDRESS_IN	: in	std_logic_vector(31 downto 0);
+	PS_DEST_IP_ADDRESS_IN	: in	std_logic_vector(31 downto 0);
+	PS_SRC_UDP_PORT_IN	: in	std_logic_vector(15 downto 0);
+	PS_DEST_UDP_PORT_IN	: in	std_logic_vector(15 downto 0);
+		
+	TC_RD_EN_IN		: in	std_logic;
+	TC_DATA_OUT		: out	std_logic_vector(8 downto 0);
+	TC_FRAME_SIZE_OUT	: out	std_logic_vector(15 downto 0);
+	TC_FRAME_TYPE_OUT	: out	std_logic_vector(15 downto 0);
+	TC_IP_PROTOCOL_OUT	: out	std_logic_vector(7 downto 0);	
+	TC_DEST_MAC_OUT		: out	std_logic_vector(47 downto 0);
+	TC_DEST_IP_OUT		: out	std_logic_vector(31 downto 0);
+	TC_DEST_UDP_OUT		: out	std_logic_vector(15 downto 0);
+	TC_SRC_MAC_OUT		: out	std_logic_vector(47 downto 0);
+	TC_SRC_IP_OUT		: out	std_logic_vector(31 downto 0);
+	TC_SRC_UDP_OUT		: out	std_logic_vector(15 downto 0);
+	
+	TC_BUSY_IN		: in	std_logic;
+	
+	STAT_DATA_OUT : out std_logic_vector(31 downto 0);
+	STAT_ADDR_OUT : out std_logic_vector(7 downto 0);
+	STAT_DATA_RDY_OUT : out std_logic;
+	STAT_DATA_ACK_IN  : in std_logic;
+	RECEIVED_FRAMES_OUT	: out	std_logic_vector(15 downto 0);
+	SENT_FRAMES_OUT		: out	std_logic_vector(15 downto 0);
+-- END OF INTERFACE
+
+	MODULE_SELECT_OUT     : out std_logic_vector(7 downto 0);
+	MODULE_RD_EN_OUT      : out std_logic;
+	MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
+	STOP_TRANSMISSION_OUT : out std_logic;
+	START_STAT_IN         : in std_logic;
+
 -- debug
 	DEBUG_OUT		: out	std_logic_vector(31 downto 0)
 );

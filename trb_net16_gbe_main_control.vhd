@@ -19,6 +19,7 @@ use work.trb_net_gbe_protocols.all;
 
 
 entity trb_net16_gbe_main_control is
+generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 port (
 	CLK			: in	std_logic;  -- system clock
 	CLK_125			: in	std_logic;
@@ -78,6 +79,17 @@ port (
 	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
 	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
 	CNT_BUSY_OUT             : out std_logic;
+	
+	CNT_MODULE_SELECT_OUT     : out std_logic_vector(7 downto 0);
+	CNT_MODULE_RD_EN_OUT      : out std_logic;
+	CNT_MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
+	CNT_STOP_TRANSMISSION_OUT : out std_logic;
+	CNT_START_STAT_IN         : in std_logic;
+		
+	CNT_MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+	CNT_MODULE_RD_EN_IN             : in	std_logic;
+	CNT_MODULE_SELECTED_IN           : in	std_logic;
+	CNT_MODULE_FULL_OUT             : out	std_logic;
 	
 	GSC_CLK_IN               : in std_logic;
 	GSC_INIT_DATAREADY_OUT   : out std_logic;
@@ -184,6 +196,7 @@ signal stat_addr                    : std_logic_vector(7 downto 0);
 begin
 
 protocol_selector : trb_net16_gbe_protocol_selector
+generic map( g_GENERATE_STAT => g_GENERATE_STAT)
 port map(
 	CLK			=> CLK,
 	RESET			=> RESET,
@@ -228,6 +241,17 @@ port map(
 	CNT_TIMESTAMP_IN       => CNT_TIMESTAMP_IN,
 	CNT_DEST_ADDR_IN       => CNT_DEST_ADDR_IN,
 	CNT_SIZE_IN            => CNT_SIZE_IN,
+	
+	CNT_MODULE_SELECT_OUT     => CNT_MODULE_SELECT_OUT,
+	CNT_MODULE_RD_EN_OUT      => CNT_MODULE_RD_EN_OUT,
+	CNT_MODULE_DATA_IN        => CNT_MODULE_DATA_IN,
+	CNT_STOP_TRANSMISSION_OUT => CNT_STOP_TRANSMISSION_OUT,
+	CNT_START_STAT_IN         => CNT_START_STAT_IN,
+	
+	CNT_MODULE_DATA_OUT       => CNT_MODULE_DATA_OUT,
+	CNT_MODULE_RD_EN_IN       => CNT_MODULE_RD_EN_IN,
+	CNT_MODULE_SELECTED_IN     => CNT_MODULE_SELECTED_IN,
+	CNT_MODULE_FULL_OUT       => CNT_MODULE_FULL_OUT,
 	
 	GSC_CLK_IN               => GSC_CLK_IN,
 	GSC_INIT_DATAREADY_OUT   => GSC_INIT_DATAREADY_OUT,
@@ -332,7 +356,9 @@ begin
 		
 		when LOAD =>
 			redirect_state <= x"2";
-			if (loaded_bytes_ctr = RC_FRAME_SIZE_IN - x"1") then
+			--if (loaded_bytes_ctr = RC_FRAME_SIZE_IN - x"1") then
+			-- !!WARNING!! dont know why this had to be changed (probably because of strange frame type)
+			if (loaded_bytes_ctr = RC_FRAME_SIZE_IN) then
 				redirect_next_state <= FINISH;
 			else
 				redirect_next_state <= LOAD;

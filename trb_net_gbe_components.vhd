@@ -209,6 +209,7 @@ component CNTester_Main is
 end component;
 
 component CNTester_module is
+generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 	port (
 		CLKSYS_IN : in std_logic;
 		CLKGBE_IN : in std_logic;
@@ -239,6 +240,17 @@ component CNTester_module is
 		TIMESTAMP_IN                : in    std_logic_vector(31 downto 0);
 		DEST_ADDR_IN                : in    std_logic_vector(15 downto 0);
 		GENERATE_PACKET_IN          : in    std_logic;
+		
+		MODULE_SELECT_OUT     : out std_logic_vector(7 downto 0);
+		MODULE_RD_EN_OUT      : out std_logic;
+		MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
+		STOP_TRANSMISSION_OUT : out std_logic;
+		START_STAT_IN         : in std_logic;
+		
+		MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+		MODULE_RD_EN_IN             : in	std_logic;
+		MODULE_SELECTED_IN           : in	std_logic;
+		MODULE_FULL_OUT             : out	std_logic;
 		
 		SIZE_IN                     : in    std_logic_vector(15 downto 0);
 		BUSY_OUT                    : out   std_logic	
@@ -387,6 +399,7 @@ port (
 end component;
 
 component trb_net16_gbe_protocol_selector is
+generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 port (
 	CLK			: in	std_logic;  -- system clock
 	RESET			: in	std_logic;
@@ -445,7 +458,20 @@ port (
 	CNT_GENERATE_PACKET_IN   : in std_logic;
 	CNT_TIMESTAMP_IN         : in    std_logic_vector(31 downto 0);
 	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
-	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
+	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);	
+		
+	CNT_MODULE_SELECT_OUT     : out std_logic_vector(7 downto 0);
+	CNT_MODULE_RD_EN_OUT      : out std_logic;
+	CNT_MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
+	CNT_STOP_TRANSMISSION_OUT : out std_logic;
+	CNT_START_STAT_IN         : in std_logic;
+		
+	CNT_MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+	CNT_MODULE_RD_EN_IN             : in	std_logic;
+	CNT_MODULE_SELECTED_IN           : in	std_logic;
+	CNT_MODULE_FULL_OUT             : out	std_logic;
+	
+	
 	-- input for statistics from outside	
 	STAT_DATA_IN             : in std_logic_vector(31 downto 0);
 	STAT_ADDR_IN             : in std_logic_vector(7 downto 0);
@@ -483,6 +509,7 @@ port (
 end component;
 
 component trb_net16_gbe_main_control is
+generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 port (
 	CLK			: in	std_logic;  -- system clock
 	CLK_125			: in	std_logic;
@@ -542,6 +569,17 @@ port (
 	CNT_DEST_ADDR_IN         : in    std_logic_vector(15 downto 0);
 	CNT_SIZE_IN              : in    std_logic_vector(15 downto 0);
 	CNT_BUSY_OUT             : out std_logic;
+	
+	CNT_MODULE_SELECT_OUT     : out std_logic_vector(7 downto 0);
+	CNT_MODULE_RD_EN_OUT      : out std_logic;
+	CNT_MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
+	CNT_STOP_TRANSMISSION_OUT : out std_logic;
+	CNT_START_STAT_IN         : in std_logic;
+		
+	CNT_MODULE_DATA_OUT             : out	std_logic_vector(71 downto 0);
+	CNT_MODULE_RD_EN_IN             : in	std_logic;
+	CNT_MODULE_SELECTED_IN           : in	std_logic;
+	CNT_MODULE_FULL_OUT             : out	std_logic;
 	
 	GSC_CLK_IN               : in std_logic;
 	GSC_INIT_DATAREADY_OUT   : out std_logic;
