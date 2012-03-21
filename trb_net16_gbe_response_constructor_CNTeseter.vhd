@@ -90,7 +90,9 @@ signal packet_ctr : std_logic_vector(31 downto 0);
 
 
 signal stats_rd_clk, stats_we, stats_re : std_logic;
-signal stats_data, stats_q : std_logic_vector(71 downto 0);
+--signal stats_data, stats_q : std_logic_vector(71 downto 0);
+signal stats_data : std_logic_vector(63 downto 0);
+signal stats_q : std_logic_vector(7 downto 0);
 signal saved_timestamp, saved_rec_timestamp, saved_rec_packet_id : std_logic_vector(31 downto 0);
 
 type dissect_states is (IDLE, SAVE, CLEANUP);
@@ -351,7 +353,7 @@ end process SAVE_VALUES_PROC;
 -- *****************
 --  STATISTICS PART
 
-STATS_MEM : fifo_512x72
+STATS_MEM : fifo_512x64x8
     port map(
         Data		=> stats_data,
         RdClock		=> CLK, 
@@ -360,9 +362,11 @@ STATS_MEM : fifo_512x72
         RdEn		=> stats_re,
         Reset		=> RESET,
         RPReset		=> RESET,
-        Q			=> MODULE_DATA_OUT,
+        Q			=> stats_q,
         Empty		=> open,
-        Full		=> MODULE_FULL_OUT
+        Full		=> MODULE_FULL_OUT,
+        AlmostEmpty => open,
+        AlmostFull  => open
 );
 
 stats_re <= '1' when MODULE_RD_EN_IN = '1' and MODULE_SELECTED_IN = '1' else '0'; 
@@ -371,9 +375,10 @@ stats_we <= '1' when construct_current_state = TERMINATION or dissect_current_st
 
 stats_data(31 downto 0)  <= packet_ctr - x"1" when construct_current_state = TERMINATION else saved_rec_packet_id;
 stats_data(63 downto 32) <= saved_timestamp when construct_current_state = TERMINATION else saved_rec_timestamp;
-stats_data(71 downto 64) <= x"11" when construct_current_state = TERMINATION else x"22";
+--stats_data(71 downto 64) <= x"11" when construct_current_state = TERMINATION else x"22";
 
-
+MODULE_DATA_OUT(7 downto 0)  <= stats_q;
+MODULE_DATA_OUT(71 downto 8) <= (others => '0');
 
 
 -- END OF STATISTICS PART

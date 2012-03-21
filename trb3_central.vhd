@@ -268,6 +268,13 @@ signal sd1_tx_pll_lol, sd1_quad_rst : std_logic;
 signal sd2_tx_pll_lol, sd2_quad_rst : std_logic;
 
 signal timer1, timer2 : std_logic_vector(31 downto 0);
+signal module_full, module_selected : std_logic_vector(7 downto 0);
+
+type arr2 is array(7 downto 0) of std_logic_vector(71 downto 0);
+signal module_data : arr2;
+
+signal stop_trans, start_stat, module_rd_en : std_logic;
+signal stat_data : std_logic_vector(71 downto 0);
 
 begin
 
@@ -289,6 +296,7 @@ MAIN : CNTester_Main
 	);
 
 
+-- serdes 0 ch 0
 LINK_1 : CNTester_module
 	port map(
 		CLKSYS_IN  => clk_100_i,
@@ -316,6 +324,17 @@ LINK_1 : CNTester_module
 		SD_QUAD_RST_OUT             => sd_quad_rst(0),
 		SD_XMIT_OUT                 => sd_xmit(0),
 		
+		MODULE_SELECT_OUT     		=> open,
+		MODULE_RD_EN_OUT      		=> open,
+		MODULE_DATA_IN        		=> (others => '0'),
+		STOP_TRANSMISSION_OUT 		=> open,
+		START_STAT_IN         	 	=> '0',
+		
+		MODULE_DATA_OUT             => module_data(0),
+		MODULE_RD_EN_IN             => module_rd_en,
+		MODULE_SELECTED_IN          => module_selected(0),
+		MODULE_FULL_OUT             => module_full(0),
+		
 		MAC_ADDR_IN          => x"123456789010",
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
@@ -324,6 +343,7 @@ LINK_1 : CNTester_module
 		BUSY_OUT             => senders_free(0)
 	);
 	
+-- serdes 0 ch 1
 LINK_2 : CNTester_module
 port map(
 	CLKSYS_IN  => clk_100_i,
@@ -351,6 +371,18 @@ port map(
 	SD_QUAD_RST_OUT             => sd_quad_rst(1),
 	SD_XMIT_OUT                 => sd_xmit(1),
 	
+	MODULE_SELECT_OUT     		=> open,
+	MODULE_RD_EN_OUT      		=> open,
+	MODULE_DATA_IN        		=> (others => '0'),
+	STOP_TRANSMISSION_OUT 		=> open,
+	START_STAT_IN         	 	=> '0',
+	
+	MODULE_DATA_OUT             => module_data(1),
+	MODULE_RD_EN_IN             => module_rd_en,
+	MODULE_SELECTED_IN          => module_selected(1),
+	MODULE_FULL_OUT             => module_full(1),
+		
+	
 	MAC_ADDR_IN          => x"123456789011",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
@@ -359,6 +391,7 @@ port map(
 	BUSY_OUT             => senders_free(1)
 );
 
+-- serdes 0 ch 2
 LINK_3 : CNTester_module
 port map(
 	CLKSYS_IN  => clk_100_i,
@@ -386,6 +419,18 @@ port map(
 	SD_QUAD_RST_OUT             => sd_quad_rst(2),
 	SD_XMIT_OUT                 => sd_xmit(2),
 	
+	MODULE_SELECT_OUT     		=> open,
+	MODULE_RD_EN_OUT      		=> open,
+	MODULE_DATA_IN        		=> (others => '0'),
+	STOP_TRANSMISSION_OUT 		=> open,
+	START_STAT_IN         	 	=> '0',
+	
+	MODULE_DATA_OUT             => module_data(2),
+	MODULE_RD_EN_IN             => module_rd_en,
+	MODULE_SELECTED_IN          => module_selected(2),
+	MODULE_FULL_OUT             => module_full(2),
+		
+	
 	MAC_ADDR_IN          => x"123456789012",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
@@ -394,13 +439,14 @@ port map(
 	BUSY_OUT             => senders_free(2)
 );
 
+-- serdes 0 ch 3
 LINK_4 : CNTester_module
 port map(
 	CLKSYS_IN  => clk_100_i,
 	CLKGBE_IN  => CLK_GPLL_RIGHT,
 	RESET      => reset_i,
 	GSR_N      => GSR_N,
-	LINK_OK_OUT => sd2_link_ok(0),
+	LINK_OK_OUT => sd1_link_ok(3),
 	
 	-- serdes io
 	SD_RX_CLK_IN                => sd_rx_clk(3),
@@ -417,9 +463,21 @@ port map(
 	SD_RX_LOS_IN				=> sd_rx_los(3),
 	SD_SIGNAL_DETECTED_IN		=> sd_signal_detected(3),
 	SD_RX_CDR_IN				=> sd_rx_cdr(3),
-	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
+	SD_TX_PLL_LOL_IN            => sd1_tx_pll_lol,
 	SD_QUAD_RST_OUT             => sd_quad_rst(3),
 	SD_XMIT_OUT                 => sd_xmit(3),
+	
+	MODULE_SELECT_OUT     		=> open,
+	MODULE_RD_EN_OUT      		=> open,
+	MODULE_DATA_IN        		=> (others => '0'),
+	STOP_TRANSMISSION_OUT 		=> open,
+	START_STAT_IN         	 	=> '0',
+	
+	MODULE_DATA_OUT             => module_data(3),
+	MODULE_RD_EN_IN             => module_rd_en,
+	MODULE_SELECTED_IN          => module_selected(3),
+	MODULE_FULL_OUT             => module_full(3),
+		
 	
 	MAC_ADDR_IN          => x"123456789013",
 	TIMESTAMP_IN         => timestamp,
@@ -429,13 +487,14 @@ port map(
 	BUSY_OUT             => senders_free(3)
 );
 
+-- serdes 1 ch 0
 LINK_5 : CNTester_module
 port map(
 	CLKSYS_IN  => clk_100_i,
 	CLKGBE_IN  => CLK_GPLL_RIGHT,
 	RESET      => reset_i,
 	GSR_N      => GSR_N,
-	LINK_OK_OUT => sd2_link_ok(1),
+	LINK_OK_OUT => sd2_link_ok(0),
 	
 	-- serdes io
 	SD_RX_CLK_IN                => sd_rx_clk(4),
@@ -456,6 +515,18 @@ port map(
 	SD_QUAD_RST_OUT             => sd_quad_rst(4),
 	SD_XMIT_OUT                 => sd_xmit(4),
 	
+	MODULE_SELECT_OUT     		=> open,
+	MODULE_RD_EN_OUT      		=> open,
+	MODULE_DATA_IN        		=> (others => '0'),
+	STOP_TRANSMISSION_OUT 		=> open,
+	START_STAT_IN         	 	=> '0',
+	
+	MODULE_DATA_OUT             => module_data(4),
+	MODULE_RD_EN_IN             => module_rd_en,
+	MODULE_SELECTED_IN          => module_selected(4),
+	MODULE_FULL_OUT             => module_full(4),
+		
+	
 	MAC_ADDR_IN          => x"123456789014",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
@@ -464,13 +535,14 @@ port map(
 	BUSY_OUT             => senders_free(4)
 );
 
+-- serdes 1 ch 1
 LINK_6 : CNTester_module
 port map(
 	CLKSYS_IN  => clk_100_i,
 	CLKGBE_IN  => CLK_GPLL_RIGHT,
 	RESET      => reset_i,
 	GSR_N      => GSR_N,
-	LINK_OK_OUT => sd2_link_ok(2),
+	LINK_OK_OUT => sd2_link_ok(1),
 	
 	-- serdes io
 	SD_RX_CLK_IN                => sd_rx_clk(5),
@@ -491,6 +563,18 @@ port map(
 	SD_QUAD_RST_OUT             => sd_quad_rst(5),
 	SD_XMIT_OUT                 => sd_xmit(5),
 	
+	MODULE_SELECT_OUT     		=> open,
+	MODULE_RD_EN_OUT      		=> open,
+	MODULE_DATA_IN        		=> (others => '0'),
+	STOP_TRANSMISSION_OUT 		=> open,
+	START_STAT_IN         	 	=> '0',
+	
+	MODULE_DATA_OUT             => module_data(5),
+	MODULE_RD_EN_IN             => module_rd_en,
+	MODULE_SELECTED_IN          => module_selected(5),
+	MODULE_FULL_OUT             => module_full(5),
+		
+	
 	MAC_ADDR_IN          => x"123456789015",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
@@ -498,6 +582,137 @@ port map(
 	SIZE_IN              => size,
 	BUSY_OUT             => senders_free(5)
 );
+
+-- serdes 1 ch 2
+LINK_7 : CNTester_module
+port map(
+	CLKSYS_IN  => clk_100_i,
+	CLKGBE_IN  => CLK_GPLL_RIGHT,
+	RESET      => reset_i,
+	GSR_N      => GSR_N,
+	LINK_OK_OUT => sd2_link_ok(2),
+	
+	-- serdes io
+	SD_RX_CLK_IN                => sd_rx_clk(6),
+	SD_TX_DATA_OUT              => sd_tx_data(6),
+	SD_TX_KCNTL_OUT             => sd_tx_k(6),
+	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(6),
+	SD_RX_DATA_IN               => sd_rx_data(6),
+	SD_RX_KCNTL_IN              => sd_rx_k(6),
+	SD_RX_DISP_ERROR_IN         => sd_rx_disp(6),
+	SD_RX_CV_ERROR_IN           => sd_cv_err(6),
+	SD_RX_SERDES_RST_OUT        => sd_rx_serdes_rst(6),
+	SD_RX_PCS_RST_OUT           => sd_rx_pcs_rst(6),
+	SD_TX_PCS_RST_OUT			=> sd_tx_pcs_rst(6),
+	SD_RX_LOS_IN				=> sd_rx_los(6),
+	SD_SIGNAL_DETECTED_IN		=> sd_signal_detected(6),
+	SD_RX_CDR_IN				=> sd_rx_cdr(6),
+	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
+	SD_QUAD_RST_OUT             => sd_quad_rst(6),
+	SD_XMIT_OUT                 => sd_xmit(6),
+	
+	MODULE_SELECT_OUT     		=> open,
+	MODULE_RD_EN_OUT      		=> open,
+	MODULE_DATA_IN        		=> (others => '0'),
+	STOP_TRANSMISSION_OUT 		=> open,
+	START_STAT_IN         	 	=> '0',
+	
+	MODULE_DATA_OUT             => module_data(6),
+	MODULE_RD_EN_IN             => module_rd_en,
+	MODULE_SELECTED_IN          => module_selected(6),
+	MODULE_FULL_OUT             => module_full(6),
+
+	
+	MAC_ADDR_IN          => x"123456789016",
+	TIMESTAMP_IN         => timestamp,
+	DEST_ADDR_IN         => dest_addr,
+	GENERATE_PACKET_IN   => activate_sender(6),
+	SIZE_IN              => size,
+	BUSY_OUT             => senders_free(6)
+);
+
+-- serdes 1 ch 3
+LINK_STATS : CNTester_module
+generic map( g_GENERATE_STAT => 1 )
+port map(
+	CLKSYS_IN  => clk_100_i,
+	CLKGBE_IN  => CLK_GPLL_RIGHT,
+	RESET      => reset_i,
+	GSR_N      => GSR_N,
+	LINK_OK_OUT => sd2_link_ok(3),
+	
+	-- serdes io
+	SD_RX_CLK_IN                => sd_rx_clk(7),
+	SD_TX_DATA_OUT              => sd_tx_data(7),
+	SD_TX_KCNTL_OUT             => sd_tx_k(7),
+	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(7),
+	SD_RX_DATA_IN               => sd_rx_data(7),
+	SD_RX_KCNTL_IN              => sd_rx_k(7),
+	SD_RX_DISP_ERROR_IN         => sd_rx_disp(7),
+	SD_RX_CV_ERROR_IN           => sd_cv_err(7),
+	SD_RX_SERDES_RST_OUT        => sd_rx_serdes_rst(7),
+	SD_RX_PCS_RST_OUT           => sd_rx_pcs_rst(7),
+	SD_TX_PCS_RST_OUT			=> sd_tx_pcs_rst(7),
+	SD_RX_LOS_IN				=> sd_rx_los(7),
+	SD_SIGNAL_DETECTED_IN		=> sd_signal_detected(7),
+	SD_RX_CDR_IN				=> sd_rx_cdr(7),
+	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
+	SD_QUAD_RST_OUT             => sd_quad_rst(7),
+	SD_XMIT_OUT                 => sd_xmit(7),
+	
+	MODULE_SELECT_OUT     		=> module_selected,
+	MODULE_RD_EN_OUT      		=> module_rd_en,
+	MODULE_DATA_IN        		=> stat_data,
+	STOP_TRANSMISSION_OUT 		=> stop_trans,
+	START_STAT_IN         	 	=> start_stat,
+	
+	MODULE_DATA_OUT             => open,
+	MODULE_RD_EN_IN             => '0',
+	MODULE_SELECTED_IN          => '0',
+	MODULE_FULL_OUT             => open,
+		
+	
+	MAC_ADDR_IN          => x"123456789020",
+	TIMESTAMP_IN         => timestamp,
+	DEST_ADDR_IN         => dest_addr,
+	GENERATE_PACKET_IN   => '0',
+	SIZE_IN              => size,
+	BUSY_OUT             => open
+);
+
+STAT_DATA_SELECTOR : process(module_selected)
+begin
+
+	case module_selected is
+	
+		when "00000001" =>
+			stat_data <= module_data(0);
+		
+		when "00000010" =>
+			stat_data <= module_data(1);
+			
+		when "00000100" =>
+			stat_data <= module_data(2);
+			
+		when "00001000" =>
+			stat_data <= module_data(3);
+			
+		when "00010000" =>
+			stat_data <= module_data(4);
+			
+		when "00100000" =>
+			stat_data <= module_data(5);
+			
+		when "01000000" =>
+			stat_data <= module_data(6);
+	
+		when others =>
+			stat_data <= (others => '1');
+	
+	end case;
+
+end process STAT_DATA_SELECTOR;
+
 
 SERDES1 : serdes4ch  -- PCSA
  port map(

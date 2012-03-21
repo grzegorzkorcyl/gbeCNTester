@@ -9,6 +9,23 @@ use work.trb_net_gbe_protocols.all;
 
 package trb_net_gbe_components is
 
+
+component fifo_512x64x8 is
+    port (
+        Data: in  std_logic_vector(63 downto 0); 
+        WrClock: in  std_logic; 
+        RdClock: in  std_logic; 
+        WrEn: in  std_logic; 
+        RdEn: in  std_logic; 
+        Reset: in  std_logic; 
+        RPReset: in  std_logic; 
+        Q: out  std_logic_vector(7 downto 0); 
+        Empty: out  std_logic; 
+        Full: out  std_logic; 
+        AlmostEmpty: out  std_logic; 
+        AlmostFull: out  std_logic);
+end component;
+
 component stats_ram is
      port (
         WrAddress: in  std_logic_vector(9 downto 0); 
