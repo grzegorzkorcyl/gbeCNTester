@@ -275,26 +275,31 @@ signal module_data : arr2;
 
 signal stop_trans, start_stat, module_rd_en : std_logic;
 signal stat_data : std_logic_vector(71 downto 0);
+signal link_ok_for_main : std_logic;
 
 begin
 
 --link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2);
-link_ok <= '1';
+link_ok <= sd1_link_ok(0); --'1';
 
 MAIN : CNTester_Main
 	port map (
 		CLKSYS_IN  => clk_100_i,
 		RESET      => reset_i,
-		LINK_OK_IN => link_ok,
+		LINK_OK_IN => link_ok_for_main,
 		
 		GENERATE_OUT    => activate_sender,
 		TIMESTAMP_OUT   => timestamp,
 		DEST_ADDR_OUT   => dest_addr,
 		SIZE_OUT        => size,
 		
+		
+		
 		SENDERS_FREE_IN => senders_free
 	);
 
+-- stop generating data in case stats are being collected from modules
+link_ok_for_main <= link_ok when stop_trans = '0' else '0';
 
 -- serdes 0 ch 0
 LINK_1 : CNTester_module
@@ -1138,11 +1143,11 @@ LED_YELLOW <= sd_signal_detected(0); --debug(3);
 ---------------------------------------------------------------------------
 -- Test Circuits
 ---------------------------------------------------------------------------
-  process
-    begin
-      wait until rising_edge(clk_100_i);
-      time_counter <= time_counter + 1;
-    end process;
+--  process
+--    begin
+--      wait until rising_edge(clk_100_i);
+--      time_counter <= time_counter + 1;
+--    end process;
 
 
 end architecture;
