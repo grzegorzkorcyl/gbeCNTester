@@ -210,6 +210,7 @@ end process TC_DATA_SYNC;
 -- END OF TRANSMISSION PART
 -- *****************
 
+STOP_TRANSMISSION_OUT <= '0';
 
 
 PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';

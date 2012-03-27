@@ -269,6 +269,9 @@ generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 		MODULE_SELECTED_IN           : in	std_logic;
 		MODULE_FULL_OUT             : out	std_logic;
 		
+		TEST_PORT_IN                : in	std_logic_vector(123 downto 0);
+		TEST_PORT_OUT               : out	std_logic_vector(123 downto 0);
+		
 		SIZE_IN                     : in    std_logic_vector(15 downto 0);
 		BUSY_OUT                    : out   std_logic	
 		

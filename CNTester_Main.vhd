@@ -51,7 +51,7 @@ begin
 	GENERATE_MACHINE_PROC : process(CLKSYS_IN)
 	begin
 		if rising_edge(CLKSYS_IN) then
-			if (RESET = '1') or (LINK_OK_IN = '0') then
+			if (RESET = '1') then
 				generate_current_state <= IDLE;
 			else
 				generate_current_state <= generate_next_state;
@@ -65,7 +65,7 @@ begin
 		case (generate_current_state) is
 		
 			when IDLE =>
-				if (SENDERS_FREE_IN = "000") then
+				if (SENDERS_FREE_IN = "000") and (LINK_OK_IN = '1') then
 					generate_next_state <= GENERATE_SENDER;
 				else
 					generate_next_state <= IDLE;

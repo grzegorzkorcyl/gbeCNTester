@@ -375,7 +375,6 @@ stats_we <= '1' when construct_current_state = TERMINATION or dissect_current_st
 
 stats_data(31 downto 0)  <= packet_ctr - x"1" when construct_current_state = TERMINATION else saved_rec_packet_id;
 stats_data(63 downto 32) <= saved_timestamp when construct_current_state = TERMINATION else saved_rec_timestamp;
---stats_data(71 downto 64) <= x"11" when construct_current_state = TERMINATION else x"22";
 
 MODULE_DATA_OUT(7 downto 0)  <= stats_q;
 MODULE_DATA_OUT(71 downto 8) <= (others => '0');

@@ -39,6 +39,9 @@ generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 		MODULE_SELECTED_IN           : in	std_logic;
 		MODULE_FULL_OUT             : out	std_logic;
 		
+		TEST_PORT_IN                : in	std_logic_vector(123 downto 0);
+		TEST_PORT_OUT               : out	std_logic_vector(123 downto 0);
+		
 		-- serdes io
 		SD_RX_CLK_IN                : in	std_logic;
 		SD_TX_DATA_OUT              : out	std_logic_vector(7 downto 0);
@@ -795,17 +798,17 @@ MAC: tsmac34
 	------------- Output signals from the Rx MAC FIFO I/F ---------------   
 		rx_fifo_error			=> mac_rx_fifo_err, --open,
 		rx_stat_vector			=> mac_rx_stat_vec, --open,
-		rx_dbout			=> open, --mac_rxd, --open,
-		rx_write			=> open, --mac_rx_en, --open,
+		rx_dbout			=> mac_rxd, --open,
+		rx_write			=> mac_rx_en, --open,
 		rx_stat_en			=> mac_rx_stat_en, --open,
-		rx_eof				=> open, --mac_rx_eof, --open,
+		rx_eof				=> mac_rx_eof, --open,
 		rx_error			=> mac_rx_er --open
 	);
 	
 	-- LOOPBACK FOR TESTBENCH
-	mac_rxd <= ft_data(7 downto 0);
-	mac_rx_en <= fc_test_rd_en;-- mac_fifoavail;
-	mac_rx_eof <= mac_fifoeof;
+--	mac_rxd <= ft_data(7 downto 0);
+--	mac_rx_en <= fc_test_rd_en;-- mac_fifoavail;
+--	mac_rx_eof <= mac_fifoeof;
 	
 	SYNC_GMII_RX_PROC : process(serdes_rx_clk)
 	begin
@@ -896,5 +899,11 @@ fc_ihl_version    <= x"45";
 fc_tos            <= x"10";
 
 LINK_OK_OUT		  <= link_ok;
+
+
+-- for debug only
+--TEST_PORT_OUT(7 downto 0) <= ft_data;
+--TEST_PORT_OUT(8)          <= mac_fifoeof;
+--TEST_PORT_OUT(9)          <= mac_fifoavail;
 	
 end architecture CNTester_module;

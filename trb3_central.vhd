@@ -987,7 +987,7 @@ SERDES1 : serdes4ch  -- PCSA
 
 
 sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1) or sd_quad_rst(2) or sd_quad_rst(3);
-sd2_quad_rst <= sd_quad_rst(4) or sd_quad_rst(5) or sd_quad_rst(6) or sd_quad_rst(4);
+sd2_quad_rst <= sd_quad_rst(4) or sd_quad_rst(5) or sd_quad_rst(6) or sd_quad_rst(7);
 
 
 SFP_TXDIS(8 downto 1) <= (others => '0');
