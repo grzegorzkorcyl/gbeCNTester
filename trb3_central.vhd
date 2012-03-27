@@ -340,6 +340,9 @@ LINK_1 : CNTester_module
 		MODULE_SELECTED_IN          => module_selected(0),
 		MODULE_FULL_OUT             => module_full(0),
 		
+		TEST_PORT_IN         => (others => '0'),
+		TEST_PORT_OUT        => open,
+		
 		MAC_ADDR_IN          => x"123456789010",
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
@@ -386,7 +389,9 @@ port map(
 	MODULE_RD_EN_IN             => module_rd_en,
 	MODULE_SELECTED_IN          => module_selected(1),
 	MODULE_FULL_OUT             => module_full(1),
-		
+	
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789011",
 	TIMESTAMP_IN         => timestamp,
@@ -434,7 +439,9 @@ port map(
 	MODULE_RD_EN_IN             => module_rd_en,
 	MODULE_SELECTED_IN          => module_selected(2),
 	MODULE_FULL_OUT             => module_full(2),
-		
+	
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789012",
 	TIMESTAMP_IN         => timestamp,
@@ -483,6 +490,8 @@ port map(
 	MODULE_SELECTED_IN          => module_selected(3),
 	MODULE_FULL_OUT             => module_full(3),
 		
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789013",
 	TIMESTAMP_IN         => timestamp,
@@ -530,7 +539,9 @@ port map(
 	MODULE_RD_EN_IN             => module_rd_en,
 	MODULE_SELECTED_IN          => module_selected(4),
 	MODULE_FULL_OUT             => module_full(4),
-		
+	
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789014",
 	TIMESTAMP_IN         => timestamp,
@@ -579,6 +590,8 @@ port map(
 	MODULE_SELECTED_IN          => module_selected(5),
 	MODULE_FULL_OUT             => module_full(5),
 		
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789015",
 	TIMESTAMP_IN         => timestamp,
@@ -627,6 +640,8 @@ port map(
 	MODULE_SELECTED_IN          => module_selected(6),
 	MODULE_FULL_OUT             => module_full(6),
 
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789016",
 	TIMESTAMP_IN         => timestamp,
@@ -676,6 +691,8 @@ port map(
 	MODULE_SELECTED_IN          => '0',
 	MODULE_FULL_OUT             => open,
 		
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789020",
 	TIMESTAMP_IN         => timestamp,
