@@ -65,14 +65,14 @@ begin
 		case (generate_current_state) is
 		
 			when IDLE =>
-				if (SENDERS_FREE_IN = "000") and (LINK_OK_IN = '1') then
+				if (SENDERS_FREE_IN = "00000000") and (LINK_OK_IN = '1') then
 					generate_next_state <= GENERATE_SENDER;
 				else
 					generate_next_state <= IDLE;
 				end if;
 			
 			when GENERATE_SENDER =>
-				if (generate_t /= "000")   then
+				if (generate_t /= "00000000")   then
 					generate_next_state <= GENERATE_SIZE;
 				else
 					generate_next_state <= GENERATE_SENDER;
@@ -101,7 +101,7 @@ begin
 				generate_next_state <= WAIT5;
 				
 			when WAIT5 =>
-				if (SENDERS_FREE_IN = "000") then
+				if (SENDERS_FREE_IN = "00000000") then
 					generate_next_state <= IDLE;
 				else
 					generate_next_state <= WAIT5;

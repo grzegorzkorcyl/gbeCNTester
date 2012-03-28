@@ -409,9 +409,16 @@ signal pcs_tx_en_q, pcs_tx_er_q, pcs_rx_en_q, pcs_rx_er_q, mac_col_q, mac_crs_q 
 signal pcs_txd_qq, pcs_rxd_qq : std_logic_vector(7 downto 0);
 signal pcs_tx_en_qq, pcs_tx_er_qq, pcs_rx_en_qq, pcs_rx_er_qq, mac_col_qq, mac_crs_qq : std_logic;
 
-signal fc_test_rd_en : std_logic;
+signal fc_test_rd_en, fc_test_rd_en_q : std_logic;
+signal fr_rx_clk : std_logic;
 
 begin
+
+-- WARNING: setting allowed types to constat true
+fr_allowed_types     <= x"0000_00ff";  -- only test protocol allowed
+fr_allowed_ip        <= x"0000_00ff";
+fr_allowed_udp       <= x"0000_00ff";
+vlan_id          <= (others => '0');
 
 MAIN_CONTROL : trb_net16_gbe_main_control
 generic map ( g_GENERATE_STAT => g_GENERATE_STAT)
@@ -620,7 +627,7 @@ port map(
 	RD_CLK				    => serdes_clk_125,
 	FT_DATA_OUT 			=> ft_data,
 	FT_TX_EMPTY_OUT			=> ft_tx_empty,
-	FT_TX_RD_EN_IN			=> fc_test_rd_en, --mac_tx_read,
+	FT_TX_RD_EN_IN			=> fc_test_rd_en_q, --mac_tx_read,
 	FT_START_OF_PACKET_OUT	=> ft_start_of_packet,
 	FT_TX_DONE_IN			=> mac_tx_done,
 	FT_TX_DISCFRM_IN		=> mac_tx_discfrm,
@@ -630,8 +637,17 @@ port map(
 	DEBUG_OUT              	=> open
 );
 
-fc_test_rd_en <= '1' when g_SIMULATE = 1 and ft_tx_empty = '0' else mac_tx_read;
-
+TEST_RD_PROC : process(serdes_clk_125)
+begin
+	if g_SIMULATE = 1 then
+		fc_test_rd_en <= not ft_tx_empty;
+	else
+		fc_test_rd_en <= mac_tx_read;
+	end if;
+	
+	fc_test_rd_en_q <= fc_test_rd_en;
+--fc_test_rd_en <= '1' when g_SIMULATE = 1 and ft_tx_empty = '0' else mac_tx_read;
+end process TEST_RD_PROC;
 
 RECEIVE_CONTROLLER : trb_net16_gbe_receive_control
 port map(
@@ -746,6 +762,7 @@ port map(
 	  DEBUG_OUT		=> open
   );
   
+--fr_rx_clk <= CLKGBE_IN when g_SIMULATE = 1 else serdes_rx_clk;
   
   
 MAC: tsmac34
@@ -796,13 +813,13 @@ MAC: tsmac34
 		tx_statvec			=> mac_tx_statevec,  -- gk 08.06.10
 		tx_done				=> mac_tx_done,
 	------------- Output signals from the Rx MAC FIFO I/F ---------------   
-		rx_fifo_error			=> mac_rx_fifo_err, --open,
-		rx_stat_vector			=> mac_rx_stat_vec, --open,
-		rx_dbout			=> mac_rxd, --open,
-		rx_write			=> mac_rx_en, --open,
-		rx_stat_en			=> mac_rx_stat_en, --open,
-		rx_eof				=> mac_rx_eof, --open,
-		rx_error			=> mac_rx_er --open
+		rx_fifo_error			=> mac_rx_fifo_err,
+		rx_stat_vector			=> mac_rx_stat_vec,
+		rx_dbout			=> mac_rxd,
+		rx_write			=> mac_rx_en,
+		rx_stat_en			=> mac_rx_stat_en,
+		rx_eof				=> mac_rx_eof,
+		rx_error			=> mac_rx_er
 	);
 	
 	-- LOOPBACK FOR TESTBENCH
