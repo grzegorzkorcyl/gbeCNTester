@@ -365,9 +365,9 @@ STATS_MEM : fifo_512x64x8
         RPReset		=> RESET,
         Q			=> stats_q,
         Empty		=> open,
-        Full		=> MODULE_FULL_OUT,
+        Full		=> open,
         AlmostEmpty => open,
-        AlmostFull  => open
+        AlmostFull  => MODULE_FULL_OUT
 );
 
 stats_re <= '1' when MODULE_RD_EN_IN = '1' and MODULE_SELECTED_IN = '1' else '0'; 

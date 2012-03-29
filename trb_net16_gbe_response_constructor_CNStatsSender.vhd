@@ -129,7 +129,7 @@ begin
 			
 		when LOAD_DATA =>
 			state <= x"3";
-			if (load_ctr = size_t - x"1") then
+			if (load_ctr = x"0400" - x"1") then  -- send data only from two first modules
 				construct_next_state <= TERMINATION;
 			else
 				construct_next_state <= LOAD_DATA;
@@ -152,7 +152,7 @@ begin
 	if rising_edge(CLK) then
 		if (RESET = '1') or (construct_next_state = IDLE) then
 			module_ctr <= x"01";
-		elsif (construct_current_state = LOAD_DATA and load_ctr = 511) then
+		elsif (construct_current_state = LOAD_DATA and load_ctr = x"0200") then
 			module_ctr(7 downto 1) <= module_ctr(6 downto 0);
 			module_ctr(0)          <= '0';
 		end if;
@@ -177,7 +177,7 @@ begin
 	end if;
 end process LOAD_CTR_PROC;
 
-TC_DATA_PROC : process(construct_current_state, load_ctr)
+TC_DATA_PROC : process(construct_current_state, MODULE_DATA_IN)
 begin
 
 	tc_data(8) <= '0';
@@ -186,7 +186,7 @@ begin
 			
 		when LOAD_DATA =>
 			for i in 0 to 7 loop
-				tc_data(i) <= load_ctr(i);
+				tc_data(i) <= MODULE_DATA_IN(i);
 			end loop;
 			
 		when TERMINATION =>
@@ -210,13 +210,13 @@ end process TC_DATA_SYNC;
 -- END OF TRANSMISSION PART
 -- *****************
 
-STOP_TRANSMISSION_OUT <= '0';
+STOP_TRANSMISSION_OUT <= '1' when construct_current_state /= IDLE else '0';
 
 
 PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1'; 
 
-TC_FRAME_SIZE_OUT <= size_t; --x"00c9";
+TC_FRAME_SIZE_OUT <= x"0400";
 TC_FRAME_TYPE_OUT <= x"1101";  -- frame type: CNTester 
 
 TC_DEST_MAC_OUT <= x"ffffffffffff";
