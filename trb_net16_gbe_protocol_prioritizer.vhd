@@ -49,7 +49,7 @@ begin
 			-- less significant bit has the higher priority
 			case FRAME_TYPE_IN is
 			
-				-- for CN test on Tester is valid
+				-- for CN test only Tester is valid
 				when x"0111" =>
 					CODE_OUT(0) <= '1';
 			
@@ -77,7 +77,6 @@ begin
 --				when x"0806" =>
 --					CODE_OUT(0) <= '1';
 				
-				-- last slot is reserved for Trash
 				when others =>
 					CODE_OUT <= (others => '0');
 			

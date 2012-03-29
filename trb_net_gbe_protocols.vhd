@@ -19,16 +19,17 @@ constant c_MAX_PROTOCOLS      : integer range 1 to 16 := 1;
 constant c_MAX_IP_PROTOCOLS   : integer range 1 to 16 := 2;
 constant c_MAX_UDP_PROTOCOLS  : integer range 1 to 16 := 2;
 
+--WARNING: do not leave zeros as unused types or protocols
 type frame_types_a is array(c_MAX_FRAME_TYPES - 1 downto 0) of std_logic_vector(15 downto 0);
-constant FRAME_TYPES : frame_types_a := (x"0112", x"ffff"); -- x"0800", x"0806"); 
+constant FRAME_TYPES : frame_types_a := (x"0111", x"ffff"); -- x"0800", x"0806"); 
 -- Test protocol only 
 
 type ip_protos_a is array(c_MAX_IP_PROTOCOLS - 1 downto 0) of std_logic_vector(7 downto 0);
-constant IP_PROTOCOLS : ip_protos_a := (x"11", x"00"); --(x"11", x"01");
+constant IP_PROTOCOLS : ip_protos_a := (x"11", x"ff"); --(x"11", x"01");
 -- none is being used
 
 type udp_protos_a is array(c_MAX_UDP_PROTOCOLS - 1 downto 0) of std_logic_vector(15 downto 0);
-constant UDP_PROTOCOLS : udp_protos_a := (x"0044", x"0000"); --(x"0044", x"61a8", x"7530");
+constant UDP_PROTOCOLS : udp_protos_a := (x"0044", x"ffff"); --(x"0044", x"61a8", x"7530");
 -- none is being used
 
 component trb_net16_gbe_response_constructor_CNTester is
