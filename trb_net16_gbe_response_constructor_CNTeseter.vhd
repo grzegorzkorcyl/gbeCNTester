@@ -321,22 +321,22 @@ begin
 		elsif (PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
 			case (resp_bytes_ctr) is
 				
-				when 4 =>
-					saved_rec_packet_id(7 downto 0) <= PS_DATA_IN(7 downto 0);
 				when 3 =>
-					saved_rec_packet_id(15 downto 8) <= PS_DATA_IN(7 downto 0);
+					saved_rec_packet_id(7 downto 0) <= PS_DATA_IN(7 downto 0);
 				when 2 =>
-					saved_rec_packet_id(23 downto 16) <= PS_DATA_IN(7 downto 0);
+					saved_rec_packet_id(15 downto 8) <= PS_DATA_IN(7 downto 0);
 				when 1 =>
+					saved_rec_packet_id(23 downto 16) <= PS_DATA_IN(7 downto 0);
+				when 0 =>
 					saved_rec_packet_id(31 downto 24) <= PS_DATA_IN(7 downto 0);
 					
-				when 8 =>
-					saved_rec_timestamp(7 downto 0) <= PS_DATA_IN(7 downto 0);
 				when 7 =>
-					saved_rec_timestamp(15 downto 8) <= PS_DATA_IN(7 downto 0);
+					saved_rec_timestamp(7 downto 0) <= PS_DATA_IN(7 downto 0);
 				when 6 =>
-					saved_rec_timestamp(23 downto 16) <= PS_DATA_IN(7 downto 0);
+					saved_rec_timestamp(15 downto 8) <= PS_DATA_IN(7 downto 0);
 				when 5 =>
+					saved_rec_timestamp(23 downto 16) <= PS_DATA_IN(7 downto 0);
+				when 4 =>
 					saved_rec_timestamp(31 downto 24) <= PS_DATA_IN(7 downto 0);
 					
 				when others => null;
