@@ -99,7 +99,7 @@ type dissect_states is (IDLE, SAVE, CLEANUP);
 signal dissect_current_state, dissect_next_state : dissect_states;
 attribute syn_encoding of dissect_current_state: signal is "safe,gray";
 
-signal resp_bytes_ctr : integer range 0 to 10;
+signal resp_bytes_ctr : integer range 0 to 9000;
 
 begin
 

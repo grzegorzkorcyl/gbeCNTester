@@ -217,15 +217,16 @@ PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1'; 
 
 TC_FRAME_SIZE_OUT <= x"0400";
-TC_FRAME_TYPE_OUT <= x"1101";  -- frame type: CNTester 
+
+TC_FRAME_TYPE_OUT <= x"0008";  -- frame type: ip 
 
 TC_DEST_MAC_OUT <= x"ffffffffffff";
-TC_DEST_IP_OUT  <= (others => '0');
-TC_DEST_UDP_OUT <= (others => '0');
-TC_SRC_MAC_OUT  <= x"123456789012";
-TC_SRC_IP_OUT   <= (others => '0');
-TC_SRC_UDP_OUT  <= (others  => '0');
-TC_IP_PROTOCOL_OUT <= (others  => '0'); -- udp
+TC_DEST_IP_OUT  <= x"ff00a8c0";
+TC_DEST_UDP_OUT <= x"55c3";
+TC_SRC_MAC_OUT  <= g_MY_MAC;
+TC_SRC_IP_OUT   <= g_MY_IP;
+TC_SRC_UDP_OUT  <= x"55c3";
+TC_IP_PROTOCOL_OUT <= x"11"; -- udp
 
 
 end trb_net16_gbe_response_constructor_CNStatsSender;
