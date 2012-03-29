@@ -101,8 +101,6 @@ attribute syn_encoding of dissect_current_state: signal is "safe,gray";
 
 signal resp_bytes_ctr : integer range 0 to 10;
 
-signal local_data : std_logic_vector(7 downto 0);
-
 begin
 
 
@@ -212,20 +210,22 @@ begin
 		TC_DATA_OUT(8) <= '0';
 	
 		if (load_ctr = x"0000") then
-			TC_DATA_OUT(7 downto 0) <= packet_ctr(31 downto 24);
+			TC_DATA_OUT(7 downto 0) <= x"cc";
 		elsif (load_ctr = x"0001") then
-			TC_DATA_OUT(7 downto 0) <= packet_ctr(23 downto 16);
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(31 downto 24);
 		elsif (load_ctr = x"0002") then
-			TC_DATA_OUT(7 downto 0) <= packet_ctr(15 downto 8);
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(23 downto 16);
 		elsif (load_ctr = x"0003") then
-			TC_DATA_OUT(7 downto 0) <= packet_ctr(7 downto 0);
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(15 downto 8);
 		elsif (load_ctr = x"0004") then
-			TC_DATA_OUT(7 downto 0) <= saved_timestamp(31 downto 24);
+			TC_DATA_OUT(7 downto 0) <= packet_ctr(7 downto 0);
 		elsif (load_ctr = x"0005") then
-			TC_DATA_OUT(7 downto 0) <= saved_timestamp(23 downto 16);
+			TC_DATA_OUT(7 downto 0) <= saved_timestamp(31 downto 24);
 		elsif (load_ctr = x"0006") then
-			TC_DATA_OUT(7 downto 0) <= saved_timestamp(15 downto 8);
+			TC_DATA_OUT(7 downto 0) <= saved_timestamp(23 downto 16);
 		elsif (load_ctr = x"0007") then
+			TC_DATA_OUT(7 downto 0) <= saved_timestamp(15 downto 8);
+		elsif (load_ctr = x"0008") then
 			TC_DATA_OUT(7 downto 0) <= saved_timestamp(7 downto 0);
 		else
 			TC_DATA_OUT <= tc_data;
@@ -315,29 +315,29 @@ end process RESP_BYTES_CTR_PROC;
 SAVE_VALUES_PROC : process(CLK)
 begin
 	if rising_edge(CLK) then
-		if (RESET = '1') then
+		if (RESET = '1') or (dissect_current_state = IDLE)then
 			saved_rec_packet_id <= (others => '0');
 			saved_rec_timestamp <= (others => '0');
 		elsif (PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
 			case (resp_bytes_ctr) is
 				
-				when 3 =>
-					saved_rec_packet_id(7 downto 0) <= local_data;
-				when 2 =>
-					saved_rec_packet_id(15 downto 8) <= local_data;
-				when 1 =>
-					saved_rec_packet_id(23 downto 16) <= local_data;
-				when 0 =>
-					saved_rec_packet_id(31 downto 24) <= local_data;
-					
-				when 7 =>
-					saved_rec_timestamp(7 downto 0) <= local_data;
-				when 6 =>
-					saved_rec_timestamp(15 downto 8) <= local_data;
-				when 5 =>
-					saved_rec_timestamp(23 downto 16) <= local_data;
 				when 4 =>
-					saved_rec_timestamp(31 downto 24) <= local_data;
+					saved_rec_packet_id(7 downto 0) <= PS_DATA_IN(7 downto 0);
+				when 3 =>
+					saved_rec_packet_id(15 downto 8) <= PS_DATA_IN(7 downto 0);
+				when 2 =>
+					saved_rec_packet_id(23 downto 16) <= PS_DATA_IN(7 downto 0);
+				when 1 =>
+					saved_rec_packet_id(31 downto 24) <= PS_DATA_IN(7 downto 0);
+					
+				when 8 =>
+					saved_rec_timestamp(7 downto 0) <= PS_DATA_IN(7 downto 0);
+				when 7 =>
+					saved_rec_timestamp(15 downto 8) <= PS_DATA_IN(7 downto 0);
+				when 6 =>
+					saved_rec_timestamp(23 downto 16) <= PS_DATA_IN(7 downto 0);
+				when 5 =>
+					saved_rec_timestamp(31 downto 24) <= PS_DATA_IN(7 downto 0);
 					
 				when others => null;
 			end case;
@@ -345,13 +345,6 @@ begin
 	end if;
 end process SAVE_VALUES_PROC;
 
--- delay by one clock cycle in order to correctly save the values
-LOCAL_DATA_PROC : process(CLK)
-begin
-	if rising_edge(CLK) then
-		local_data <= PS_DATA_IN(7 downto 0);
-	end if;
-end process LOCAL_DATA_PROC;
 
 -- END OF RECEVING PART
 -- *****************
