@@ -702,6 +702,8 @@ port map(
 	BUSY_OUT             => open
 );
 
+start_stat <= '1' when module_full(6 downto 0) /= "0000000" else '0';
+
 STAT_DATA_SELECTOR : process(module_selected)
 begin
 
