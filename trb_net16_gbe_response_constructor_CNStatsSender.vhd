@@ -224,7 +224,7 @@ TC_DEST_MAC_OUT <= x"ffffffffffff";
 TC_DEST_IP_OUT  <= x"ff00a8c0";
 TC_DEST_UDP_OUT <= x"55c3";
 TC_SRC_MAC_OUT  <= g_MY_MAC;
-TC_SRC_IP_OUT   <= g_MY_IP;
+TC_SRC_IP_OUT   <= x"aa00a8c0";
 TC_SRC_UDP_OUT  <= x"55c3";
 TC_IP_PROTOCOL_OUT <= x"11"; -- udp
 
