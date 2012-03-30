@@ -504,154 +504,154 @@ senders_free(3 downto 2) <= (others => '0');
 --);
 --
 -- serdes 1 ch 0
-LINK_5 : CNTester_module
-port map(
-	CLKSYS_IN  => clk_100_i,
-	CLKGBE_IN  => CLK_GPLL_RIGHT,
-	RESET      => reset_i,
-	GSR_N      => GSR_N,
-	LINK_OK_OUT => sd2_link_ok(0),
-	
-	-- serdes io
-	SD_RX_CLK_IN                => sd2_rx_clk(0),
-	SD_TX_DATA_OUT              => sd2_tx_data(0),
-	SD_TX_KCNTL_OUT             => sd2_tx_k(0),
-	SD_TX_CORRECT_DISP_OUT      => sd2_tx_disp(0),
-	SD_RX_DATA_IN               => sd2_rx_data(0),
-	SD_RX_KCNTL_IN              => sd2_rx_k(0),
-	SD_RX_DISP_ERROR_IN         => sd2_rx_disp(0),
-	SD_RX_CV_ERROR_IN           => sd2_cv_err(0),
-	SD_RX_SERDES_RST_OUT        => sd2_rx_serdes_rst(0),
-	SD_RX_PCS_RST_OUT           => sd2_rx_pcs_rst(0),
-	SD_TX_PCS_RST_OUT			=> sd2_tx_pcs_rst(0),
-	SD_RX_LOS_IN				=> sd2_rx_los(0),
-	SD_SIGNAL_DETECTED_IN		=> sd2_signal_detected(0),
-	SD_RX_CDR_IN				=> sd2_rx_cdr(0),
-	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
-	SD_QUAD_RST_OUT             => sd_quad2_rst(0),
-	SD_XMIT_OUT                 => sd2_xmit(0),
-	
-	MODULE_SELECT_OUT     		=> open,
-	MODULE_RD_EN_OUT      		=> open,
-	MODULE_DATA_IN        		=> (others => '0'),
-	STOP_TRANSMISSION_OUT 		=> open,
-	START_STAT_IN         	 	=> '0',
-	
-	MODULE_DATA_OUT             => module_data(4),
-	MODULE_RD_EN_IN             => module_rd_en,
-	MODULE_SELECTED_IN          => module_selected(4),
-	MODULE_FULL_OUT             => module_full(4),
-	
-	TEST_PORT_IN         => (others => '0'),
-	TEST_PORT_OUT        => open,
-	
-	MAC_ADDR_IN          => x"123456789014",
-	TIMESTAMP_IN         => timestamp,
-	DEST_ADDR_IN         => dest_addr,
-	GENERATE_PACKET_IN   => activate_sender(4),
-	SIZE_IN              => size,
-	BUSY_OUT             => senders_free(4)
-);
-
--- serdes 1 ch 1
-LINK_6 : CNTester_module
-port map(
-	CLKSYS_IN  => clk_100_i,
-	CLKGBE_IN  => CLK_GPLL_RIGHT,
-	RESET      => reset_i,
-	GSR_N      => GSR_N,
-	LINK_OK_OUT => sd2_link_ok(1),
-	
-	-- serdes io
-	SD_RX_CLK_IN                => sd2_rx_clk(1),
-	SD_TX_DATA_OUT              => sd2_tx_data(1),
-	SD_TX_KCNTL_OUT             => sd2_tx_k(1),
-	SD_TX_CORRECT_DISP_OUT      => sd2_tx_disp(1),
-	SD_RX_DATA_IN               => sd2_rx_data(1),
-	SD_RX_KCNTL_IN              => sd2_rx_k(1),
-	SD_RX_DISP_ERROR_IN         => sd2_rx_disp(1),
-	SD_RX_CV_ERROR_IN           => sd2_cv_err(1),
-	SD_RX_SERDES_RST_OUT        => sd2_rx_serdes_rst(1),
-	SD_RX_PCS_RST_OUT           => sd2_rx_pcs_rst(1),
-	SD_TX_PCS_RST_OUT			=> sd2_tx_pcs_rst(1),
-	SD_RX_LOS_IN				=> sd2_rx_los(1),
-	SD_SIGNAL_DETECTED_IN		=> sd2_signal_detected(1),
-	SD_RX_CDR_IN				=> sd2_rx_cdr(1),
-	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
-	SD_QUAD_RST_OUT             => sd_quad2_rst(1),
-	SD_XMIT_OUT                 => sd2_xmit(1),
-	
-	MODULE_SELECT_OUT     		=> open,
-	MODULE_RD_EN_OUT      		=> open,
-	MODULE_DATA_IN        		=> (others => '0'),
-	STOP_TRANSMISSION_OUT 		=> open,
-	START_STAT_IN         	 	=> '0',
-	
-	MODULE_DATA_OUT             => module_data(5),
-	MODULE_RD_EN_IN             => module_rd_en,
-	MODULE_SELECTED_IN          => module_selected(5),
-	MODULE_FULL_OUT             => module_full(5),
-		
-	TEST_PORT_IN         => (others => '0'),
-	TEST_PORT_OUT        => open,
-	
-	MAC_ADDR_IN          => x"123456789015",
-	TIMESTAMP_IN         => timestamp,
-	DEST_ADDR_IN         => dest_addr,
-	GENERATE_PACKET_IN   => activate_sender(5),
-	SIZE_IN              => size,
-	BUSY_OUT             => senders_free(5)
-);
-
--- serdes 1 ch 2
-LINK_7 : CNTester_module
-port map(
-	CLKSYS_IN  => clk_100_i,
-	CLKGBE_IN  => CLK_GPLL_RIGHT,
-	RESET      => reset_i,
-	GSR_N      => GSR_N,
-	LINK_OK_OUT => sd2_link_ok(2),
-	
-	-- serdes io
-	SD_RX_CLK_IN                => sd2_rx_clk(2),
-	SD_TX_DATA_OUT              => sd2_tx_data(2),
-	SD_TX_KCNTL_OUT             => sd2_tx_k(2),
-	SD_TX_CORRECT_DISP_OUT      => sd2_tx_disp(2),
-	SD_RX_DATA_IN               => sd2_rx_data(2),
-	SD_RX_KCNTL_IN              => sd2_rx_k(2),
-	SD_RX_DISP_ERROR_IN         => sd2_rx_disp(2),
-	SD_RX_CV_ERROR_IN           => sd2_cv_err(2),
-	SD_RX_SERDES_RST_OUT        => sd2_rx_serdes_rst(2),
-	SD_RX_PCS_RST_OUT           => sd2_rx_pcs_rst(2),
-	SD_TX_PCS_RST_OUT			=> sd2_tx_pcs_rst(2),
-	SD_RX_LOS_IN				=> sd2_rx_los(2),
-	SD_SIGNAL_DETECTED_IN		=> sd2_signal_detected(2),
-	SD_RX_CDR_IN				=> sd2_rx_cdr(2),
-	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
-	SD_QUAD_RST_OUT             => sd_quad2_rst(2),
-	SD_XMIT_OUT                 => sd2_xmit(2),
-	
-	MODULE_SELECT_OUT     		=> open,
-	MODULE_RD_EN_OUT      		=> open,
-	MODULE_DATA_IN        		=> (others => '0'),
-	STOP_TRANSMISSION_OUT 		=> open,
-	START_STAT_IN         	 	=> '0',
-	
-	MODULE_DATA_OUT             => module_data(6),
-	MODULE_RD_EN_IN             => module_rd_en,
-	MODULE_SELECTED_IN          => module_selected(6),
-	MODULE_FULL_OUT             => module_full(6),
-
-	TEST_PORT_IN         => (others => '0'),
-	TEST_PORT_OUT        => open,
-	
-	MAC_ADDR_IN          => x"123456789016",
-	TIMESTAMP_IN         => timestamp,
-	DEST_ADDR_IN         => dest_addr,
-	GENERATE_PACKET_IN   => activate_sender(6),
-	SIZE_IN              => size,
-	BUSY_OUT             => senders_free(6)
-);
+--LINK_5 : CNTester_module
+--port map(
+--	CLKSYS_IN  => clk_100_i,
+--	CLKGBE_IN  => CLK_GPLL_RIGHT,
+--	RESET      => reset_i,
+--	GSR_N      => GSR_N,
+--	LINK_OK_OUT => sd2_link_ok(0),
+--	
+--	-- serdes io
+--	SD_RX_CLK_IN                => sd2_rx_clk(0),
+--	SD_TX_DATA_OUT              => sd2_tx_data(0),
+--	SD_TX_KCNTL_OUT             => sd2_tx_k(0),
+--	SD_TX_CORRECT_DISP_OUT      => sd2_tx_disp(0),
+--	SD_RX_DATA_IN               => sd2_rx_data(0),
+--	SD_RX_KCNTL_IN              => sd2_rx_k(0),
+--	SD_RX_DISP_ERROR_IN         => sd2_rx_disp(0),
+--	SD_RX_CV_ERROR_IN           => sd2_cv_err(0),
+--	SD_RX_SERDES_RST_OUT        => sd2_rx_serdes_rst(0),
+--	SD_RX_PCS_RST_OUT           => sd2_rx_pcs_rst(0),
+--	SD_TX_PCS_RST_OUT			=> sd2_tx_pcs_rst(0),
+--	SD_RX_LOS_IN				=> sd2_rx_los(0),
+--	SD_SIGNAL_DETECTED_IN		=> sd2_signal_detected(0),
+--	SD_RX_CDR_IN				=> sd2_rx_cdr(0),
+--	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
+--	SD_QUAD_RST_OUT             => sd_quad2_rst(0),
+--	SD_XMIT_OUT                 => sd2_xmit(0),
+--	
+--	MODULE_SELECT_OUT     		=> open,
+--	MODULE_RD_EN_OUT      		=> open,
+--	MODULE_DATA_IN        		=> (others => '0'),
+--	STOP_TRANSMISSION_OUT 		=> open,
+--	START_STAT_IN         	 	=> '0',
+--	
+--	MODULE_DATA_OUT             => module_data(4),
+--	MODULE_RD_EN_IN             => module_rd_en,
+--	MODULE_SELECTED_IN          => module_selected(4),
+--	MODULE_FULL_OUT             => module_full(4),
+--	
+--	TEST_PORT_IN         => (others => '0'),
+--	TEST_PORT_OUT        => open,
+--	
+--	MAC_ADDR_IN          => x"123456789014",
+--	TIMESTAMP_IN         => timestamp,
+--	DEST_ADDR_IN         => dest_addr,
+--	GENERATE_PACKET_IN   => activate_sender(4),
+--	SIZE_IN              => size,
+--	BUSY_OUT             => senders_free(4)
+--);
+--
+---- serdes 1 ch 1
+--LINK_6 : CNTester_module
+--port map(
+--	CLKSYS_IN  => clk_100_i,
+--	CLKGBE_IN  => CLK_GPLL_RIGHT,
+--	RESET      => reset_i,
+--	GSR_N      => GSR_N,
+--	LINK_OK_OUT => sd2_link_ok(1),
+--	
+--	-- serdes io
+--	SD_RX_CLK_IN                => sd2_rx_clk(1),
+--	SD_TX_DATA_OUT              => sd2_tx_data(1),
+--	SD_TX_KCNTL_OUT             => sd2_tx_k(1),
+--	SD_TX_CORRECT_DISP_OUT      => sd2_tx_disp(1),
+--	SD_RX_DATA_IN               => sd2_rx_data(1),
+--	SD_RX_KCNTL_IN              => sd2_rx_k(1),
+--	SD_RX_DISP_ERROR_IN         => sd2_rx_disp(1),
+--	SD_RX_CV_ERROR_IN           => sd2_cv_err(1),
+--	SD_RX_SERDES_RST_OUT        => sd2_rx_serdes_rst(1),
+--	SD_RX_PCS_RST_OUT           => sd2_rx_pcs_rst(1),
+--	SD_TX_PCS_RST_OUT			=> sd2_tx_pcs_rst(1),
+--	SD_RX_LOS_IN				=> sd2_rx_los(1),
+--	SD_SIGNAL_DETECTED_IN		=> sd2_signal_detected(1),
+--	SD_RX_CDR_IN				=> sd2_rx_cdr(1),
+--	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
+--	SD_QUAD_RST_OUT             => sd_quad2_rst(1),
+--	SD_XMIT_OUT                 => sd2_xmit(1),
+--	
+--	MODULE_SELECT_OUT     		=> open,
+--	MODULE_RD_EN_OUT      		=> open,
+--	MODULE_DATA_IN        		=> (others => '0'),
+--	STOP_TRANSMISSION_OUT 		=> open,
+--	START_STAT_IN         	 	=> '0',
+--	
+--	MODULE_DATA_OUT             => module_data(5),
+--	MODULE_RD_EN_IN             => module_rd_en,
+--	MODULE_SELECTED_IN          => module_selected(5),
+--	MODULE_FULL_OUT             => module_full(5),
+--		
+--	TEST_PORT_IN         => (others => '0'),
+--	TEST_PORT_OUT        => open,
+--	
+--	MAC_ADDR_IN          => x"123456789015",
+--	TIMESTAMP_IN         => timestamp,
+--	DEST_ADDR_IN         => dest_addr,
+--	GENERATE_PACKET_IN   => activate_sender(5),
+--	SIZE_IN              => size,
+--	BUSY_OUT             => senders_free(5)
+--);
+--
+---- serdes 1 ch 2
+--LINK_7 : CNTester_module
+--port map(
+--	CLKSYS_IN  => clk_100_i,
+--	CLKGBE_IN  => CLK_GPLL_RIGHT,
+--	RESET      => reset_i,
+--	GSR_N      => GSR_N,
+--	LINK_OK_OUT => sd2_link_ok(2),
+--	
+--	-- serdes io
+--	SD_RX_CLK_IN                => sd2_rx_clk(2),
+--	SD_TX_DATA_OUT              => sd2_tx_data(2),
+--	SD_TX_KCNTL_OUT             => sd2_tx_k(2),
+--	SD_TX_CORRECT_DISP_OUT      => sd2_tx_disp(2),
+--	SD_RX_DATA_IN               => sd2_rx_data(2),
+--	SD_RX_KCNTL_IN              => sd2_rx_k(2),
+--	SD_RX_DISP_ERROR_IN         => sd2_rx_disp(2),
+--	SD_RX_CV_ERROR_IN           => sd2_cv_err(2),
+--	SD_RX_SERDES_RST_OUT        => sd2_rx_serdes_rst(2),
+--	SD_RX_PCS_RST_OUT           => sd2_rx_pcs_rst(2),
+--	SD_TX_PCS_RST_OUT			=> sd2_tx_pcs_rst(2),
+--	SD_RX_LOS_IN				=> sd2_rx_los(2),
+--	SD_SIGNAL_DETECTED_IN		=> sd2_signal_detected(2),
+--	SD_RX_CDR_IN				=> sd2_rx_cdr(2),
+--	SD_TX_PLL_LOL_IN            => sd2_tx_pll_lol,
+--	SD_QUAD_RST_OUT             => sd_quad2_rst(2),
+--	SD_XMIT_OUT                 => sd2_xmit(2),
+--	
+--	MODULE_SELECT_OUT     		=> open,
+--	MODULE_RD_EN_OUT      		=> open,
+--	MODULE_DATA_IN        		=> (others => '0'),
+--	STOP_TRANSMISSION_OUT 		=> open,
+--	START_STAT_IN         	 	=> '0',
+--	
+--	MODULE_DATA_OUT             => module_data(6),
+--	MODULE_RD_EN_IN             => module_rd_en,
+--	MODULE_SELECTED_IN          => module_selected(6),
+--	MODULE_FULL_OUT             => module_full(6),
+--
+--	TEST_PORT_IN         => (others => '0'),
+--	TEST_PORT_OUT        => open,
+--	
+--	MAC_ADDR_IN          => x"123456789016",
+--	TIMESTAMP_IN         => timestamp,
+--	DEST_ADDR_IN         => dest_addr,
+--	GENERATE_PACKET_IN   => activate_sender(6),
+--	SIZE_IN              => size,
+--	BUSY_OUT             => senders_free(6)
+--);
 
  -- serdes 1 ch 3
 LINK_STATS : CNTester_module
@@ -1008,7 +1008,7 @@ SERDES1 : serdes4ch  -- PCSA
 
 
 sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1); -- or sd_quad_rst(2) or sd_quad_rst(3);
-sd2_quad_rst <= sd_quad2_rst(0) or sd_quad2_rst(1) or sd_quad2_rst(2) or sd_quad2_rst(3);
+sd2_quad_rst <= sd_quad2_rst(3);
 
 
 SFP_TXDIS(8 downto 1) <= (others => '0');
