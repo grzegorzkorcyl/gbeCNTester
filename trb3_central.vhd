@@ -401,7 +401,7 @@ port map(
 	BUSY_OUT             => senders_free(1)
 );
 
-senders_free(7 downto 2) <= (others => '0');
+senders_free(3 downto 2) <= (others => '0');
 
 ------ serdes 0 ch 2
 --LINK_3 : CNTester_module
