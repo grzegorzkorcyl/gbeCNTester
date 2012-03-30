@@ -411,7 +411,8 @@ signal pcs_tx_en_qq, pcs_tx_er_qq, pcs_rx_en_qq, pcs_rx_er_qq, mac_col_qq, mac_c
 
 signal fc_test_rd_en, fc_test_rd_en_q : std_logic;
 signal fr_rx_clk : std_logic;
-
+signal serdes_rx_clk_a, serdes_clk_125_a : std_logic;
+                        
 begin
 
 -- WARNING: setting allowed types to constat true
@@ -627,7 +628,7 @@ port map(
 	RD_CLK				    => serdes_clk_125,
 	FT_DATA_OUT 			=> ft_data,
 	FT_TX_EMPTY_OUT			=> ft_tx_empty,
-	FT_TX_RD_EN_IN			=> fc_test_rd_en_q, --mac_tx_read,
+	FT_TX_RD_EN_IN			=> mac_tx_read,
 	FT_START_OF_PACKET_OUT	=> ft_start_of_packet,
 	FT_TX_DONE_IN			=> mac_tx_done,
 	FT_TX_DISCFRM_IN		=> mac_tx_discfrm,
@@ -636,18 +637,6 @@ port map(
 	BSM_TRANS_OUT			=> open,
 	DEBUG_OUT              	=> open
 );
-
-TEST_RD_PROC : process(serdes_clk_125)
-begin
-	if g_SIMULATE = 1 then
-		fc_test_rd_en <= not ft_tx_empty;
-	else
-		fc_test_rd_en <= mac_tx_read;
-	end if;
-	
-	fc_test_rd_en_q <= fc_test_rd_en;
---fc_test_rd_en <= '1' when g_SIMULATE = 1 and ft_tx_empty = '0' else mac_tx_read;
-end process TEST_RD_PROC;
 
 RECEIVE_CONTROLLER : trb_net16_gbe_receive_control
 port map(
@@ -762,8 +751,8 @@ port map(
 	  DEBUG_OUT		=> open
   );
   
---fr_rx_clk <= CLKGBE_IN when g_SIMULATE = 1 else serdes_rx_clk;
-  
+serdes_rx_clk <= CLKGBE_IN when g_SIMULATE = 1 else serdes_rx_clk_a;
+serdes_clk_125 <= CLKGBE_IN  when g_SIMULATE = 1 else serdes_clk_125_a;
   
 MAC: tsmac34
 	port map(
@@ -821,11 +810,7 @@ MAC: tsmac34
 		rx_eof				=> mac_rx_eof,
 		rx_error			=> mac_rx_er
 	);
-	
-	-- LOOPBACK FOR TESTBENCH
---	mac_rxd <= ft_data(7 downto 0);
---	mac_rx_en <= fc_test_rd_en;-- mac_fifoavail;
---	mac_rx_eof <= mac_fifoeof;
+
 	
 	SYNC_GMII_RX_PROC : process(serdes_rx_clk)
 	begin
@@ -860,8 +845,8 @@ MAC: tsmac34
 		port map(
 			RESET				=> RESET,
 			GSR_N				=> GSR_N,
-			CLK_125_OUT			=> serdes_clk_125,
-			CLK_125_RX_OUT		=> serdes_rx_clk, --open,
+			CLK_125_OUT			=> serdes_clk_125_a,
+			CLK_125_RX_OUT		=> serdes_rx_clk_a,
 			CLK_125_IN			=> CLKGBE_IN,
 			FT_TX_CLK_EN_OUT	=> mac_tx_clk_en,
 			FT_RX_CLK_EN_OUT	=> mac_rx_clk_en,
