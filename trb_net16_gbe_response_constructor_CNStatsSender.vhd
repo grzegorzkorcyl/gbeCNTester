@@ -129,7 +129,7 @@ begin
 			
 		when LOAD_DATA =>
 			state <= x"3";
-			if (load_ctr = x"0400" - x"2") then  -- send data only from the two first modules
+			if (load_ctr = x"0400") then  -- send data only from the two first modules
 				construct_next_state <= TERMINATION;
 			else
 				construct_next_state <= LOAD_DATA;
