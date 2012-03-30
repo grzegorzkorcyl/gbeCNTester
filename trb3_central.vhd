@@ -258,7 +258,7 @@ signal senders_free, activate_sender : std_logic_vector(7 downto 0);
 signal timestamp : std_logic_vector(31 downto 0);
 signal dest_addr, size : std_logic_vector(15 downto 0);
 
-signal sd_rx_clk, sd_quad_rst, sd1_link_ok, sd2_link_ok : std_logic_vector(7 downto 0);
+signal sd_rx_clk, sd2_rx_clk, sd_quad_rst, sd1_link_ok, sd2_link_ok : std_logic_vector(7 downto 0);
 signal sd_tx_k, sd_xmit, sd_tx_disp, sd_rx_k, sd_rx_disp, sd_cv_err, sd_rx_serdes_rst, sd_tx_pcs_rst, sd_rx_pcs_rst, sd_rx_los, sd_rx_cdr, sd_signal_detected : std_logic_vector(7 downto 0);
 
 type arr is array(7 downto 0) of std_logic_vector(7 downto 0);
@@ -513,7 +513,7 @@ senders_free(7 downto 2) <= (others => '0');
 --	LINK_OK_OUT => sd2_link_ok(0),
 --	
 --	-- serdes io
---	SD_RX_CLK_IN                => sd_rx_clk(4),
+--	SD_RX_CLK_IN                => sd2_rx_clk(0),
 --	SD_TX_DATA_OUT              => sd_tx_data(4),
 --	SD_TX_KCNTL_OUT             => sd_tx_k(4),
 --	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(4),
@@ -563,7 +563,7 @@ senders_free(7 downto 2) <= (others => '0');
 --	LINK_OK_OUT => sd2_link_ok(1),
 --	
 --	-- serdes io
---	SD_RX_CLK_IN                => sd_rx_clk(5),
+--	SD_RX_CLK_IN                => sd2_rx_clk(1),
 --	SD_TX_DATA_OUT              => sd_tx_data(5),
 --	SD_TX_KCNTL_OUT             => sd_tx_k(5),
 --	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(5),
@@ -613,7 +613,7 @@ senders_free(7 downto 2) <= (others => '0');
 --	LINK_OK_OUT => sd2_link_ok(2),
 --	
 --	-- serdes io
---	SD_RX_CLK_IN                => sd_rx_clk(6),
+--	SD_RX_CLK_IN                => sd2_rx_clk(2),
 --	SD_TX_DATA_OUT              => sd_tx_data(6),
 --	SD_TX_KCNTL_OUT             => sd_tx_k(6),
 --	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(6),
@@ -664,7 +664,7 @@ port map(
 	LINK_OK_OUT => sd2_link_ok(3),
 	
 	-- serdes io
-	SD_RX_CLK_IN                => sd_rx_clk(7),
+	SD_RX_CLK_IN                => sd2_rx_clk(3),
 	SD_TX_DATA_OUT              => sd_tx_data(7),
 	SD_TX_KCNTL_OUT             => sd_tx_k(7),
 	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(7),
@@ -697,10 +697,10 @@ port map(
 	TEST_PORT_OUT        => open,
 	
 	MAC_ADDR_IN          => x"123456789020",
-	TIMESTAMP_IN         => timestamp,
-	DEST_ADDR_IN         => dest_addr,
+	TIMESTAMP_IN         => (others => '0'),
+	DEST_ADDR_IN         => (others => '0'),
 	GENERATE_PACKET_IN   => '0',
-	SIZE_IN              => size,
+	SIZE_IN              => (others => '0'),
 	BUSY_OUT             => open
 );
 
@@ -880,9 +880,9 @@ SERDES1 : serdes4ch  -- PCSA
     hdinn_ch0			=> SFP_RX_N(5),
     hdoutp_ch0			=> SFP_TX_P(5),
     hdoutn_ch0			=> SFP_TX_N(5),
-    rxiclk_ch0			=> sd_rx_clk(4),
+    rxiclk_ch0			=> sd2_rx_clk(0),
     txiclk_ch0			=> CLK_GPLL_RIGHT,
-    rx_full_clk_ch0		=> sd_rx_clk(4),
+    rx_full_clk_ch0		=> sd2_rx_clk(0),
     rx_half_clk_ch0		=> open,
     tx_full_clk_ch0		=> open,
     tx_half_clk_ch0		=> open,
@@ -910,9 +910,9 @@ SERDES1 : serdes4ch  -- PCSA
     hdinn_ch1			=> SFP_RX_N(6),
     hdoutp_ch1			=> SFP_TX_P(6),
     hdoutn_ch1			=> SFP_TX_N(6),
-    rxiclk_ch1			=> sd_rx_clk(5),
+    rxiclk_ch1			=> sd2_rx_clk(1),
     txiclk_ch1			=> CLK_GPLL_RIGHT,
-    rx_full_clk_ch1		=> sd_rx_clk(5),
+    rx_full_clk_ch1		=> sd2_rx_clk(1),
     rx_half_clk_ch1		=> open,
     tx_full_clk_ch1		=> open,
     tx_half_clk_ch1		=> open,
@@ -940,9 +940,9 @@ SERDES1 : serdes4ch  -- PCSA
     hdinn_ch2			=> SFP_RX_N(7),
     hdoutp_ch2			=> SFP_TX_P(7),
     hdoutn_ch2			=> SFP_TX_N(7),
-    rxiclk_ch2			=> sd_rx_clk(6),
+    rxiclk_ch2			=> sd2_rx_clk(2),
     txiclk_ch2			=> CLK_GPLL_RIGHT,
-    rx_full_clk_ch2		=> sd_rx_clk(6),
+    rx_full_clk_ch2		=> sd2_rx_clk(2),
     rx_half_clk_ch2		=> open,
     tx_full_clk_ch2		=> open,
     tx_half_clk_ch2		=> open,
@@ -970,9 +970,9 @@ SERDES1 : serdes4ch  -- PCSA
     hdinn_ch3			=> SFP_RX_N(8),
     hdoutp_ch3			=> SFP_TX_P(8),
     hdoutn_ch3			=> SFP_TX_N(8),
-    rxiclk_ch3			=> sd_rx_clk(7),
+    rxiclk_ch3			=> sd2_rx_clk(3),
     txiclk_ch3			=> CLK_GPLL_RIGHT,
-    rx_full_clk_ch3		=> sd_rx_clk(7),
+    rx_full_clk_ch3		=> sd2_rx_clk(3),
     rx_half_clk_ch3		=> open,
     tx_full_clk_ch3		=> open,
     tx_half_clk_ch3		=> open,
