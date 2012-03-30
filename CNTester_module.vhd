@@ -600,7 +600,7 @@ port map(
 	-- ports for user logic
 	RESET				    => RESET,
 	CLK				        => CLKSYS_IN,
-	LINK_OK_IN			    => '1', --link_ok, --pcs_an_complete,  -- gk 03.08.10  -- gk 30.09.10
+	LINK_OK_IN			    => link_ok, --pcs_an_complete,  -- gk 03.08.10  -- gk 30.09.10
 	--
 	WR_EN_IN			    => fc_wr_en,
 	DATA_IN				    => fc_data,
