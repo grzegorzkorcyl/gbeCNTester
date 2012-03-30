@@ -261,10 +261,10 @@ signal dest_addr, size : std_logic_vector(15 downto 0);
 signal sd_rx_clk, sd_quad_rst, sd1_link_ok : std_logic_vector(3 downto 0);
 signal sd_tx_k, sd_xmit, sd_tx_disp, sd_rx_k, sd_rx_disp, sd_cv_err, sd_rx_serdes_rst, sd_tx_pcs_rst, sd_rx_pcs_rst, sd_rx_los, sd_rx_cdr, sd_signal_detected : std_logic_vector(3 downto 0);
 signal sd2_tx_k, sd2_xmit, sd2_tx_disp, sd2_rx_k, sd2_rx_disp, sd2_cv_err, sd2_rx_serdes_rst, sd2_tx_pcs_rst, sd2_rx_pcs_rst, sd2_rx_los, sd2_rx_cdr, sd2_signal_detected : std_logic_vector(3 downto 0);
-signal sd2_rx_clk, sd2_link_ok : std_logic_vector(3 downto 0);
+signal sd2_rx_clk, sd2_link_ok, sd_quad2_reset : std_logic_vector(3 downto 0);
 
 type arr is array(3 downto 0) of std_logic_vector(7 downto 0);
-signal sd_tx_data, sd_rx_data, sd_quad2_reset, sd2_tx_data, sd2_rx_data : arr;
+signal sd_tx_data, sd_rx_data, sd2_tx_data, sd2_rx_data : arr;
 
 signal sd1_tx_pll_lol, sd1_quad_rst : std_logic;
 signal sd2_tx_pll_lol, sd2_quad_rst : std_logic;
