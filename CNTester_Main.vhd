@@ -29,13 +29,14 @@ end entity CNTester_Main;
 
 architecture CNTester_Main of CNTester_Main is
 
-type generate_states is (IDLE, GENERATE_SENDER, GENERATE_SIZE, ACTIVATE, WAIT1, WAIT2, WAIT3, WAIT4, WAIT5);
+type generate_states is (IDLE, GENERATE_SENDER, GENERATE_SIZE, ACTIVATE, WAIT1, WAIT2, WAIT3, WAIT4, WAIT5, PAUSE);
 signal generate_current_state, generate_next_state : generate_states;
 
 signal generate_en, condition_valid : std_logic;
 signal values : std_logic_vector(31 downto 0);
 signal generate_t : std_logic_vector(7 downto 0);
 signal timer : std_logic_vector(31 downto 0);
+signal pause_ctr : std_logic_vector(15 downto 0);
 	
 begin
 
@@ -59,7 +60,7 @@ begin
 		end if;
 	end process GENERATE_MACHINE_PROC;
 	
-	GENERATE_MACHINE : process(generate_current_state, SENDERS_FREE_IN, generate_t)
+	GENERATE_MACHINE : process(generate_current_state, SENDERS_FREE_IN, generate_t, pause_ctr)
 	begin
 	
 		case (generate_current_state) is
@@ -102,14 +103,32 @@ begin
 				
 			when WAIT5 =>
 				if (SENDERS_FREE_IN = "00000000") then
-					generate_next_state <= IDLE;
+					generate_next_state <= PAUSE; --IDLE;
 				else
 					generate_next_state <= WAIT5;
+				end if;
+				
+			when PAUSE =>
+				if (pause_ctr = x"0000_ffff") then
+					generate_next_state <= IDLE;
+				else
+					generate_next_state <= PAUSE;
 				end if;
 		
 		end case;
 		
 	end process GENERATE_MACHINE;
+	
+	PAUSE_CTR_PROC : process(CLKSYS_IN)
+	begin
+		if rising_edge(CLKSYS_IN) then
+			if (RESET = '1') or (generate_current_state = IDLE) then
+				pause_ctr <= (others => '0');
+			elsif (generate_current_state = PAUSE) then
+				pause_ctr <= pause_ctr + x"1";
+			end if;
+		end if;
+	end process PAUSE_CTR_PROC;
 	
 	generate_en <= '1' when generate_current_state = GENERATE_SENDER or generate_current_state = GENERATE_SIZE else '0';
 	
