@@ -155,16 +155,16 @@ begin
 	end case;
 end process CONSTRUCT_MACHINE;
 
-PAUSE_CTR_PROC : process(CLK)
-begin
-	if rising_edge(CLK) then
-		if (RESET = '1') or (construct_current_state = IDLE) then
-			pause_ctr <= (others => '0');
-		elsif (construct_current_state = PAUSE) then
-			pause_ctr <= pause_ctr + x"1";		
-		end if;
-	end if;
-end process PAUSE_CTR_PROC;
+--PAUSE_CTR_PROC : process(CLK)
+--begin
+--	if rising_edge(CLK) then
+--		if (RESET = '1') or (construct_current_state = IDLE) then
+--			pause_ctr <= (others => '0');
+--		elsif (construct_current_state = PAUSE) then
+--			pause_ctr <= pause_ctr + x"1";		
+--		end if;
+--	end if;
+--end process PAUSE_CTR_PROC;
 
 -- shift register for module selection
 MODULE_CTR_PROC : process(CLK)
