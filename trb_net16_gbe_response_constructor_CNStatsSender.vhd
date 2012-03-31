@@ -145,7 +145,7 @@ begin
 			if (pause_ctr =  x"00a0_0000") then
 				construct_next_state <= CLEANUP;
 			else
-				construcy_next_state <= PASUE;
+				construct_next_state <= PAUSE;
 			end if;
 		
 		when CLEANUP =>
