@@ -73,7 +73,7 @@ architecture trb_net16_gbe_response_constructor_CNStatsSender of trb_net16_gbe_r
 
 attribute syn_encoding	: string;
 
-type construct_states is (IDLE, WAIT_FOR_LOAD, LOAD_DATA, TERMINATION, PAUSE, CLEANUP);
+type construct_states is (IDLE, WAIT_FOR_LOAD, LOAD_DATA, TERMINATION, CLEANUP);
 signal construct_current_state, construct_next_state : construct_states;
 attribute syn_encoding of construct_current_state: signal is "safe,gray";
 
@@ -138,15 +138,15 @@ begin
 			
 		when TERMINATION =>
 			state <= x"4";
-			construct_next_state <= PAUSE;
+			construct_next_state <= CLEANUP; --PAUSE;
 			
-		when PAUSE =>
-			state <= x"6";
-			if (pause_ctr =  x"00a0_0000") then
-				construct_next_state <= CLEANUP;
-			else
-				construct_next_state <= PAUSE;
-			end if;
+--		when PAUSE =>
+--			state <= x"6";
+--			if (pause_ctr = x"00a0_0000") then
+--				construct_next_state <= CLEANUP;
+--			else
+--				construct_next_state <= PAUSE;
+--			end if;
 		
 		when CLEANUP =>
 			state <= x"5";
