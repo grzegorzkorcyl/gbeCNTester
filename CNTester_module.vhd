@@ -638,6 +638,8 @@ port map(
 	DEBUG_OUT              	=> open
 );
 
+fc_ttl <= x"10";
+
 RECEIVE_CONTROLLER : trb_net16_gbe_receive_control
 port map(
 	CLK		    	=> CLKSYS_IN,

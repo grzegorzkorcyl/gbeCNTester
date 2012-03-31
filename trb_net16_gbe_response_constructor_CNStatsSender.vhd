@@ -73,7 +73,7 @@ architecture trb_net16_gbe_response_constructor_CNStatsSender of trb_net16_gbe_r
 
 attribute syn_encoding	: string;
 
-type construct_states is (IDLE, WAIT_FOR_LOAD, LOAD_DATA, TERMINATION, CLEANUP);
+type construct_states is (IDLE, WAIT_FOR_LOAD, LOAD_DATA, TERMINATION, PAUSE, CLEANUP);
 signal construct_current_state, construct_next_state : construct_states;
 attribute syn_encoding of construct_current_state: signal is "safe,gray";
 
@@ -89,6 +89,7 @@ signal stats_rd_clk, stats_we, stats_re : std_logic;
 signal stats_data, stats_q : std_logic_vector(71 downto 0);
 
 signal module_ctr : std_logic_vector(7 downto 0);
+signal pause_ctr  : std_logic_vector(15 downto 0);
 
 begin
 
@@ -129,7 +130,7 @@ begin
 			
 		when LOAD_DATA =>
 			state <= x"3";
-			if (load_ctr = x"0400" - x"1") then  -- send data only from the two first modules
+			if (load_ctr = x"0400") then  -- send data only from the two first modules
 				construct_next_state <= TERMINATION;
 			else
 				construct_next_state <= LOAD_DATA;
@@ -137,7 +138,15 @@ begin
 			
 		when TERMINATION =>
 			state <= x"4";
-			construct_next_state <= CLEANUP;
+			construct_next_state <= PAUSE;
+			
+		when PAUSE =>
+			state <= x"6";
+			if (pause_ctr =  x"00a0_0000") then
+				construct_next_state <= CLEANUP;
+			else
+				construcy_next_state <= PASUE;
+			end if;
 		
 		when CLEANUP =>
 			state <= x"5";
@@ -145,6 +154,17 @@ begin
 	
 	end case;
 end process CONSTRUCT_MACHINE;
+
+PAUSE_CTR_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = 1') or (construct_current_state = IDLE) then
+			pause_ctr <= (others => '0');
+		elsif (construct_current_state = PAUSE) then
+			pause_ctr <= pause_ctr + x"1";		
+		end if;
+	end if;
+end proces PAUSE_CTR_PROC;
 
 -- shift register for module selection
 MODULE_CTR_PROC : process(CLK)
