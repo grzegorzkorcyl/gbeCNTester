@@ -139,15 +139,7 @@ begin
 			
 		when TERMINATION =>
 			state <= x"4";
-			construct_next_state <= CLEANUP; --PAUSE;
-			
---		when PAUSE =>
---			state <= x"6";
---			if (pause_ctr = x"00a0_0000") then
---				construct_next_state <= CLEANUP;
---			else
---				construct_next_state <= PAUSE;
---			end if;
+			construct_next_state <= CLEANUP;
 		
 		when CLEANUP =>
 			state <= x"5";
@@ -156,24 +148,13 @@ begin
 	end case;
 end process CONSTRUCT_MACHINE;
 
---PAUSE_CTR_PROC : process(CLK)
---begin
---	if rising_edge(CLK) then
---		if (RESET = '1') or (construct_current_state = IDLE) then
---			pause_ctr <= (others => '0');
---		elsif (construct_current_state = PAUSE) then
---			pause_ctr <= pause_ctr + x"1";		
---		end if;
---	end if;
---end process PAUSE_CTR_PROC;
-
 -- shift register for module selection
 MODULE_CTR_PROC : process(CLK)
 begin
 	if rising_edge(CLK) then
 		if (RESET = '1') or (construct_next_state = IDLE) then
 			module_ctr <= x"01";
-		elsif (construct_current_state = LOAD_DATA and load_ctr = x"0200") then
+		elsif (construct_current_state = LOAD_DATA and load_ctr = x"01ff") then
 			module_ctr(7 downto 1) <= module_ctr(6 downto 0);
 			module_ctr(0)          <= '0';
 		end if;
