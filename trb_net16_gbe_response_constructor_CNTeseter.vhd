@@ -377,7 +377,7 @@ stats_we <= '1' when construct_current_state = TERMINATION or dissect_current_st
 
 stats_data(3 downto 0)   <= CNT_MODULE_ID_IN when construct_current_state = TERMINATION else saved_rec_packet_id(31 downto 28);
 stats_data(31 downto 4)  <= packet_ctr(27 downto 0) - x"1" when construct_current_state = TERMINATION else saved_rec_packet_id(27 downto 0);
-stats_data(63 downto 32) <= saved_timestamp when construct_current_state = TERMINATION else saved_rec_timestamp;
+stats_data(63 downto 32) <= TIMESTAMP_IN; --saved_timestamp when construct_current_state = TERMINATION else TIMESTAMP_IN; --saved_rec_timestamp;
 
 MODULE_DATA_OUT(7 downto 0)  <= stats_q;
 MODULE_DATA_OUT(71 downto 8) <= (others => '0');
