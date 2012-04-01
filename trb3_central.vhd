@@ -343,7 +343,7 @@ LINK_1 : CNTester_module
 		TEST_PORT_IN         => (others => '0'),
 		TEST_PORT_OUT        => open,
 		
-		MAC_ADDR_IN          => x"123456789010",
+		MAC_ADDR_IN          => x"123456789011",
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
 		GENERATE_PACKET_IN   => activate_sender(0),
@@ -393,7 +393,7 @@ port map(
 	TEST_PORT_IN         => (others => '0'),
 	TEST_PORT_OUT        => open,
 	
-	MAC_ADDR_IN          => x"123456789011",
+	MAC_ADDR_IN          => x"123456789012",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
 	GENERATE_PACKET_IN   => activate_sender(1),

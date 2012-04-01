@@ -90,6 +90,7 @@ port (
 	CNT_MODULE_RD_EN_IN             : in	std_logic;
 	CNT_MODULE_SELECTED_IN           : in	std_logic;
 	CNT_MODULE_FULL_OUT             : out	std_logic;
+	CNT_MODULE_ID_IN         : in std_logic_vector(3 downto 0);
 	
 	GSC_CLK_IN               : in std_logic;
 	GSC_INIT_DATAREADY_OUT   : out std_logic;
@@ -252,6 +253,7 @@ port map(
 	CNT_MODULE_RD_EN_IN       => CNT_MODULE_RD_EN_IN,
 	CNT_MODULE_SELECTED_IN     => CNT_MODULE_SELECTED_IN,
 	CNT_MODULE_FULL_OUT       => CNT_MODULE_FULL_OUT,
+	CNT_MODULE_ID_IN         => CNT_MODULE_ID_IN,
 	
 	GSC_CLK_IN               => GSC_CLK_IN,
 	GSC_INIT_DATAREADY_OUT   => GSC_INIT_DATAREADY_OUT,

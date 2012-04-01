@@ -66,6 +66,7 @@ port (
 	MODULE_RD_EN_IN             : in	std_logic;
 	MODULE_SELECTED_IN           : in	std_logic;
 	MODULE_FULL_OUT             : out	std_logic;
+	CNT_MODULE_ID_IN            : in std_logic_vector(3 downto 0);
 
 -- debug
 	DEBUG_OUT		: out	std_logic_vector(31 downto 0)
@@ -374,7 +375,8 @@ stats_re <= '1' when MODULE_RD_EN_IN = '1' and MODULE_SELECTED_IN = '1' else '0'
 
 stats_we <= '1' when construct_current_state = TERMINATION or dissect_current_state = CLEANUP else '0';
 
-stats_data(31 downto 0)  <= packet_ctr - x"1" when construct_current_state = TERMINATION else saved_rec_packet_id;
+stats_data(3 downto 0)   <= CNT_MODULE_ID_IN;
+stats_data(31 downto 4)  <= packet_ctr(11 downto 0) - x"1" when construct_current_state = TERMINATION else saved_rec_packet_id;
 stats_data(63 downto 32) <= saved_timestamp when construct_current_state = TERMINATION else saved_rec_timestamp;
 
 MODULE_DATA_OUT(7 downto 0)  <= stats_q;

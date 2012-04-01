@@ -89,6 +89,7 @@ port (
 	CNT_MODULE_RD_EN_IN             : in	std_logic;
 	CNT_MODULE_SELECTED_IN           : in	std_logic;
 	CNT_MODULE_FULL_OUT             : out	std_logic;
+	CNT_MODULE_ID_IN         : in std_logic_vector(3 downto 0);
 
 	-- input for statistics from outside	
 	STAT_DATA_IN             : in std_logic_vector(31 downto 0);
@@ -186,6 +187,7 @@ port map (
 	MODULE_RD_EN_IN      => CNT_MODULE_RD_EN_IN,
 	MODULE_SELECTED_IN    => CNT_MODULE_SELECTED_IN,
 	MODULE_FULL_OUT      => CNT_MODULE_FULL_OUT,
+	CNT_MODULE_ID_IN     => CNT_MODULE_ID_IN,
 	
 	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
 );
@@ -243,7 +245,7 @@ port map (
 	MODULE_DATA_IN        => CNT_MODULE_DATA_IN,
 	STOP_TRANSMISSION_OUT => CNT_STOP_TRANSMISSION_OUT,
 	START_STAT_IN         => CNT_START_STAT_IN,
-
+    CNT_MODULE_ID_IN      => CNT_MODULE_ID_IN,
 	
 	DEBUG_OUT		=> PROTOS_DEBUG_OUT(1 * 32 - 1 downto 0 * 32)
 );

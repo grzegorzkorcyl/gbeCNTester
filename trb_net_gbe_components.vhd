@@ -490,7 +490,7 @@ port (
 	CNT_MODULE_RD_EN_IN             : in	std_logic;
 	CNT_MODULE_SELECTED_IN           : in	std_logic;
 	CNT_MODULE_FULL_OUT             : out	std_logic;
-	
+	CNT_MODULE_ID_IN         : in std_logic_vector(3 downto 0);
 	
 	-- input for statistics from outside	
 	STAT_DATA_IN             : in std_logic_vector(31 downto 0);
@@ -600,6 +600,7 @@ port (
 	CNT_MODULE_RD_EN_IN             : in	std_logic;
 	CNT_MODULE_SELECTED_IN           : in	std_logic;
 	CNT_MODULE_FULL_OUT             : out	std_logic;
+	CNT_MODULE_ID_IN          : in std_logic_vector(3 downto 0);
 	
 	GSC_CLK_IN               : in std_logic;
 	GSC_INIT_DATAREADY_OUT   : out std_logic;

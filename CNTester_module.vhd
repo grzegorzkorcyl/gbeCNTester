@@ -492,6 +492,7 @@ generic map ( g_GENERATE_STAT => g_GENERATE_STAT)
 	  CNT_MODULE_RD_EN_IN       => MODULE_RD_EN_IN,
 	  CNT_MODULE_SELECTED_IN     => MODULE_SELECTED_IN,
 	  CNT_MODULE_FULL_OUT       => MODULE_FULL_OUT,
+	  CNT_MODULE_ID_IN          => MAC_ADDR_IN(3 downto 0),
 	
 	  GSC_CLK_IN               => '0',
 	  GSC_INIT_DATAREADY_OUT   => open,

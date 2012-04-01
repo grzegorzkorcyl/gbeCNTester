@@ -62,6 +62,7 @@ port (
 	MODULE_DATA_IN        : in std_logic_vector(71 downto 0);
 	STOP_TRANSMISSION_OUT : out std_logic;
 	START_STAT_IN         : in std_logic;
+	CNT_MODULE_ID_IN      : in std_logic_vector(3 downto 0);
 
 -- debug
 	DEBUG_OUT		: out	std_logic_vector(31 downto 0)
