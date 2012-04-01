@@ -78,6 +78,10 @@ type construct_states is (IDLE, WAIT_FOR_LOAD, LOAD_DATA, TERMINATION, CLEANUP);
 signal construct_current_state, construct_next_state : construct_states;
 attribute syn_encoding of construct_current_state: signal is "safe,gray";
 
+type select_states is (IDLE, SELECT_MODULE, WAIT_FOR_TRANSMIT, CLEANUP);
+signal select_current_state, select_next_state : select_states;
+attribute syn_encoding of select_current_state: signal is "safe,gray";
+
 signal load_ctr   : std_logic_vector(15 downto 0);
 signal tc_data    : std_logic_vector(8 downto 0);
 signal timer_t    : std_logic_vector(7 downto 0);
@@ -85,15 +89,76 @@ signal state      : std_logic_vector(3 downto 0);
 signal size_t     : std_logic_vector(15 downto 0);
 signal packet_ctr : std_logic_vector(31 downto 0);
 
-
 signal stats_rd_clk, stats_we, stats_re : std_logic;
 signal stats_data, stats_q : std_logic_vector(71 downto 0);
 
 signal module_ctr : std_logic_vector(7 downto 0);
 signal pause_ctr  : std_logic_vector(15 downto 0);
 
+
 begin
 
+-- **************
+-- MODULE SELECTION PART
+
+SELECT_MACHINE_PROC : process(CLK)
+begin
+if rising_edge(CLK) then
+		if (RESET = '1') then
+			select_current_state <= IDLE;
+		else
+			select_current_state <= select_next_state;
+		end if;
+	end if;
+end process SELECT_MACHINE_PROC;
+
+SELECT_MACHINE : process(construct_current_state, START_STAT_IN, module_ctr)
+begin
+	case select_current_state is
+	
+		when IDLE =>
+			if (START_STAT_IN = '1') then
+				select_next_state <= SELECT_MODULE;
+			else
+				select_next_state <= IDLE;
+			end if;
+		
+		when SELECT_MODULE =>
+			select_next_state <= WAIT_FOR_TRANSMIT;
+		
+		when WAIT_FOR_TRANSMIT =>
+			if (construct_current_state = CLEANUP) then
+				if (module_ctr = x"0000_0010") then
+					select_next_state <= CLEANUP;
+				else
+					select_next_state <= SELECT_MODULE;
+				end if;
+			else
+				select_next_state <= WAIT_FOR_TRANSMIT;
+			end if;			
+		
+		when CLEANUP =>
+			select_next_state <= IDLE; 
+	
+	end case;
+end process SELECT_MACHINE;
+
+-- shift register for module selection
+MODULE_CTR_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') or (select_current_state = IDLE) then
+			module_ctr <= x"01";
+		elsif (select_current_state = WAIT_FOR_TRANSMIT and construct_current_state = CLEANUP) then
+			module_ctr(7 downto 1) <= module_ctr(6 downto 0);
+			module_ctr(0)          <= '0';
+		end if;
+	end if;
+end process MODULE_CTR_PROC;
+
+MODULE_SELECT_OUT <= module_ctr;
+
+MODULE_RD_EN_OUT <= '1' when (PS_SELECTED_IN = '1' and TC_RD_EN_IN = '1') or (select_current_state = SELECT_MODULE) else '0'; 
 
 -- **************
 -- TRANSMISSION PART
@@ -109,13 +174,13 @@ begin
 	end if;
 end process CONSTRUCT_MACHINE_PROC;
 
-CONSTRUCT_MACHINE : process(construct_current_state, START_STAT_IN, TC_BUSY_IN, PS_SELECTED_IN, load_ctr)
+CONSTRUCT_MACHINE : process(construct_current_state, select_current_state, TC_BUSY_IN, PS_SELECTED_IN, load_ctr)
 begin
 	case construct_current_state is
 	
 		when IDLE =>
 			state <= x"1";
-			if (START_STAT_IN = '1') then
+			if (select_current_state = SELECT_MODULE) then
 				construct_next_state <= WAIT_FOR_LOAD;
 			else
 				construct_next_state <= IDLE;
@@ -147,25 +212,6 @@ begin
 	
 	end case;
 end process CONSTRUCT_MACHINE;
-
--- shift register for module selection
-MODULE_CTR_PROC : process(CLK)
-begin
-	if rising_edge(CLK) then
-		if (RESET = '1') or (construct_next_state = IDLE) then
-			module_ctr <= x"01";
-		elsif (construct_current_state = LOAD_DATA and load_ctr = x"01ff") then
-			module_ctr(7 downto 1) <= module_ctr(6 downto 0);
-			module_ctr(0)          <= '0';
-		end if;
-	end if;
-end process MODULE_CTR_PROC;
-
-MODULE_SELECT_OUT <= module_ctr;
-
-MODULE_RD_EN_OUT <= '1' when PS_SELECTED_IN = '1' and TC_RD_EN_IN = '1' else '0'; 
-
-
 
 -- counts bytes from one module
 LOAD_CTR_PROC : process(CLK)
@@ -212,7 +258,7 @@ end process TC_DATA_SYNC;
 -- END OF TRANSMISSION PART
 -- *****************
 
-STOP_TRANSMISSION_OUT <= '1' when construct_current_state /= IDLE else '0';
+STOP_TRANSMISSION_OUT <= '1' when select_current_state /= IDLE else '0';
 
 
 PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';
