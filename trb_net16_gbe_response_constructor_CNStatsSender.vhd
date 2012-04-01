@@ -128,14 +128,14 @@ begin
 		
 		when WAIT_FOR_TRANSMIT =>
 			if (construct_current_state = CLEANUP) then
-				if (module_ctr = x"0000_0010") then
+				if (module_ctr = "00000010") then  -- send data from only two first modules
 					select_next_state <= CLEANUP;
 				else
 					select_next_state <= SELECT_MODULE;
 				end if;
 			else
 				select_next_state <= WAIT_FOR_TRANSMIT;
-			end if;			
+			end if;
 		
 		when CLEANUP =>
 			select_next_state <= IDLE; 
@@ -196,7 +196,7 @@ begin
 			
 		when LOAD_DATA =>
 			state <= x"3";
-			if (load_ctr = x"0400") then  -- send data only from the two first modules
+			if (load_ctr = x"0400") then
 				construct_next_state <= TERMINATION;
 			else
 				construct_next_state <= LOAD_DATA;
