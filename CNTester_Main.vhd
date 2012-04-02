@@ -138,7 +138,7 @@ begin
 	GENERATE_T_PROC : process(CLKSYS_IN)
 	begin
 		if rising_edge(CLKSYS_IN) then
-			if (generate_current_state /= GENERATE_SENDER and generate_current_state /= GENERATE_SIZE and generate_current_state /= ACTIVATE) then
+			if (generate_current_state /= GENERATE_SENDER and generate_current_state /= GENERATE_SIZE and generate_current_state /= ACTIVATE and generate_current_state /= WAIT0) then
 				generate_t <= "00000000";
 			elsif (generate_current_state = GENERATE_SENDER) and (generate_t = "00000000") then
 				if (values(31 downto 28) = x"f") then
