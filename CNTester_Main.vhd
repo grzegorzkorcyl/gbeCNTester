@@ -178,7 +178,7 @@ begin
 			if (RESET = '1') or (generate_current_state = IDLE) then
 				SIZE_OUT <= (others  => '0');
 			elsif (generate_current_state = GENERATE_SIZE) then
-				SIZE_OUT <= "00000000" & values(11 downto 8) & "1111";
+				SIZE_OUT <= "000000" & values(13 downto 8) & "1111";
 			end if;
 		end if;
 	end process SIZE_PROC;
