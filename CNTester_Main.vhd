@@ -183,7 +183,7 @@ begin
 --		end if;
 --	end process SIZE_PROC;
 
-	SIZE_OUT <= x"0400";
+	SIZE_OUT <= x"0100";
 
 	TIMER_PROC : process(CLKSYS_IN)
 	begin
