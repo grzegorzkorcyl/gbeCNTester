@@ -29,7 +29,7 @@ end entity CNTester_Main;
 
 architecture CNTester_Main of CNTester_Main is
 
-type generate_states is (IDLE, GENERATE_SENDER, GENERATE_SIZE, ACTIVATE, WAIT1, WAIT2, WAIT3, WAIT4, WAIT5, PAUSE);
+type generate_states is (IDLE, GENERATE_SENDER, GENERATE_SIZE, ACTIVATE, WAIT0, WAIT1, WAIT2, WAIT3, WAIT4, WAIT5, PAUSE);
 signal generate_current_state, generate_next_state : generate_states;
 
 signal generate_en, condition_valid : std_logic;
@@ -81,10 +81,13 @@ begin
 				
 			when GENERATE_SIZE =>
 				if (values(31 downto 7) /= x"0000_00") then
-					generate_next_state <= ACTIVATE;
+					generate_next_state <= WAIT0; --ACTIVATE;
 				else
 					generate_next_state <= GENERATE_SIZE;
 				end if;
+			
+			when WAIT0 =>
+				generate_next_state <= ACTIVATE;
 			
 			when ACTIVATE =>
 				generate_next_state <= WAIT1;
@@ -172,18 +175,18 @@ begin
 		end if;
 	end process GENERATE_OUT_PROC;
 	
---	SIZE_PROC : process(CLKSYS_IN)
---	begin
---		if rising_edge(CLKSYS_IN) then
---			if (RESET = '1') or (generate_current_state = IDLE) then
---				SIZE_OUT <= (others  => '0');
---			elsif (generate_current_state = GENERATE_SIZE) then
---				SIZE_OUT <= "000000" & values(13 downto 8) & "1111";
---			end if;
---		end if;
---	end process SIZE_PROC;
+	SIZE_PROC : process(CLKSYS_IN)
+	begin
+		if rising_edge(CLKSYS_IN) then
+			if (RESET = '1') or (generate_current_state = IDLE) then
+				SIZE_OUT <= (others  => '0');
+			elsif (generate_current_state = WAIT0) then
+				SIZE_OUT <= "000000" & values(13 downto 8) & "1111";
+			end if;
+		end if;
+	end process SIZE_PROC;
 
-SIZE_OUT <= x"0100";
+	--SIZE_OUT <= x"0100";
 
 	TIMER_PROC : process(CLKSYS_IN)
 	begin
