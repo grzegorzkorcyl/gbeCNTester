@@ -106,6 +106,8 @@ attribute syn_preserve : boolean;
 attribute syn_keep : boolean;
 attribute syn_keep of stats_we : signal is true;
 attribute syn_preserve of stats_we : signal is true;
+attribute syn_keep of size_t : signal is true;
+attribute syn_preserve of size_t : signal is true;
 
 begin
 
