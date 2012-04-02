@@ -377,7 +377,8 @@ stats_we <= '1' when construct_current_state = TERMINATION or dissect_current_st
 
 stats_data(3 downto 0)   <= CNT_MODULE_ID_IN when construct_current_state = TERMINATION else saved_rec_packet_id(31 downto 28);
 stats_data(31 downto 4)  <= packet_ctr(27 downto 0) - x"1" when construct_current_state = TERMINATION else saved_rec_packet_id(27 downto 0);
-stats_data(63 downto 32) <= TIMESTAMP_IN; --saved_timestamp when construct_current_state = TERMINATION else TIMESTAMP_IN; --saved_rec_timestamp;
+stats_data(47 downto 32) <= size_t;
+stats_data(63 downto 48) <= TIMESTAMP_IN(15 downto 0);
 
 MODULE_DATA_OUT(7 downto 0)  <= stats_q;
 MODULE_DATA_OUT(71 downto 8) <= (others => '0');
@@ -390,7 +391,7 @@ MODULE_DATA_OUT(71 downto 8) <= (others => '0');
 PS_BUSY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1'; 
 
-TC_FRAME_SIZE_OUT <= size_t; --x"00c9";
+TC_FRAME_SIZE_OUT <= size_t;
 TC_FRAME_TYPE_OUT <= x"1101";  -- frame type: CNTester 
 
 TC_DEST_MAC_OUT <= x"ffffffffffff";
