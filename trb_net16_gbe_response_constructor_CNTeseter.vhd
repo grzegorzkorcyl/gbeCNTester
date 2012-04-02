@@ -102,6 +102,11 @@ attribute syn_encoding of dissect_current_state: signal is "safe,gray";
 
 signal resp_bytes_ctr : integer range 0 to 9000;
 
+attribute syn_preserve : boolean;
+attribute syn_keep : boolean;
+attribute syn_keep of stats_we : signal is true;
+attribute syn_preserve of stats_we : signal is true;
+
 begin
 
 
