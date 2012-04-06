@@ -183,11 +183,7 @@ begin
 			if (RESET = '1') or (generate_current_state = IDLE) then
 				SIZE_OUT <= (others  => '0');
 			elsif (generate_current_state = WAIT0) then
-				if (CNTRL_PACKET_SIZE_IN = x"0000") then
-					SIZE_OUT <= "000000" & values(13 downto 8) & "1111";
-				else
-					SIZE_OUT <= CNTRL_PACKET_SIZE_IN;
-				end if;
+				SIZE_OUT <= "000000" & values(13 downto 8) & "1111";
 			end if;
 		end if;
 	end process SIZE_PROC;
