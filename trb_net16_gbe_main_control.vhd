@@ -342,7 +342,8 @@ begin
 		when CHECK_TYPE =>
 			if (link_current_state = ACTIVE) then
 				redirect_next_state <= CHECK_BUSY;
-			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN = "10") then
+				-- WARNING: hardtyped protocol code for DHCP
+			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN = "1000") then
 				redirect_next_state <= CHECK_BUSY;
 			else
 				redirect_next_state <= DROP;
@@ -366,9 +367,9 @@ begin
 		
 		when LOAD =>
 			redirect_state <= x"2";
-			if (loaded_bytes_ctr = RC_FRAME_SIZE_IN - x"1") then
-			-- !!WARNING!! dont know why this had to be changed (probably because of strange frame type)
-			--if (loaded_bytes_ctr = RC_FRAME_SIZE_IN) then
+			--if (loaded_bytes_ctr = RC_FRAME_SIZE_IN - x"1") then
+				-- !!WARNING!! dont know why this had to be changed (probably because of strange frame type)
+			if (loaded_bytes_ctr = RC_FRAME_SIZE_IN) then
 				redirect_next_state <= FINISH;
 			else
 				redirect_next_state <= LOAD;
@@ -589,7 +590,6 @@ begin
 				end if;
 			end if;
 		
-		-- not used anymore in this design
 		when GET_ADDRESS =>
 			link_state <= x"7";
 			if (PCS_AN_COMPLETE_IN = '0') then
