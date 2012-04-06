@@ -298,7 +298,8 @@ begin
 		elsif (redirect_current_state = CHECK_TYPE) then
 			if (link_current_state /= ACTIVE and link_current_state /= GET_ADDRESS) then
 				disable_redirect <= '1';
-			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN /= "10") then
+				-- WARNING: here is hardcoded position of DHCP response constructor
+			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN /= "1000") then
 				disable_redirect <= '1';
 			else
 				disable_redirect <= '0';
@@ -510,7 +511,7 @@ begin
 			if (g_SIMULATE = 0) then
 				link_current_state <= INACTIVE;
 			else
-				link_current_state <= ACTIVE;
+				link_current_state <= GET_ADDRESS; --ACTIVE;
 			end if;
 		else
 			link_current_state <= link_next_state;
