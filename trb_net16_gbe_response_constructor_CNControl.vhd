@@ -144,9 +144,9 @@ begin
 		elsif (PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
 			case (resp_bytes_ctr) is
 				
-				when 1 =>
+				when 2 =>
 					saved_packet_size(7 downto 0) <= PS_DATA_IN(7 downto 0);
-				when 0 =>
+				when 1 =>
 					saved_packet_size(15 downto 8) <= PS_DATA_IN(7 downto 0);
 					
 				when others => null;
