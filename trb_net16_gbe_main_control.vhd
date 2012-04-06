@@ -579,7 +579,7 @@ begin
 			if (PCS_AN_COMPLETE_IN = '0') then
 				link_next_state <= INACTIVE;
 			else
-				if (wait_ctr = x"3baa_ca00") then
+				if (wait_ctr = x"05ff_0000") then
 					if (g_GENERATE_STAT = 1) then
 						link_next_state <= GET_ADDRESS; --ACTIVE;
 					else
