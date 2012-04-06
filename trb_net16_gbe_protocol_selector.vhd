@@ -340,6 +340,11 @@ port map (
 	
 	TC_BUSY_IN		=> TC_BUSY_IN,
 	
+	STAT_DATA_OUT => open,
+	STAT_ADDR_OUT => open,
+	STAT_DATA_RDY_OUT => open,
+	STAT_DATA_ACK_IN  => '0',
+	
 	RECEIVED_FRAMES_OUT	=> RECEIVED_FRAMES_OUT(3 * 16 - 1 downto 2 * 16),
 	SENT_FRAMES_OUT		=> SENT_FRAMES_OUT(3 * 16 - 1 downto 2 * 16),
 	DEBUG_OUT		=> PROTOS_DEBUG_OUT(3 * 32 - 1 downto 2 * 32)
@@ -380,6 +385,11 @@ port map (
 	TC_SRC_UDP_OUT		=> tc_src_udp(4 * 16 - 1 downto 3 * 16),
 	 
 	TC_BUSY_IN		=> TC_BUSY_IN,
+	
+	STAT_DATA_OUT => open,
+	STAT_ADDR_OUT => open,
+	STAT_DATA_RDY_OUT => open,
+	STAT_DATA_ACK_IN  => '0',
 	
 	RECEIVED_FRAMES_OUT	=> RECEIVED_FRAMES_OUT(4 * 16 - 1 downto 3 * 16),
 	SENT_FRAMES_OUT		=> SENT_FRAMES_OUT(4 * 16 - 1 downto 3 * 16),

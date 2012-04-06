@@ -226,6 +226,11 @@ port (
 	TC_SRC_IP_OUT		: out	std_logic_vector(31 downto 0);
 	TC_SRC_UDP_OUT		: out	std_logic_vector(15 downto 0);
 	TC_BUSY_IN		: in	std_logic;
+	
+	STAT_DATA_OUT : out std_logic_vector(31 downto 0);
+	STAT_ADDR_OUT : out std_logic_vector(7 downto 0);
+	STAT_DATA_RDY_OUT : out std_logic;
+	STAT_DATA_ACK_IN  : in std_logic;
 			
 	RECEIVED_FRAMES_OUT	: out	std_logic_vector(15 downto 0);
 	SENT_FRAMES_OUT		: out	std_logic_vector(15 downto 0);
@@ -267,6 +272,11 @@ port (
 	TC_SRC_IP_OUT		: out	std_logic_vector(31 downto 0);
 	TC_SRC_UDP_OUT		: out	std_logic_vector(15 downto 0);
 	TC_BUSY_IN		: in	std_logic;
+	
+	STAT_DATA_OUT : out std_logic_vector(31 downto 0);
+	STAT_ADDR_OUT : out std_logic_vector(7 downto 0);
+	STAT_DATA_RDY_OUT : out std_logic;
+	STAT_DATA_ACK_IN  : in std_logic;
 	
 	RECEIVED_FRAMES_OUT	: out	std_logic_vector(15 downto 0);
 	SENT_FRAMES_OUT		: out	std_logic_vector(15 downto 0);
