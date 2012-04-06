@@ -574,7 +574,11 @@ begin
 				link_next_state <= INACTIVE;
 			else
 				if (wait_ctr = x"3baa_ca00") then
-					link_next_state <= ACTIVE;
+					if (g_GENERATE_STAT = 1) then
+						link_next_state <= GET_ADDRESS; --ACTIVE;
+					else
+						link_next_state <= ACTIVE;
+					end if;
 				else
 					link_next_state <= WAIT_FOR_BOOT;
 				end if;
