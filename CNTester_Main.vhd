@@ -23,6 +23,8 @@ entity CNTester_Main is
 		DEST_ADDR_OUT   : out std_logic_vector(15 downto 0);
 		SIZE_OUT        : out std_logic_vector(15 downto 0);
 		
+		CNTRL_PACKET_SIZE_IN : in std_logic_vector(15 downto 0);
+		
 		SENDERS_FREE_IN : in std_logic_vector(7 downto 0)
 	);
 end entity CNTester_Main;
@@ -181,12 +183,14 @@ begin
 			if (RESET = '1') or (generate_current_state = IDLE) then
 				SIZE_OUT <= (others  => '0');
 			elsif (generate_current_state = WAIT0) then
-				SIZE_OUT <= "000000" & values(13 downto 8) & "1111";
+				if (CNTRL_PACKET_SIZE_IN = x"0000") then
+					SIZE_OUT <= "000000" & values(13 downto 8) & "1111";
+				else
+					SIZE_OUT <= CNTRL_PACKET_SIZE_IN;
+				end if;
 			end if;
 		end if;
 	end process SIZE_PROC;
-
-	--SIZE_OUT <= x"0100";
 
 	TIMER_PROC : process(CLKSYS_IN)
 	begin

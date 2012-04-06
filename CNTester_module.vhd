@@ -42,6 +42,8 @@ generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 		TEST_PORT_IN                : in	std_logic_vector(123 downto 0);
 		TEST_PORT_OUT               : out	std_logic_vector(123 downto 0);
 		
+		CNTRL_PACKET_SIZE_OUT       : out std_logic_vector(15 downto 0);
+		
 		-- serdes io
 		SD_RX_CLK_IN                : in	std_logic;
 		SD_TX_DATA_OUT              : out	std_logic_vector(7 downto 0);
@@ -519,6 +521,8 @@ generic map ( g_GENERATE_STAT => g_GENERATE_STAT)
 	  SELECT_REC_FRAMES_OUT		=> open,
 	  SELECT_SENT_FRAMES_OUT	=> open,
 	  SELECT_PROTOS_DEBUG_OUT	=> open,
+	  
+	  CNTRL_PACKET_SIZE_OUT => CNTRL_PACKET_SIZE_OUT, 
 
 	  DEBUG_OUT		=> open
   );
