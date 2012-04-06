@@ -59,6 +59,8 @@ begin
 						-- No. 2 = CNControl
 						if (UDP_PROTOCOL_IN = x"c352") then
 							CODE_OUT(1) <= '1';
+						elsif (UDP_PROTOCOL_IN = x"0044") then  -- dhcp
+							CODE_OUT(3) <= '1';
 						else
 							-- branch for pure IPv4
 							CODE_OUT <= (others => '0');
@@ -66,6 +68,9 @@ begin
 					else
 						CODE_OUT <= (others => '0');
 					end if;
+					
+				when x"0806" =>  -- arp
+					CODE_OUT(2) <= '1';
 				
 				when others =>
 					CODE_OUT <= (others => '0');
