@@ -72,7 +72,7 @@ attribute syn_encoding	: string;
 signal state      : std_logic_vector(3 downto 0);
 signal size_t     : std_logic_vector(15 downto 0);
 
-signal saved_packet_size : std_logic_vector(31 downto 0);
+signal saved_packet_size : std_logic_vector(15 downto 0);
 
 type dissect_states is (IDLE, SAVE, CLEANUP);
 signal dissect_current_state, dissect_next_state : dissect_states;
