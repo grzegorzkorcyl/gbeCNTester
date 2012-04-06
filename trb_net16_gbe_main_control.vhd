@@ -195,6 +195,10 @@ signal stats_ctr                    : integer range 0 to 15;
 signal stat_data                    : std_logic_vector(31 downto 0);
 signal stat_addr                    : std_logic_vector(7 downto 0);
 
+attribute syn_preserve : boolean;
+attribute syn_keep : boolean;
+attribute syn_keep of dhcp_start : signal is true;
+attribute syn_preserve of dhcp_start : signal is true;
 
 begin
 
