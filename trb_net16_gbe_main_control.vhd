@@ -367,9 +367,9 @@ begin
 		
 		when LOAD =>
 			redirect_state <= x"2";
-			if (loaded_bytes_ctr = RC_FRAME_SIZE_IN - x"1") then
+			--if (loaded_bytes_ctr = RC_FRAME_SIZE_IN - x"1") then
 		    -- !!WARNING!! dont know why this had to be changed (probably because of strange frame type)
-			--if (loaded_bytes_ctr = RC_FRAME_SIZE_IN) then
+			if (loaded_bytes_ctr = RC_FRAME_SIZE_IN) then
 				redirect_next_state <= FINISH;
 			else
 				redirect_next_state <= LOAD;
