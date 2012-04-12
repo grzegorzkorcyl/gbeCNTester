@@ -21,7 +21,7 @@ constant c_MAX_UDP_PROTOCOLS  : integer range 1 to 16 := 2;
 
 --WARNING: do not leave zeros as unused types or protocols
 type frame_types_a is array(c_MAX_FRAME_TYPES - 1 downto 0) of std_logic_vector(15 downto 0);
-constant FRAME_TYPES : frame_types_a := (x"0111", x"0800"); -- x"0800", x"0806"); 
+constant FRAME_TYPES : frame_types_a := (x"0111", x"ffff"); -- x"0800", x"0806"); 
 
 
 type ip_protos_a is array(c_MAX_IP_PROTOCOLS - 1 downto 0) of std_logic_vector(7 downto 0);
