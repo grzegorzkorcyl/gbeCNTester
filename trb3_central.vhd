@@ -284,8 +284,8 @@ signal cntrl_packet_size : std_logic_vector(15 downto 0);
 
 begin
 
---link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2);
-link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd2_link_ok(3); --'1';
+--link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd2_link_ok(3); --'1';
+link_ok <= '1';
 
 MAIN : CNTester_Main
 	port map (
