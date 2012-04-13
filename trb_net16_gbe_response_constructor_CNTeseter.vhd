@@ -401,7 +401,7 @@ PS_RESPONSE_READY_OUT <= '0' when (construct_current_state = IDLE) else '1';
 TC_FRAME_SIZE_OUT <= size_t;
 TC_FRAME_TYPE_OUT <= x"1101";  -- frame type: CNTester 
 
-TC_DEST_MAC_OUT <= x"ffffffffffff";
+TC_DEST_MAC_OUT <= x"123456789012";
 TC_DEST_IP_OUT  <= (others => '0');
 TC_DEST_UDP_OUT <= (others => '0');
 TC_SRC_MAC_OUT  <= x"123456789012";
