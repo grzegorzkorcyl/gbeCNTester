@@ -351,7 +351,7 @@ begin
  	mr_page_rx				=> mr_page_rx,
  	mr_lp_adv_ability		=> mr_lp_adv_ability,
  	mr_main_reset			=> mr_main_reset,
- 	mr_an_enable			=> '1',
+ 	mr_an_enable			=> MR_AN_ENABLE_IN,
  	mr_restart_an			=> mr_restart_an,
  	mr_adv_ability			=> mr_adv_ability
  );
