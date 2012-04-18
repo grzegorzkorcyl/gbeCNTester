@@ -874,7 +874,7 @@ MAC: tsmac34
 			MR_AN_COMPLETE_OUT		=> pcs_an_complete,
 			MR_RESET_IN				=> RESET,
 			MR_MODE_IN				=> '0', --MR_MODE_IN,
-			MR_AN_ENABLE_IN			=> '0', -- do autonegotiation
+			MR_AN_ENABLE_IN			=> '1', -- do autonegotiation
 			MR_RESTART_AN_IN		=> '0', --MR_RESTART_IN,
 			
 			SD_RX_CLK_IN                => SD_RX_CLK_IN,
