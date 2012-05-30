@@ -353,7 +353,7 @@ LINK_1 : CNTester_module
 		MAC_ADDR_IN          => x"123456789011",
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
-		GENERATE_PACKET_IN   => activate_sender(0),
+		GENERATE_PACKET_IN   => '0', --activate_sender(0),
 		SIZE_IN              => size,
 		BUSY_OUT             => senders_free(0)
 	);
@@ -405,7 +405,7 @@ port map(
 	MAC_ADDR_IN          => x"123456789012",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
-	GENERATE_PACKET_IN   => '0', --activate_sender(1), -- disabled sendig data from link 2 I want only received data
+	GENERATE_PACKET_IN   => activate_sender(1),
 	SIZE_IN              => size,
 	BUSY_OUT             => senders_free(1)
 );
