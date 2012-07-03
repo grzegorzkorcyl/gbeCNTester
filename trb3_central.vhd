@@ -282,7 +282,7 @@ signal link_ok_for_main : std_logic;
 begin
 
 --link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2);
-link_ok <= '1'; --sd1_link_ok(0) and sd1_link_ok(1) and sd2_link_ok(3); --'1';
+link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2) and sd2_link_ok(3); --'1';
 
 MAIN : CNTester_Main
 	port map (
@@ -401,57 +401,58 @@ port map(
 	BUSY_OUT             => senders_free(1)
 );
 
-senders_free(3 downto 2) <= (others => '0');
+---- serdes 0 ch 2
+LINK_3 : CNTester_module
+port map(
+	CLKSYS_IN  => clk_100_i,
+	CLKGBE_IN  => CLK_GPLL_RIGHT,
+	RESET      => reset_i,
+	GSR_N      => GSR_N,
+	LINK_OK_OUT => sd1_link_ok(2),
+	
+	-- serdes io
+	SD_RX_CLK_IN                => sd_rx_clk(2),
+	SD_TX_DATA_OUT              => sd_tx_data(2),
+	SD_TX_KCNTL_OUT             => sd_tx_k(2),
+	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(2),
+	SD_RX_DATA_IN               => sd_rx_data(2),
+	SD_RX_KCNTL_IN              => sd_rx_k(2),
+	SD_RX_DISP_ERROR_IN         => sd_rx_disp(2),
+	SD_RX_CV_ERROR_IN           => sd_cv_err(2),
+	SD_RX_SERDES_RST_OUT        => sd_rx_serdes_rst(2),
+	SD_RX_PCS_RST_OUT           => sd_rx_pcs_rst(2),
+	SD_TX_PCS_RST_OUT			=> sd_tx_pcs_rst(2),
+	SD_RX_LOS_IN				=> sd_rx_los(2),
+	SD_SIGNAL_DETECTED_IN		=> sd_signal_detected(2),
+	SD_RX_CDR_IN				=> sd_rx_cdr(2),
+	SD_TX_PLL_LOL_IN            => sd1_tx_pll_lol,
+	SD_QUAD_RST_OUT             => sd_quad_rst(2),
+	SD_XMIT_OUT                 => sd_xmit(2),
+	
+	MODULE_SELECT_OUT     		=> open,
+	MODULE_RD_EN_OUT      		=> open,
+	MODULE_DATA_IN        		=> (others => '0'),
+	STOP_TRANSMISSION_OUT 		=> open,
+	START_STAT_IN         	 	=> '0',
+	
+	MODULE_DATA_OUT             => module_data(2),
+	MODULE_RD_EN_IN             => module_rd_en,
+	MODULE_SELECTED_IN          => module_selected(2),
+	MODULE_FULL_OUT             => module_full(2),
+	
+	TEST_PORT_IN         => (others => '0'),
+	TEST_PORT_OUT        => open,
+	
+	MAC_ADDR_IN          => x"123456789012",
+	TIMESTAMP_IN         => timestamp,
+	DEST_ADDR_IN         => dest_addr,
+	GENERATE_PACKET_IN   => activate_sender(2),
+	SIZE_IN              => size,
+	BUSY_OUT             => senders_free(2)
+);
 
------- serdes 0 ch 2
---LINK_3 : CNTester_module
---port map(
---	CLKSYS_IN  => clk_100_i,
---	CLKGBE_IN  => CLK_GPLL_RIGHT,
---	RESET      => reset_i,
---	GSR_N      => GSR_N,
---	LINK_OK_OUT => sd1_link_ok(2),
---	
---	-- serdes io
---	SD_RX_CLK_IN                => sd_rx_clk(2),
---	SD_TX_DATA_OUT              => sd_tx_data(2),
---	SD_TX_KCNTL_OUT             => sd_tx_k(2),
---	SD_TX_CORRECT_DISP_OUT      => sd_tx_disp(2),
---	SD_RX_DATA_IN               => sd_rx_data(2),
---	SD_RX_KCNTL_IN              => sd_rx_k(2),
---	SD_RX_DISP_ERROR_IN         => sd_rx_disp(2),
---	SD_RX_CV_ERROR_IN           => sd_cv_err(2),
---	SD_RX_SERDES_RST_OUT        => sd_rx_serdes_rst(2),
---	SD_RX_PCS_RST_OUT           => sd_rx_pcs_rst(2),
---	SD_TX_PCS_RST_OUT			=> sd_tx_pcs_rst(2),
---	SD_RX_LOS_IN				=> sd_rx_los(2),
---	SD_SIGNAL_DETECTED_IN		=> sd_signal_detected(2),
---	SD_RX_CDR_IN				=> sd_rx_cdr(2),
---	SD_TX_PLL_LOL_IN            => sd1_tx_pll_lol,
---	SD_QUAD_RST_OUT             => sd_quad_rst(2),
---	SD_XMIT_OUT                 => sd_xmit(2),
---	
---	MODULE_SELECT_OUT     		=> open,
---	MODULE_RD_EN_OUT      		=> open,
---	MODULE_DATA_IN        		=> (others => '0'),
---	STOP_TRANSMISSION_OUT 		=> open,
---	START_STAT_IN         	 	=> '0',
---	
---	MODULE_DATA_OUT             => module_data(2),
---	MODULE_RD_EN_IN             => module_rd_en,
---	MODULE_SELECTED_IN          => module_selected(2),
---	MODULE_FULL_OUT             => module_full(2),
---	
---	TEST_PORT_IN         => (others => '0'),
---	TEST_PORT_OUT        => open,
---	
---	MAC_ADDR_IN          => x"123456789012",
---	TIMESTAMP_IN         => timestamp,
---	DEST_ADDR_IN         => dest_addr,
---	GENERATE_PACKET_IN   => activate_sender(2),
---	SIZE_IN              => size,
---	BUSY_OUT             => senders_free(2)
---);
+senders_free(7 downto 3) <= (others => '0');
+
 ----
 ---- serdes 0 ch 3
 --LINK_4 : CNTester_module
@@ -1007,7 +1008,7 @@ SERDES1 : serdes4ch  -- PCSA
     
 
 
-sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1); -- or sd_quad_rst(2) or sd_quad_rst(3);
+sd1_quad_rst <= sd_quad_rst(0) or sd_quad_rst(1) or sd_quad_rst(2); -- or sd_quad_rst(3);
 sd2_quad_rst <= sd_quad2_rst(3);
 
 
