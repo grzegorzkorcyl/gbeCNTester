@@ -118,8 +118,6 @@ port (
 	SELECT_SENT_FRAMES_OUT	: out	std_logic_vector(c_MAX_PROTOCOLS * 16 - 1 downto 0);
 	SELECT_PROTOS_DEBUG_OUT	: out	std_logic_vector(c_MAX_PROTOCOLS * 32 - 1 downto 0);
 	
-	CNTRL_PACKET_SIZE_OUT : out std_logic_vector(15 downto 0);
-	
 	DEBUG_OUT		: out	std_logic_vector(63 downto 0)
 );
 end trb_net16_gbe_main_control;
@@ -195,10 +193,6 @@ signal stats_ctr                    : integer range 0 to 15;
 signal stat_data                    : std_logic_vector(31 downto 0);
 signal stat_addr                    : std_logic_vector(7 downto 0);
 
-attribute syn_preserve : boolean;
-attribute syn_keep : boolean;
-attribute syn_keep of dhcp_start : signal is true;
-attribute syn_preserve of dhcp_start : signal is true;
 
 begin
 
@@ -278,7 +272,6 @@ port map(
 	STAT_DATA_RDY_IN   => stat_rdy,
 	STAT_DATA_ACK_OUT  => stat_ack,
 
-	CNTRL_PACKET_SIZE_OUT => CNTRL_PACKET_SIZE_OUT,
 	
 	DEBUG_OUT		=> open
 );
@@ -298,8 +291,7 @@ begin
 		elsif (redirect_current_state = CHECK_TYPE) then
 			if (link_current_state /= ACTIVE and link_current_state /= GET_ADDRESS) then
 				disable_redirect <= '1';
-				-- WARNING: here is hardcoded position of DHCP response constructor
-			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN /= "1000") then
+			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN /= "10") then
 				disable_redirect <= '1';
 			else
 				disable_redirect <= '0';
@@ -342,8 +334,7 @@ begin
 		when CHECK_TYPE =>
 			if (link_current_state = ACTIVE) then
 				redirect_next_state <= CHECK_BUSY;
-				-- WARNING: hardtyped protocol code for DHCP
-			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN = "1000") then
+			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN = "10") then
 				redirect_next_state <= CHECK_BUSY;
 			else
 				redirect_next_state <= DROP;
@@ -368,7 +359,7 @@ begin
 		when LOAD =>
 			redirect_state <= x"2";
 			if (loaded_bytes_ctr = RC_FRAME_SIZE_IN - x"1") then
-		    -- !!WARNING!! dont know why this had to be changed (probably because of strange frame type)
+			-- !!WARNING!! dont know why this had to be changed (probably because of strange frame type)
 			--if (loaded_bytes_ctr = RC_FRAME_SIZE_IN) then
 				redirect_next_state <= FINISH;
 			else
@@ -579,14 +570,14 @@ begin
 			if (PCS_AN_COMPLETE_IN = '0') then
 				link_next_state <= INACTIVE;
 			else
-				if (wait_ctr = x"05ff_0000") then
+				if (wait_ctr = x"3baa_ca00") then
 					link_next_state <= ACTIVE;
 				else
 					link_next_state <= WAIT_FOR_BOOT;
 				end if;
 			end if;
 		
-		-- this one not used
+		-- not used anymore in this design
 		when GET_ADDRESS =>
 			link_state <= x"7";
 			if (PCS_AN_COMPLETE_IN = '0') then

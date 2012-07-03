@@ -279,13 +279,10 @@ signal stop_trans, start_stat, module_rd_en : std_logic;
 signal stat_data : std_logic_vector(71 downto 0);
 signal link_ok_for_main : std_logic;
 
-
-signal cntrl_packet_size : std_logic_vector(15 downto 0);
-
 begin
 
+--link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2);
 link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd2_link_ok(3); --'1';
---link_ok <= '1';
 
 MAIN : CNTester_Main
 	port map (
@@ -297,8 +294,6 @@ MAIN : CNTester_Main
 		TIMESTAMP_OUT   => timestamp,
 		DEST_ADDR_OUT   => dest_addr,
 		SIZE_OUT        => size,
-		
-		CNTRL_PACKET_SIZE_IN => cntrl_packet_size,
 		
 		SENDERS_FREE_IN => senders_free
 	);
@@ -348,12 +343,10 @@ LINK_1 : CNTester_module
 		TEST_PORT_IN         => (others => '0'),
 		TEST_PORT_OUT        => open,
 		
-		CNTRL_PACKET_SIZE_OUT => open,
-		
 		MAC_ADDR_IN          => x"123456789011",
 		TIMESTAMP_IN         => timestamp,
 		DEST_ADDR_IN         => dest_addr,
-		GENERATE_PACKET_IN   => '0', --activate_sender(0),
+		GENERATE_PACKET_IN   => activate_sender(0),
 		SIZE_IN              => size,
 		BUSY_OUT             => senders_free(0)
 	);
@@ -400,12 +393,10 @@ port map(
 	TEST_PORT_IN         => (others => '0'),
 	TEST_PORT_OUT        => open,
 	
-	CNTRL_PACKET_SIZE_OUT => open,
-	
 	MAC_ADDR_IN          => x"123456789012",
 	TIMESTAMP_IN         => timestamp,
 	DEST_ADDR_IN         => dest_addr,
-	GENERATE_PACKET_IN   => activate_sender(1),
+	GENERATE_PACKET_IN   => '0', --activate_sender(1), -- disabled sendig data from link 2 I want only received data
 	SIZE_IN              => size,
 	BUSY_OUT             => senders_free(1)
 );
@@ -705,8 +696,6 @@ port map(
 	TEST_PORT_IN         => (others => '0'),
 	TEST_PORT_OUT        => open,
 	
-	CNTRL_PACKET_SIZE_OUT => cntrl_packet_size,
-	
 	MAC_ADDR_IN          => x"123456789020",
 	TIMESTAMP_IN         => (others => '0'),
 	DEST_ADDR_IN         => (others => '0'),
@@ -716,7 +705,6 @@ port map(
 );
 
 start_stat <= '1' when module_full(6 downto 0) /= "0000000" else '0';
-module_full(6 downto 2) <= (others => '0');
 
 STAT_DATA_SELECTOR : process(module_selected)
 begin

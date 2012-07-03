@@ -623,114 +623,114 @@ TC_FRAME_SIZE_OUT <= x"0103" when (main_current_state = SENDING_DISCOVER) else x
 TC_FRAME_TYPE_OUT <= x"0008";  -- frame type: ip 
 
 -- **** statistics
---REC_FRAMES_PROC : process(CLK)
---begin
---	if rising_edge(CLK) then
---		if (RESET = '1') then
---			rec_frames <= (others => '0');
---		--elsif (receive_current_state = IDLE and PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
---		elsif (receive_current_state = SAVE_VALUES and PS_DATA_IN(8) = '1') then
---			rec_frames <= rec_frames + x"1";
---		end if;
---	end if;
---end process REC_FRAMES_PROC;
---
---SENT_FRAMES_PROC : process(CLK)
---begin
---	if rising_edge(CLK) then
---		if (RESET = '1') then
---			sent_frames <= (others => '0');
---		elsif (construct_current_state = CLEANUP) then
---			sent_frames <= sent_frames + x"1";
---		end if;
---	end if;
---end process SENT_FRAMES_PROC;
---
---RECEIVED_FRAMES_OUT <= rec_frames;
---SENT_FRAMES_OUT     <= sent_frames;
---
---STATS_MACHINE_PROC : process(CLK)
---begin
---	if rising_edge(CLK) then
---		if (RESET = '1') then
---			stats_current_state <= IDLE;
---		else
---			stats_current_state <= stats_next_state;
---		end if;
---	end if;
---end process STATS_MACHINE_PROC;
---
---STATS_MACHINE : process(stats_current_state, STAT_DATA_ACK_IN, PS_DATA_IN, construct_current_state, receive_current_state)
---begin
---
---	case (stats_current_state) is
---	
---		when IDLE =>
---			if (receive_current_state = SAVE_VALUES and PS_DATA_IN(8) = '1') or (construct_current_state = CLEANUP) or (receive_current_state = DISCARD and PS_DATA_IN(8) = '1') then
---				stats_next_state <= LOAD_SENT;
---			else
---				stats_next_state <= IDLE;
---			end if;
---			
---		when LOAD_SENT =>
---			if (STAT_DATA_ACK_IN = '1') then
---				stats_next_state <= LOAD_RECEIVED;
---			else
---				stats_next_state <= LOAD_SENT;
---			end if;
---		
---		when LOAD_RECEIVED =>
---			if (STAT_DATA_ACK_IN = '1') then
---				stats_next_state <= LOAD_DISCARDED;
---			else
---				stats_next_state <= LOAD_RECEIVED;
---			end if;
---			
---		when LOAD_DISCARDED =>
---			if (STAT_DATA_ACK_IN = '1') then
---				stats_next_state <= CLEANUP;
---			else
---				stats_next_state <= LOAD_DISCARDED;
---			end if;
---			
---		when CLEANUP =>
---			stats_next_state <= IDLE;
---	
---	end case;
---
---end process STATS_MACHINE;
---
---SELECTOR : process(stats_current_state)
---begin
---
---	case(stats_current_state) is
---	
---		when LOAD_SENT =>
---			stat_data_temp <= x"0101" & sent_frames;
---			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE, 8));
---		
---		when LOAD_RECEIVED =>
---			stat_data_temp <= x"0102" & rec_frames;
---			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE + 1, 8));
---		
---		when LOAD_DISCARDED =>
---			stat_data_temp <= x"0103" & discarded_ctr;
---			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE + 2, 8));
---		
---		when others =>
---			stat_data_temp <= (others => '0');
---			STAT_ADDR_OUT  <= (others => '0');
---	
---	end case;
---	
---end process SELECTOR;
---
---STAT_DATA_OUT(7 downto 0)   <= stat_data_temp(31 downto 24);
---STAT_DATA_OUT(15 downto 8)  <= stat_data_temp(23 downto 16);
---STAT_DATA_OUT(23 downto 16) <= stat_data_temp(15 downto 8);
---STAT_DATA_OUT(31 downto 24) <= stat_data_temp(7 downto 0);
---
---STAT_DATA_RDY_OUT <= '1' when stats_current_state /= IDLE and stats_current_state /= CLEANUP else '0';
+REC_FRAMES_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') then
+			rec_frames <= (others => '0');
+		--elsif (receive_current_state = IDLE and PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1') then
+		elsif (receive_current_state = SAVE_VALUES and PS_DATA_IN(8) = '1') then
+			rec_frames <= rec_frames + x"1";
+		end if;
+	end if;
+end process REC_FRAMES_PROC;
+
+SENT_FRAMES_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') then
+			sent_frames <= (others => '0');
+		elsif (construct_current_state = CLEANUP) then
+			sent_frames <= sent_frames + x"1";
+		end if;
+	end if;
+end process SENT_FRAMES_PROC;
+
+RECEIVED_FRAMES_OUT <= rec_frames;
+SENT_FRAMES_OUT     <= sent_frames;
+
+STATS_MACHINE_PROC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (RESET = '1') then
+			stats_current_state <= IDLE;
+		else
+			stats_current_state <= stats_next_state;
+		end if;
+	end if;
+end process STATS_MACHINE_PROC;
+
+STATS_MACHINE : process(stats_current_state, STAT_DATA_ACK_IN, PS_DATA_IN, construct_current_state, receive_current_state)
+begin
+
+	case (stats_current_state) is
+	
+		when IDLE =>
+			if (receive_current_state = SAVE_VALUES and PS_DATA_IN(8) = '1') or (construct_current_state = CLEANUP) or (receive_current_state = DISCARD and PS_DATA_IN(8) = '1') then
+				stats_next_state <= LOAD_SENT;
+			else
+				stats_next_state <= IDLE;
+			end if;
+			
+		when LOAD_SENT =>
+			if (STAT_DATA_ACK_IN = '1') then
+				stats_next_state <= LOAD_RECEIVED;
+			else
+				stats_next_state <= LOAD_SENT;
+			end if;
+		
+		when LOAD_RECEIVED =>
+			if (STAT_DATA_ACK_IN = '1') then
+				stats_next_state <= LOAD_DISCARDED;
+			else
+				stats_next_state <= LOAD_RECEIVED;
+			end if;
+			
+		when LOAD_DISCARDED =>
+			if (STAT_DATA_ACK_IN = '1') then
+				stats_next_state <= CLEANUP;
+			else
+				stats_next_state <= LOAD_DISCARDED;
+			end if;
+			
+		when CLEANUP =>
+			stats_next_state <= IDLE;
+	
+	end case;
+
+end process STATS_MACHINE;
+
+SELECTOR : process(stats_current_state)
+begin
+
+	case(stats_current_state) is
+	
+		when LOAD_SENT =>
+			stat_data_temp <= x"0101" & sent_frames;
+			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE, 8));
+		
+		when LOAD_RECEIVED =>
+			stat_data_temp <= x"0102" & rec_frames;
+			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE + 1, 8));
+		
+		when LOAD_DISCARDED =>
+			stat_data_temp <= x"0103" & discarded_ctr;
+			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE + 2, 8));
+		
+		when others =>
+			stat_data_temp <= (others => '0');
+			STAT_ADDR_OUT  <= (others => '0');
+	
+	end case;
+	
+end process SELECTOR;
+
+STAT_DATA_OUT(7 downto 0)   <= stat_data_temp(31 downto 24);
+STAT_DATA_OUT(15 downto 8)  <= stat_data_temp(23 downto 16);
+STAT_DATA_OUT(23 downto 16) <= stat_data_temp(15 downto 8);
+STAT_DATA_OUT(31 downto 24) <= stat_data_temp(7 downto 0);
+
+STAT_DATA_RDY_OUT <= '1' when stats_current_state /= IDLE and stats_current_state /= CLEANUP else '0';
 -- ****
 
 

@@ -221,8 +221,6 @@ component CNTester_Main is
 		DEST_ADDR_OUT : out std_logic_vector(15 downto 0);
 		SIZE_OUT        : out std_logic_vector(15 downto 0);
 		
-		CNTRL_PACKET_SIZE_IN : in std_logic_vector(15 downto 0);
-		
 		SENDERS_FREE_IN : in std_logic_vector(7 downto 0)
 	);
 end component;
@@ -273,8 +271,6 @@ generic ( g_GENERATE_STAT : integer range 0 to 1 := 0);
 		
 		TEST_PORT_IN                : in	std_logic_vector(123 downto 0);
 		TEST_PORT_OUT               : out	std_logic_vector(123 downto 0);
-		
-		CNTRL_PACKET_SIZE_OUT : out std_logic_vector(15 downto 0);
 		
 		SIZE_IN                     : in    std_logic_vector(15 downto 0);
 		BUSY_OUT                    : out   std_logic	
@@ -502,8 +498,6 @@ port (
 	STAT_DATA_RDY_IN         : in std_logic;
 	STAT_DATA_ACK_OUT        : out std_logic;
 	
-	CNTRL_PACKET_SIZE_OUT : out std_logic_vector(15 downto 0);
-	
 	DEBUG_OUT		: out	std_logic_vector(63 downto 0)
 );
 end component;
@@ -634,8 +628,6 @@ port (
 	SELECT_REC_FRAMES_OUT	: out	std_logic_vector(c_MAX_PROTOCOLS * 16 - 1 downto 0);
 	SELECT_SENT_FRAMES_OUT	: out	std_logic_vector(c_MAX_PROTOCOLS * 16 - 1 downto 0);
 	SELECT_PROTOS_DEBUG_OUT	: out	std_logic_vector(c_MAX_PROTOCOLS * 32 - 1 downto 0);
-	
-	CNTRL_PACKET_SIZE_OUT : out std_logic_vector(15 downto 0);
 
 	DEBUG_OUT		: out	std_logic_vector(63 downto 0)
 );
