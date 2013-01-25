@@ -282,7 +282,8 @@ signal link_ok_for_main : std_logic;
 begin
 
 --link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2);
-link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2) and sd2_link_ok(3); --'1';
+--link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2) and sd2_link_ok(3); --'1';
+link_ok <= '1';
 
 MAIN : CNTester_Main
 	port map (
@@ -1122,27 +1123,27 @@ THE_MAIN_PLL : pll_in200_out100
 --LED_YELLOW <= debug(3);
 
 
-TIMER1_PROC : process(CLK_GPLL_RIGHT)
-begin
-	if rising_edge(CLK_GPLL_RIGHT) then
-		if (reset_i = '1') then
-			timer1 <= (others => '0');
-		else
-			timer1 <= timer1 + x"1";
-		end if;
-	end if;
-end process TIMER1_PROC;
-
-TIMER2_PROC : process(sd_rx_clk(0))
-begin
-	if rising_edge(sd_rx_clk(0)) then
-		if (reset_i = '1') then
-			timer2 <= (others => '0');
-		else
-			timer2 <= timer2 + x"1";
-		end if;
-	end if;
-end process TIMER2_PROC;
+--TIMER1_PROC : process(CLK_GPLL_RIGHT)
+--begin
+--	if rising_edge(CLK_GPLL_RIGHT) then
+--		if (reset_i = '1') then
+--			timer1 <= (others => '0');
+--		else
+--			timer1 <= timer1 + x"1";
+--		end if;
+--	end if;
+--end process TIMER1_PROC;
+--
+--TIMER2_PROC : process(sd_rx_clk(0))
+--begin
+--	if rising_edge(sd_rx_clk(0)) then
+--		if (reset_i = '1') then
+--			timer2 <= (others => '0');
+--		else
+--			timer2 <= timer2 + x"1";
+--		end if;
+--	end if;
+--end process TIMER2_PROC;
 
 LED_GREEN <= timer1(28);
 LED_ORANGE <= timer2(24);
