@@ -112,6 +112,7 @@ signal init_ctr, reply_ctr      : std_logic_vector(15 downto 0);
 signal rx_empty, tx_empty       : std_logic;
 
 signal rx_full, tx_full         : std_logic;
+signal rx_fifo_data             : std_logic_vector()
 
 	
 begin
@@ -122,7 +123,7 @@ receive_fifo : fifo_2048x8x16
 	RPReset          => RESET,
     WrClock          => CLK,
 	RdClock          => CLK,
-    Data             => PS_DATA_IN,
+    Data             => rx_fifo_data(8 downto 0), --PS_DATA_IN,
     WrEn             => rx_fifo_wr,
     RdEn             => rx_fifo_rd,
     Q                => rx_fifo_q,
@@ -130,11 +131,34 @@ receive_fifo : fifo_2048x8x16
     Empty            => rx_empty
   );
 
-rx_fifo_wr              <= '1' when PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1' else '0';
-rx_fifo_rd              <= '1' when (gsc_init_dataready = '1' and dissect_current_state = LOAD_TO_HUB) or 
-								(gsc_init_dataready = '1' and dissect_current_state = WAIT_FOR_HUB and GSC_INIT_READ_IN = '1') or
-								(dissect_current_state = READ_FRAME and PS_DATA_IN(8) = '1')
-								else '0';  -- preload first word
+RX_FIFO_SYNC : process(CLK)
+begin
+	if rising_edge(CLK) then
+	
+		if (PS_WR_EN_IN '1' and PS_ACTIVATE_IN = '1') then
+			rx_fifo_wr <= '1';
+		else
+			rx_fifo_wr <= '0';
+		end if;
+		
+		if (gsc_init_dataready = '1' and dissect_current_state = LOAD_TO_HUB) then
+			rx_fifo_rd <= '1';
+		elsif (gsc_init_dataready = '1' and dissect_current_state = WAIT_FOR_HUB and GSC_INIT_READ_IN = '1') then
+			rx_fifo_rd <= '1';
+		elsif (dissect_current_state = READ_FRAME and PS_DATA_IN(8) = '1') then
+			rx_fifo_rd <= '1';
+		else
+			rx_fifo_rd <= '0';
+		end if;
+		
+		rx_fifo_data <= PS_DATA_IN;
+	end if;
+end process RX_FIFO_SYNC;
+--rx_fifo_wr              <= '1' when PS_WR_EN_IN = '1' and PS_ACTIVATE_IN = '1' else '0';
+--rx_fifo_rd              <= '1' when (gsc_init_dataready = '1' and dissect_current_state = LOAD_TO_HUB) or 
+--								(gsc_init_dataready = '1' and dissect_current_state = WAIT_FOR_HUB and GSC_INIT_READ_IN = '1') or
+--								(dissect_current_state = READ_FRAME and PS_DATA_IN(8) = '1')
+--								else '0';  -- preload first word
 
 GSC_INIT_DATA_OUT(7 downto 0)  <= rx_fifo_q(16 downto 9);
 GSC_INIT_DATA_OUT(15 downto 8) <= rx_fifo_q(7 downto 0);
@@ -190,9 +214,25 @@ begin
 	end if;
 end process TX_LOADED_CTR_PROC;
 
-PS_BUSY_OUT <= '0' when (dissect_current_state = IDLE) else '1';
+PS_RESPONSE_SYNC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (dissect_current_state = WAIT_FOR_LOAD or dissect_current_state = LOAD_FRAME or dissect_current_state = CLEANUP) then
+			PS_RESPONSE_READY_OUT <= '1';
+		else
+			PS_RESPONSE_READY_OUT <= '0';
+		end if;
+		
+		if (dissect_current_state = IDLE) then
+			PS_BUSY_OUT <= '0';
+		else
+			PS_BUSY_OUT <= '1';
+		end if;
+	end if;	
+end process PS_RESPONSE_SYNC;
 
-PS_RESPONSE_READY_OUT <= '1' when (dissect_current_state = WAIT_FOR_LOAD or dissect_current_state = LOAD_FRAME or dissect_current_state = CLEANUP) else '0';
+--PS_BUSY_OUT <= '0' when (dissect_current_state = IDLE) else '1';
+--PS_RESPONSE_READY_OUT <= '1' when (dissect_current_state = WAIT_FOR_LOAD or dissect_current_state = LOAD_FRAME or dissect_current_state = CLEANUP) else '0';
 
 TC_FRAME_SIZE_OUT  <= tx_data_ctr;
 
@@ -376,25 +416,25 @@ begin
 
 end process STATS_MACHINE;
 
-SELECTOR : process(stats_current_state)
+SELECTOR : process(CLK)
 begin
-
-	case(stats_current_state) is
-		
-		when LOAD_RECEIVED =>
-			stat_data_temp <= x"0502" & rec_frames;
-			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE, 8));
-		
-		when LOAD_REPLY =>
-			stat_data_temp <= x"0503" & reply_ctr;
-			STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE + 1, 8));
+	if rising_edge(CLK) then
+		case(stats_current_state) is
 			
-		when others =>
-			stat_data_temp <= (others => '0');
-			STAT_ADDR_OUT  <= (others => '0');
-	
-	end case;
-	
+			when LOAD_RECEIVED =>
+				stat_data_temp <= x"0502" & rec_frames;
+				STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE, 8));
+			
+			when LOAD_REPLY =>
+				stat_data_temp <= x"0503" & reply_ctr;
+				STAT_ADDR_OUT  <= std_logic_vector(to_unsigned(STAT_ADDRESS_BASE + 1, 8));
+				
+			when others =>
+				stat_data_temp <= (others => '0');
+				STAT_ADDR_OUT  <= (others => '0');
+		
+		end case;
+	end if;	
 end process SELECTOR;
 
 STAT_DATA_OUT(7 downto 0)   <= stat_data_temp(31 downto 24);
@@ -402,8 +442,19 @@ STAT_DATA_OUT(15 downto 8)  <= stat_data_temp(23 downto 16);
 STAT_DATA_OUT(23 downto 16) <= stat_data_temp(15 downto 8);
 STAT_DATA_OUT(31 downto 24) <= stat_data_temp(7 downto 0);
 
-STAT_DATA_RDY_OUT <= '1' when stats_current_state /= IDLE and stats_current_state /= CLEANUP else '0';
+STAT_SYNC : process(CLK)
+begin
+	if rising_edge(CLK) then
+		if (stats_current_state /= IDLE and stats_current_state /= CLEANUP) then
+			STAT_DATA_RDY_OUT <= '1'
+		else
+			STAT_DATA_RDY_OUT <= '0';
+		end if;
+	end if;
+end process STAT_SYNC;
+--STAT_DATA_RDY_OUT <= '1' when stats_current_state /= IDLE and stats_current_state /= CLEANUP else '0';
 
 -- end of statistics
 
 end architecture RTL;
+
