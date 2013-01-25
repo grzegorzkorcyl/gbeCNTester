@@ -282,8 +282,7 @@ signal link_ok_for_main : std_logic;
 begin
 
 --link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2);
---link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd1_link_ok(2) and sd2_link_ok(3); --'1';
-link_ok <= '1';
+link_ok <= sd1_link_ok(0) and sd1_link_ok(1) and sd2_link_ok(3); --'1';
 
 MAIN : CNTester_Main
 	port map (

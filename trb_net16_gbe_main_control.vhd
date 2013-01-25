@@ -136,7 +136,7 @@ signal tsm_hcs_n                            : std_logic;
 signal tsm_hwrite_n                         : std_logic;
 signal tsm_hread_n                          : std_logic;
 
-type link_states is (ACTIVE, INACTIVE, ENABLE_MAC, TIMEOUT, FINALIZE, WAIT_FOR_BOOT, GET_ADDRESS);
+type link_states is (ACTIVE, INACTIVE, ENABLE_MAC, TIMEOUT, FINALIZE, WAIT_FOR_BOOT);
 signal link_current_state, link_next_state : link_states;
 
 signal link_down_ctr                 : std_logic_vector(15 downto 0);
@@ -146,7 +146,7 @@ signal link_ok_timeout_ctr           : std_logic_vector(15 downto 0);
 
 signal mac_control_debug             : std_logic_vector(63 downto 0);
 
-type flow_states is (IDLE, TRANSMIT_DATA, TRANSMIT_CTRL, CLEANUP);
+type flow_states is (IDLE, TRANSMIT_CTRL, CLEANUP);
 signal flow_current_state, flow_next_state : flow_states;
 
 signal state                        : std_logic_vector(3 downto 0);
@@ -276,29 +276,11 @@ port map(
 	DEBUG_OUT		=> open
 );
 
-TC_FRAME_TYPE_OUT <= frame_type when flow_current_state = TRANSMIT_CTRL else x"0008";
+TC_FRAME_TYPE_OUT <= frame_type;
 
 -- gk 07.11.11
 -- do not select any response constructors when dropping a frame
-proto_select <= RC_FRAME_PROTO_IN when disable_redirect = '0' else (others => '0');
-
--- gk 07.11.11
-DISABLE_REDIRECT_PROC : process(CLK)
-begin
-	if rising_edge(CLK) then
-		if (RESET = '1') then
-			disable_redirect <= '0';
-		elsif (redirect_current_state = CHECK_TYPE) then
-			if (link_current_state /= ACTIVE and link_current_state /= GET_ADDRESS) then
-				disable_redirect <= '1';
-			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN /= "10") then
-				disable_redirect <= '1';
-			else
-				disable_redirect <= '0';
-			end if;
-		end if;
-	end if;
-end process DISABLE_REDIRECT_PROC;
+proto_select <= RC_FRAME_PROTO_IN;
 
 -- warning
 SYNC_PROC : process(CLK)
@@ -333,8 +315,6 @@ begin
 		-- gk 16.11.11
 		when CHECK_TYPE =>
 			if (link_current_state = ACTIVE) then
-				redirect_next_state <= CHECK_BUSY;
-			elsif (link_current_state = GET_ADDRESS and RC_FRAME_PROTO_IN = "10") then
 				redirect_next_state <= CHECK_BUSY;
 			else
 				redirect_next_state <= DROP;
@@ -450,27 +430,16 @@ begin
   end if;
 end process FLOW_MACHINE_PROC;
 
-FLOW_MACHINE : process(flow_current_state, PC_TRANSMIT_ON_IN, PC_SOD_IN, TC_TRANSMIT_DONE_IN, ps_response_ready)
+FLOW_MACHINE : process(flow_current_state, TC_TRANSMIT_DONE_IN, ps_response_ready)
 begin
   case flow_current_state is
 
     when IDLE =>
       state <= x"1";
-      --if (RC_FRAME_WAITING_IN = '1') and (PC_TRANSMIT_ON_IN = '0') then
-      if (ps_response_ready = '1') and (PC_TRANSMIT_ON_IN = '0') then
+      if (ps_response_ready = '1') then
 	flow_next_state <= TRANSMIT_CTRL;
-      elsif (PC_SOD_IN = '1') then  -- pottential loss of frames
-	flow_next_state <= TRANSMIT_DATA;
       else
 	flow_next_state <= IDLE;
-      end if;
-
-    when TRANSMIT_DATA =>
-      state <= x"2";
-      if (TC_TRANSMIT_DONE_IN = '1') then
-	flow_next_state <= CLEANUP;
-      else
-	flow_next_state <= TRANSMIT_DATA;
       end if;
 
     when TRANSMIT_CTRL =>
@@ -488,7 +457,7 @@ begin
   end case;
 end process FLOW_MACHINE;
 
-TC_TRANSMIT_DATA_OUT <= '1' when (flow_current_state = TRANSMIT_DATA) else '0';
+TC_TRANSMIT_DATA_OUT <= '0';
 TC_TRANSMIT_CTRL_OUT <= '1' when (flow_current_state = TRANSMIT_CTRL) else '0';
 
 CNT_BUSY_OUT <= '0' when flow_current_state = IDLE else '1';
@@ -576,19 +545,6 @@ begin
 					link_next_state <= WAIT_FOR_BOOT;
 				end if;
 			end if;
-		
-		-- not used anymore in this design
-		when GET_ADDRESS =>
-			link_state <= x"7";
-			if (PCS_AN_COMPLETE_IN = '0') then
-				link_next_state <= INACTIVE;
-			else
-				if (dhcp_done = '1') then
-					link_next_state <= ACTIVE;
-				else
-					link_next_state <= GET_ADDRESS;
-				end if;
-			end if;
 
 	end case;
 end process LINK_STATE_MACHINE;
@@ -604,7 +560,7 @@ begin
 	end if;
 end process LINK_OK_CTR_PROC;
 
-link_ok <= '1' when (link_current_state = ACTIVE) or (link_current_state = GET_ADDRESS) or (link_current_state = WAIT_FOR_BOOT) else '0';
+link_ok <= '1' when (link_current_state = ACTIVE) or (link_current_state = WAIT_FOR_BOOT) else '0';
 
 WAIT_CTR_PROC : process(CLK)
 begin
@@ -616,23 +572,6 @@ begin
 		end if;
 	end if;
 end process WAIT_CTR_PROC;
-
-dhcp_start <= '1' when link_current_state = GET_ADDRESS else '0';
-
-LINK_DOWN_CTR_PROC : process(CLK)
-begin
-	if rising_edge(CLK) then
-		if (RESET = '1') then
-			link_down_ctr      <= (others => '0');
-			link_down_ctr_lock <= '0';
-		elsif (PCS_AN_COMPLETE_IN = '1') then
-			link_down_ctr_lock <= '0';
-		elsif ((PCS_AN_COMPLETE_IN = '0') and (link_down_ctr_lock = '0')) then
-			link_down_ctr      <= link_down_ctr + x"1";
-			link_down_ctr_lock <= '1';
-		end if;
-	end if;
-end process LINK_DOWN_CTR_PROC;
 
 MC_LINK_OK_OUT <= link_ok;
 

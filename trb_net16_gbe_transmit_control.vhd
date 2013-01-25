@@ -93,7 +93,7 @@ architecture trb_net16_gbe_transmit_control of trb_net16_gbe_transmit_control is
 
 attribute syn_encoding	: string;
 
-type tx_states is (IDLE, TRANSMIT_DATA, TRANSMIT_CTRL, CLEANUP);
+type tx_states is (IDLE, TRANSMIT_CTRL, CLEANUP);
 signal tx_current_state, tx_next_state : tx_states;
 attribute syn_encoding of tx_current_state: signal is "safe,gray";
 
@@ -139,9 +139,7 @@ begin
     when IDLE =>
       state <= x"1";
       if (FC_READY_IN = '1') then
-	if (MC_TRANSMIT_DATA_IN = '1') then
-	  tx_next_state <= TRANSMIT_DATA;
-	elsif (MC_TRANSMIT_CTRL_IN = '1') then
+	if (MC_TRANSMIT_CTRL_IN = '1') then
 	  tx_next_state <= TRANSMIT_CTRL;
 	else
 	  tx_next_state <= IDLE;
@@ -150,14 +148,6 @@ begin
 	tx_next_state <= IDLE;
       end if;
 
-    when TRANSMIT_DATA =>
-      state <= x"2";
-      if (PC_EOD_IN = '1') then
-	tx_next_state <= CLEANUP;
-      else
-	tx_next_state <= TRANSMIT_DATA;
-      end if;
-      
     when TRANSMIT_CTRL =>
       state <= x"3";
       if (ctrl_construct_current_state = CLOSE) then
@@ -180,33 +170,6 @@ SELECTOR : process(CLK)
 begin
   if rising_edge(CLK) then
 
-    case tx_current_state is
-      
-      when TRANSMIT_DATA =>
-      -- CHANGED FOR SIMPLE FRAME SENDER
-	FC_DATA_OUT          <= PC_DATA_IN;
-	FC_SOD_OUT           <= PC_SOD_IN;
-	FC_EOD_OUT           <= PC_EOD_IN;
-	FC_IP_SIZE_OUT       <= PC_IP_SIZE_IN;
-	FC_UDP_SIZE_OUT      <= PC_UDP_SIZE_IN;
-	FC_FLAGS_OFFSET_OUT  <= PC_FLAGS_OFFSET_IN;
-	FC_IDENT_OUT         <= sent_packets_ctr;
-
-	DEST_MAC_ADDRESS_OUT <= x"9a680f201300"; --IC_DEST_MAC_ADDRESS_IN;
-	DEST_IP_ADDRESS_OUT  <= x"0100a8c0";     --IC_DEST_IP_ADDRESS_IN;
-	DEST_UDP_PORT_OUT    <= (others => '0'); --IC_DEST_UDP_PORT_IN;
-	SRC_MAC_ADDRESS_OUT  <= x"beefbeef0000"; --IC_SRC_MAC_ADDRESS_IN;
-	SRC_IP_ADDRESS_OUT   <= x"0b00a8c0";     --IC_SRC_IP_ADDRESS_IN;
-	SRC_UDP_PORT_OUT     <= (others => '0'); --IC_SRC_UDP_PORT_IN;
-	
-	if (sent_packets_ctr(0) = '0') then
-		FC_IP_PROTOCOL_OUT   <= x"dd";
-	else
-		FC_IP_PROTOCOL_OUT   <= x"ee";
-	end if;
-	
-
-      when TRANSMIT_CTRL =>
 	FC_DATA_OUT         <= MC_DATA_IN(7 downto 0);
 	FC_IP_PROTOCOL_OUT  <= MC_IP_PROTOCOL_IN; 
 
@@ -248,14 +211,6 @@ begin
 	
 	FC_IDENT_OUT         <= sent_packets_ctr;
 
-      when others =>
-	MC_RD_EN_OUT        <= '0';
-	FC_DATA_OUT         <= (others => '0');
-	delayed_wr_en       <= '0';
-	FC_SOD_OUT          <= '0';
-	FC_EOD_OUT          <= '0';
-
-    end case;
 
   end if;
 end process SELECTOR;
@@ -265,14 +220,8 @@ begin
   if rising_edge(CLK) then
     delayed_wr_en_q <= delayed_wr_en;
 
-    case tx_current_state is
-      when TRANSMIT_DATA =>
-	FC_WR_EN_OUT <= PC_WR_EN_IN;
-      when TRANSMIT_CTRL =>
 	FC_WR_EN_OUT <= delayed_wr_en_q;
-      when  others =>
-	FC_WR_EN_OUT <= '0';
-    end case;
+
   end if;
 end process FC_WR_EN_PROC;
 
@@ -340,11 +289,9 @@ begin
   end if;
 end process SENT_BYTES_CTR_PROC;
 
-PC_FC_H_READY_OUT   <= FC_H_READY_IN when ((tx_current_state = IDLE) or (tx_current_state = TRANSMIT_DATA))
-		      else '0';
+PC_FC_H_READY_OUT   <= '0';
 
-PC_FC_READY_OUT     <= FC_READY_IN   when ((tx_current_state = IDLE) or (tx_current_state = TRANSMIT_DATA))
-		      else '0';
+PC_FC_READY_OUT     <= '0';
 
 SENT_PACKETS_CTR_PROC : process(CLK)
 begin
